@@ -9,7 +9,7 @@
 couples(typetest = 0, typecode = numeric())
 }
 \arguments{
-\item{typetest}{integer; set typetest=0 for simmetry test (default choice),
+\item{typetest}{integer; set typetest=0 for symmetry test (default choice),
 \code{typetest=1} for separability test, \code{typetest=2} for type of non
 separability test,
 \code{typetest=3} for the test on the product-sum class of models,
@@ -56,14 +56,14 @@ couples of the selected spatial points}
 }}
 
 \note{
-It is important to note that for:
+It is important to point out that for:
 \itemize{
 \item symmetry test (\code{typetest=0}), both positive and negative
 temporal lags have to be considered;
 
 \item separability and type of non separability tests (\code{typetest=1} and
 \code{typetest=2}, respectively), both positive and negative
-temporal lags have to be considered. Hovewer, if the simmetry hyphotesis
+temporal lags have to be considered. Hovewer, if the symmetry hyphotesis
 has not been rejected, only positive temporal lags should be set.
 Moreover for \code{typetest=2} the temporal lags should be chosen according
 to the results of the sample non separability ratios, plotted through
@@ -72,9 +72,15 @@ details);
 
 \item model tests (\code{typetest} from 3 to 5), the number of analyzed spatial
 points must be used to create at least 3 spatial couples or multiple of 3,
-such that each triplet satisfies the condition h1-h2=h2-h3. The number
-of positive temporal lags must be at least 3, or multiple of 3, too. The
-condition u1-u2=u2-u3 must be satisfied for each triplet.
+such that each triplet satisfies the condition h1-h2=h2-h3 (only for typetest=4
+and 5). The number of positive temporal lags must be at least 3, or multiple
+of 3, too. The condition u1-u2=u2-u3 (only for typetest=4 and 5) must be satisfied
+for each triplet. Note that for each spatial triplet and each temporal triplet, 6
+contrasts can be defined. However, for typetest=4 (test on the integrated model)
+2 contrasts are not necessary (user has to set arbitrarily one temporal lag equal
+to zero in order to delete redundant contrasts).
+
+
 
 }
 
@@ -95,12 +101,13 @@ temporal lags
 }
 \examples{
 ## The function requires to set some external arguments.
-# In the example regarding the simmetry test (typetest = 0),
+# In the example regarding the symmetry test (typetest = 0),
 # 12 spatial points, with ID codes: DERP016, ..., DESN049, have been selected,
 # then 6 spatial couples ([DERP016, DENW065], .., [DEBY047, DESN049])
 # have been formed for comparison. Moreover, 4 positive and negative temporal
-# lags have been considered (i.e. +1, -1, +2, -2). Finally, no (N) temporal
-# lag has been set equal to zero. Hence, for the simmetry test 24 (6*4)
+# lags have been considered (i.e. +1, -1, +2, -2). Finally, no temporal
+# lag has been set equal to zero (Answer "N" to the question "Would you like
+# to set some temporal lags equal to 0?"). Hence, for the symmetry test 24 (6*4)
 # spatio-temporal comparisons have been fixed.
 #
 # To run the example, paste and copy the following lines

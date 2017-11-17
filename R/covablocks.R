@@ -31,7 +31,7 @@ setClass("covablocks", slots = c(mat.cova = "matrix",
 #' @param stpairs object of class \code{couples}, containing the spatial
 #' points and the corresponding temporal lags to be analyzed
 #'
-#' @param typetest integer; set \code{typetest=0} for simmetry test (default
+#' @param typetest integer; set \code{typetest=0} for symmetry test (default
 #' choice), \code{typetest=1} for separability test, \code{typetest=2} for type
 #' of non separability test, \code{typetest=3} for the test on the product-sum
 #' class of models, \code{typetest=4} for the test on the integrated product
@@ -40,7 +40,7 @@ setClass("covablocks", slots = c(mat.cova = "matrix",
 #'
 #' @note {
 #' \itemize{
-#' \item If \code{typetest} is equal to 0 (simmetry test) or 4 (test on the
+#' \item If \code{typetest} is equal to 0 (symmetry test) or 4 (test on the
 #' integrated product class of models) \code{mat.cova.h} and \code{mat.cova.u}
 #' are not available
 #'
@@ -82,7 +82,8 @@ setClass("covablocks", slots = c(mat.cova = "matrix",
 #'
 #' Cappello, C., De Iaco, S., Posa, D., 2016, Testing the type of
 #' non-separability and some classes of covariance models for space-time data.
-#' (submitted)
+#' Stochastic Environmental Research and Risk Assessment,
+#' doi 10.1007/s00477-017-1472-2
 #'
 #' @rdname covablocks-class
 #' @export
@@ -96,7 +97,7 @@ covablocks <- function(stblocks, stpairs, typetest = 0) {
 
 
   #=================================================================#
-  #= type of tests: 0=simmetry (default choice), 1=separability,   =#
+  #= type of tests: 0=symmetry (default choice), 1=separability,   =#
   #= 2= type of non separability, 3=type of variability            =#
   #= 4 up to 7 = type of model                                     =#
   #=================================================================#

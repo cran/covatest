@@ -116,14 +116,13 @@ sepindex <- function(nt, ns, vario_st, globalSill) {
 #' @aliases sepindex-class
 #' @aliases sepindex-method
 #' @aliases plot
+#' @export
 setMethod("boxplot", signature = c(x = "sepindex"),
           function(x, ...) {
             boxplot(x@sep.index.ratio[, 3] ~ x@sep.index.ratio[, 1],
-                    data = x@sep.index.ratio,
-                    ...)
+                    data = x@sep.index.ratio, xlab="Spatial lags", ...)
             boxplot(x@sep.index.ratio[, 3] ~ x@sep.index.ratio[, 2],
-                    data = x@sep.index.ratio,
-                    ...)
+                    data = x@sep.index.ratio, xlab="Temporal lags", ...)
           }
 
 )

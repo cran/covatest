@@ -11,7 +11,7 @@ covaprop(cblock, cstat, typetest, nonseptype = NULL, sign.level = 0.05)
 
 \item{cstat}{object of class \code{covastat}}
 
-\item{typetest}{integer; set \code{typetest=0} for simmetry test (default
+\item{typetest}{integer; set \code{typetest=0} for symmetry test (default
 choice), \code{typetest=1} for separability test, \code{typetest=2} for type
 of non separability test, \code{typetest=3} for the test on the product-sum
 class of models, \code{typetest=4} for the test on the integrated product
@@ -33,16 +33,16 @@ hypothesis in favor of the alternative or not reject it, at a specific level
 of significance
 }
 \description{
-A function for testing some properties (simmetry, separability, type of
+A function for testing some properties (symmetry, separability, type of
 non-separability) of spatio-temporal covariance functions and some classes
 of space-time covariance models
 }
 \note{
 {
 \itemize{
-\item The test on full simmetry (\code{typetest=0}) represents the first step
+\item The test on full symmetry (\code{typetest=0}) represents the first step
 for the selection of a suitable class of spatio-temporal covariance functions.
-According to the definition of full simmetry, the null hypothesis to be
+According to the definition of full symmetry, the null hypothesis to be
 tested is \eqn{H_0: C(h,u) - C(h,-u)=0}
 
 \item The test of separability (\code{typetest=1}) represents the second
@@ -96,7 +96,8 @@ Environmentrics, \bold{27(4)} 212--224.
 
 Cappello, C., De Iaco, S., Posa, D., 2016, Testing the type of
 non-separability and some classes of covariance models for space-time data.
-(submitted)
+Stochastic Environmental Research and Risk Assessment,
+doi 10.1007/s00477-017-1472-2
 }
 \seealso{
 \linkS4class{couples}

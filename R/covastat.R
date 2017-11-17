@@ -6,7 +6,7 @@
 #' and temporal marginal covariances are also computed.
 #'
 #' @slot G matrix; containing the spatio-temporal covariances for the specified
-#' lags. For all tests, except for the simmetry test (\code{typetest=0}), the
+#' lags. For all tests, except for the symmetry test (\code{typetest=0}), the
 #' sample variance and the sample spatial and temporal marginal covariances are
 #' also computed and stored in \code{G}
 #'
@@ -45,7 +45,7 @@ setClass("covastat", slots = c(G = "matrix",
 #' @param stpairs object of class \code{couples}, containing the spatial
 #' points and the corresponding temporal lags to be analyzed
 #'
-#' @param typetest integer; set \code{typetest=0} for simmetry test (default
+#' @param typetest integer; set \code{typetest=0} for symmetry test (default
 #' choice), \code{typetest=1} for separability test, \code{typetest=2} for type
 #' of non separability test, \code{typetest=3} for the test on the product-sum
 #' class of models, \code{typetest=4} for the test on the integrated product
@@ -66,7 +66,10 @@ setClass("covastat", slots = c(G = "matrix",
 #' \item the number of variables in the STFDF/STSDF
 #' \item the slot in which the values of the variable of interest are stored
 #' (only if more than one variable is stored in the STFDF/STSDF).
-#' }
+#' } Note that a message appears on the user's console if the \code{G} vector
+#' contains spatio-temporal negative covariances. The message returns the negative
+#' value/values and it will help to identify the spatial and and the temporal lags
+#' involved.
 #'
 #' @seealso \linkS4class{couples}
 #' @seealso \code{\link{dataprep}}
@@ -82,7 +85,8 @@ setClass("covastat", slots = c(G = "matrix",
 #'
 #' Cappello, C., De Iaco, S., Posa, D., 2016, Testing the type of
 #' non-separability and some classes of covariance models for space-time data.
-#' (submitted)
+#' Stochastic Environmental Research and Risk Assessment,
+#' doi 10.1007/s00477-017-1472-2
 #'
 #' @examples
 #' ## The function requires to set some external arguments. In this example, it
@@ -105,7 +109,7 @@ covastat <- function(matdata, stpairs, typetest = 0) {
   nstaz <- length(selstaz)
 
   #========================================================================#
-  #= type of tests: 0=simmetry (default choice), 1=separability,          =#
+  #= type of tests: 0=symmetry (default choice), 1=separability,          =#
   #= 2= type of non separability, 3=type of variability,                  =#
   #= 4-7= type of model (4= product-sum, 5= integrated product            =#
   #= 6= Gneiting, 7= Cressie-Huang)                                       =#
@@ -227,13 +231,13 @@ covastat <- function(matdata, stpairs, typetest = 0) {
   }
 
   array.matdata.sel <- array(matdata.sel, dim = c(length(datistaz), 1, length(selstaz)))
-
+  cova.nv <- matrix(data = "-", nrow = nrow(couples), ncol = ncol(couples))
   #========================================================================#
   #= End of search for lags equal to zero                                 =#
   #========================================================================#
 
   #===========================================================================#
-  #= start if on type of test (O=simmetry, 1=separability,2=type of non_sep, =#
+  #= start if on type of test (O=symmetry, 1=separability,2=type of non_sep, =#
   #= 3=variability, 4-7=typemodel)                                           =#
   #===========================================================================#
 
@@ -241,12 +245,13 @@ covastat <- function(matdata, stpairs, typetest = 0) {
   #= start test on typetest=0, 1,2,3 and 4-7                              =#
   #========================================================================#
 
-
+    nflag.cova.nv <- 0
   if (typetest == 0 || typetest == 1 || typetest == 2 || typetest == 3 ||
       typetest >= 4) {
 
     #= Compute spatio-temporal covariance (with hs and ht different from zero)
     #= for each block =#
+
     if (typetest == 0 || typetest == 1 || typetest == 2 || typetest == 3) {
       cova <- matrix(0, nrow = nct, ncol = 1)
 
@@ -282,7 +287,11 @@ covastat <- function(matdata, stpairs, typetest = 0) {
                                                                                                                                                                          2]], use = "pairwise.complete.obs")
             }
 
-
+            if (cova[cov.n,] < 0) {
+              nflag.cova.nv <- nflag.cova.nv + 1
+              cova.nv[i,1:2] <- selstaz[couples[i,1:2]]
+              cova.nv[i,j+2] <- couples[i,j+2]
+            }
 
           }
 
@@ -292,9 +301,27 @@ covastat <- function(matdata, stpairs, typetest = 0) {
         }
         nf <- 1
       }
+
+
+
+
+
+    if (nflag.cova.nv != 0) {
+      message(nflag.cova.nv, " negative spatio-temporal covariance/es detected.")
+      ans_YN <- readline(prompt = "Would you like to visualize the spatial points and the temporal lags involved? (Y/N) ")
+      if (ans_YN == "Y" || ans_YN == "y") {
+        for (i in 1:couples.nrow) {
+          if(cova.nv[i,1] != "-"  && cova.nv[i,2] != "-"){
+
+                print(cova.nv[i,])
+
+          }
+        }
+        }
+    }
     }
 
-    if (typetest >= 4) {
+        if (typetest >= 4) {
       cova <- matrix(0, nrow = nct, ncol = 1)
 
       couples.ncol <- as.integer((ncol(couples) - 2))
@@ -332,14 +359,34 @@ covastat <- function(matdata, stpairs, typetest = 0) {
             }
             covacouple[i, j] <- cova[cov.n, ]
 
+            if (cova[cov.n, ] < 0) {
+              nflag.cova.nv <- nflag.cova.nv + 1
+              cova.nv[i,1:2] <- selstaz[couples[i,1:2]]
+              cova.nv[i,j+2] <- couples[i,j+2]
+            }
 
           }
 
         }
+
+
+
         if (nf == 0) {
           couples.ncol.r <- couples.ncol.r + couples.nrow.r
         }
         nf <- 1
+      }
+
+      if (nflag.cova.nv != 0) {
+        message(nflag.cova.nv, " negative spatio-temporal covariance/es detected.")
+        ans_YN <- readline(prompt = "Would you like to visualize the spatial points and the temporal lags involved? (Y/N) ")
+        if (ans_YN == "Y" || ans_YN == "y") {
+          for (i in 1:couples.nrow) {
+            if(cova.nv[i,1] != "-" && cova.nv[i,2] != "-"){
+              print(cova.nv[i,])
+            }
+          }
+        }
       }
 
       #= Check on columns and rows with non-zero values
@@ -465,25 +512,45 @@ covastat <- function(matdata, stpairs, typetest = 0) {
     #========================================================================#
     #= Compute the spatial and temporal marginal covariance                 =#
     #========================================================================#
+    nflag.cova.h.nv <- 0
+    nflag.cova.u.nv <- 0
 
     if (typetest == 1 || typetest == 2 || typetest == 3) {
       #= Compute the spatial marginal covariance =#
 
       cova.h <- matrix(0, nrow(couples), 1)
+      cova.h.nv <- matrix(NA, nrow(couples), 2)
       for (i in 1:nrow(couples)) {
 
 
         cova.h[i, ] <- cov(array.matdata.sel[, , couples[i, 1]], array.matdata.sel[,
                                                                                    , couples[i, 2]], use = "pairwise.complete.obs")
 
-
+        if(cova.h[i, ] < 0){
+          nflag.cova.h.nv <- nflag.cova.h.nv + 1
+          cova.h.nv[i,] <- selstaz[couples[i,1:2]]
+        }
       }
 
+      if (nflag.cova.h.nv != 0) {
+        message(nflag.cova.h.nv, " negative spatial covariances have been
+                detected.")
+        ans_YN <- readline(prompt = "Would you like to visualize the spatial points
+                            involved? (Y/N) ")
+        if (ans_YN == "Y" || ans_YN == "y") {
+          for (i in 1:couples.nrow) {
+            if(is.na(cova.h.nv[i, 1]) == FALSE && is.na(cova.h.nv[i, 2]) == FALSE){
+              print(cova.h.nv[i, ])
+            }
+          }
+        }
+      }
 
       #= Compute the temporal marginal covariance =#
       nstaz <- length(selstaz)
       cova.u.ncol <- as.integer(couples.ncol/2)
       cova.u <- matrix(0, cova.u.ncol, 1)
+      cova.u.nv <- matrix(NA, cova.u.ncol, 1)
       cova.ui <- matrix(0, nstaz, 1)
       jj <- -1
       for (j in 1:(couples.ncol/2)) {
@@ -503,11 +570,27 @@ covastat <- function(matdata, stpairs, typetest = 0) {
         }
 
         cova.u[j, ] <- mean(cova.ui, na.rm = TRUE)
-
+        if(cova.u[j, ] < 0){
+          nflag.cova.u.nv <- nflag.cova.u.nv + 1
+          cova.u.nv[j,] <- couples[i,jj+2]
+        }
       }
 
     }
 
+    if (nflag.cova.u.nv != 0) {
+      message(nflag.cova.u.nv, " negative temporal covariances have been
+              detected.")
+      ans_YN <- readline(prompt = "Would you like to visualize the temporal lags
+                         involved? (Y/N) ")
+      if (ans_YN == "Y" || ans_YN == "y") {
+        for (i in 1:cova.u.ncol) {
+          if(is.na(cova.u.nv[i, ]) == FALSE){
+            print(cova.u.nv[i, ])
+          }
+        }
+      }
+    }
 
     lstaz_zero <- 0
 
@@ -553,6 +636,7 @@ covastat <- function(matdata, stpairs, typetest = 0) {
       #= Compute the spatial marginal covariance =#
       cova.hsel <- matrix(0, nspaz * 3, 1)
       cova.h <- matrix(0, nrow(couples), 1)
+      cova.h.nv <- matrix(NA, nspaz * 3, 2)
       j <- 0
       for (i in 1:nrow(couples)) {
         cova.h[i, ] <- 0
@@ -563,10 +647,27 @@ covastat <- function(matdata, stpairs, typetest = 0) {
           cova.hsel[j, ] <- cov(array.matdata.sel[, , couples[i, 1]],
                                 array.matdata.sel[, , couples[i, 2]], use = "pairwise.complete.obs")
           cova.h[i, ] <- cova.hsel[j, ]
+          if(cova.hsel[j, ] < 0){
+            nflag.cova.h.nv <- nflag.cova.h.nv + 1
+            cova.h.nv[j,] <- selstaz[couples[i,1:2]]
+          }
         }
 
       }
 
+      if (nflag.cova.h.nv != 0) {
+        message(nflag.cova.h.nv, " negative spatial covariances have been
+                detected.")
+        ans_YN <- readline(prompt = "Would you like to visualize the spatial points
+                           involved? (Y/N) ")
+        if (ans_YN == "Y" || ans_YN == "y") {
+          for (i in 1:(nspaz * 3)) {
+            if(is.na(cova.h.nv[i, 1]) == FALSE && is.na(cova.h.nv[i, 2]) == FALSE){
+              print(cova.h.nv[i, ])
+            }
+          }
+        }
+      }
 
       #= Compute the temporal marginal covariance =#
       nstaz <- length(selstaz)
@@ -587,6 +688,7 @@ covastat <- function(matdata, stpairs, typetest = 0) {
 
       cova.u.ncolsel <- ntemp
       cova.usel <- matrix(0, cova.u.ncolsel, 1)
+      cova.usel.nv <- matrix(NA, cova.u.ncolsel, 1)
       cova.uisel <- matrix(0, length(setdiff(selstaz, selstaz[staz_zero])),
                            1)
 
@@ -627,7 +729,24 @@ covastat <- function(matdata, stpairs, typetest = 0) {
           jjj <- jjj + 1
           cova.usel[jjj, ] <- mean(cova.uisel, na.rm = TRUE)
           cova.u[j, ] <- cova.usel[jjj, ]
+          if(cova.u[j, ] < 0){
+            nflag.cova.u.nv <- nflag.cova.u.nv + 1
+            cova.u.nv[j,] <- stpairs@tl.couples[j]
+          }
+        }
+      }
 
+      if (nflag.cova.u.nv != 0) {
+        message(nflag.cova.u.nv, " negative temporal covariances have been
+                detected.")
+        ans_YN <- readline(prompt = "Would you like to visualize the temporal lags
+                           involved? (Y/N) ")
+        if (ans_YN == "Y" || ans_YN == "y") {
+          for (i in 1:cova.u.ncol) {
+            if(is.na(cova.u.nv[i, ]) == FALSE){
+              print(cova.u.nv[i, ])
+            }
+          }
         }
       }
 
@@ -1854,6 +1973,7 @@ covastat <- function(matdata, stpairs, typetest = 0) {
 
     if (typetest == 1 || typetest == 2) {
       cova <- rbind(cova00, cova, cova.h, cova.u)
+      row.names(cova) <- NULL
     }
     if (typetest == 3) {
       cova <- rbind(cova, cova.h, cova.u)

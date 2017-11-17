@@ -17,7 +17,7 @@ the variable}
 \item{stpairs}{object of class \code{couples}, containing the spatial
 points and the corresponding temporal lags to be analyzed}
 
-\item{typetest}{integer; set \code{typetest=0} for simmetry test (default
+\item{typetest}{integer; set \code{typetest=0} for symmetry test (default
 choice), \code{typetest=1} for separability test, \code{typetest=2} for type
 of non separability test, \code{typetest=3} for the test on the product-sum
 class of models, \code{typetest=4} for the test on the integrated product
@@ -44,13 +44,16 @@ specify
 \item the number of variables in the STFDF/STSDF
 \item the slot in which the values of the variable of interest are stored
 (only if more than one variable is stored in the STFDF/STSDF).
-}
+} Note that a message appears on the user's console if the \code{G} vector
+contains spatio-temporal negative covariances. The message returns the negative
+value/values and it will help to identify the spatial and and the temporal lags
+involved.
 }
 \section{Slots}{
 
 \describe{
 \item{\code{G}}{matrix; containing the spatio-temporal covariances for the specified
-lags. For all tests, except for the simmetry test (\code{typetest=0}), the
+lags. For all tests, except for the symmetry test (\code{typetest=0}), the
 sample variance and the sample spatial and temporal marginal covariances are
 also computed and stored in \code{G}}
 
@@ -98,7 +101,8 @@ Environmentrics, \bold{27(4)} 212--224.
 
 Cappello, C., De Iaco, S., Posa, D., 2016, Testing the type of
 non-separability and some classes of covariance models for space-time data.
-(submitted)
+Stochastic Environmental Research and Risk Assessment,
+doi 10.1007/s00477-017-1472-2
 }
 \seealso{
 \linkS4class{couples}

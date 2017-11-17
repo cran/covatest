@@ -14,7 +14,7 @@ covablocks(stblocks, stpairs, typetest = 0)
 \item{stpairs}{object of class \code{couples}, containing the spatial
 points and the corresponding temporal lags to be analyzed}
 
-\item{typetest}{integer; set \code{typetest=0} for simmetry test (default
+\item{typetest}{integer; set \code{typetest=0} for symmetry test (default
 choice), \code{typetest=1} for separability test, \code{typetest=2} for type
 of non separability test, \code{typetest=3} for the test on the product-sum
 class of models, \code{typetest=4} for the test on the integrated product
@@ -51,7 +51,7 @@ in \code{stpairs} (object of class \code{couples})}
 \note{
 {
 \itemize{
-\item If \code{typetest} is equal to 0 (simmetry test) or 4 (test on the
+\item If \code{typetest} is equal to 0 (symmetry test) or 4 (test on the
 integrated product class of models) \code{mat.cova.h} and \code{mat.cova.u}
 are not available
 
@@ -91,7 +91,8 @@ Environmentrics, \bold{27(4)} 212--224.
 
 Cappello, C., De Iaco, S., Posa, D., 2016, Testing the type of
 non-separability and some classes of covariance models for space-time data.
-(submitted)
+Stochastic Environmental Research and Risk Assessment,
+doi 10.1007/s00477-017-1472-2
 }
 \seealso{
 \linkS4class{blocks}

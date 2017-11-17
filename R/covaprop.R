@@ -1,6 +1,6 @@
 #' Tests properties of S-T covariance functions
 #'
-#' A function for testing some properties (simmetry, separability, type of
+#' A function for testing some properties (symmetry, separability, type of
 #' non-separability) of spatio-temporal covariance functions and some classes
 #' of space-time covariance models
 #'
@@ -8,7 +8,7 @@
 #'
 #' @param cstat object of class \code{covastat}
 #'
-#' @param typetest integer; set \code{typetest=0} for simmetry test (default
+#' @param typetest integer; set \code{typetest=0} for symmetry test (default
 #' choice), \code{typetest=1} for separability test, \code{typetest=2} for type
 #' of non separability test, \code{typetest=3} for the test on the product-sum
 #' class of models, \code{typetest=4} for the test on the integrated product
@@ -30,9 +30,9 @@
 #'
 #' @note {
 #' \itemize{
-#' \item The test on full simmetry (\code{typetest=0}) represents the first step
+#' \item The test on full symmetry (\code{typetest=0}) represents the first step
 #' for the selection of a suitable class of spatio-temporal covariance functions.
-#' According to the definition of full simmetry, the null hypothesis to be
+#' According to the definition of full symmetry, the null hypothesis to be
 #' tested is \eqn{H_0: C(h,u) - C(h,-u)=0}
 #'
 #' \item The test of separability (\code{typetest=1}) represents the second
@@ -70,7 +70,8 @@
 #'
 #' Cappello, C., De Iaco, S., Posa, D., 2016, Testing the type of
 #' non-separability and some classes of covariance models for space-time data.
-#' (submitted)
+#' Stochastic Environmental Research and Risk Assessment,
+#' doi 10.1007/s00477-017-1472-2
 #'
 #' @examples
 #' # Before running this function, it is necessary to execute couples, blocks,
@@ -102,7 +103,7 @@ covaprop <- function(cblock, cstat, typetest, nonseptype = NULL, sign.level = 0.
     stop("The argument for typetest is not admissible.")
   }
 
-  if (is.null(nonseptype) == FALSE && nonseptype != 2) {
+  if (is.null(nonseptype) == FALSE && typetest != 2) {
     message("The nonseptype will be ignored since it is not required for the
             selected type of test.")
   }
@@ -136,10 +137,10 @@ covaprop <- function(cblock, cstat, typetest, nonseptype = NULL, sign.level = 0.
     print(critical.value)
 
     if (critical.value >= sign.level) {
-      message("don't reject the null hypothesis of simmetry at ",
+      message("Don't reject the null hypothesis of symmetry at ",
               sign.level, " level of significance")
     } else {
-      message("reject the null hypothesis of simmetry at ", sign.level,
+      message("Reject the null hypothesis of symmetry at ", sign.level,
               " level of significance")
     }
   }
@@ -165,10 +166,10 @@ covaprop <- function(cblock, cstat, typetest, nonseptype = NULL, sign.level = 0.
     print(critical.value)
 
     if (critical.value >= sign.level) {
-      message("don't reject the null hypothesis of separability at ",
+      message("Don't reject the null hypothesis of separability at ",
               sign.level, " level of significance")
     } else {
-      message("reject the null hypothesis of separability at ", sign.level,
+      message("Reject the null hypothesis of separability at ", sign.level,
               " level of significance")
     }
   }
@@ -209,11 +210,11 @@ covaprop <- function(cblock, cstat, typetest, nonseptype = NULL, sign.level = 0.
       message("The critical value is equal to")
       print(critical.value)
       if (critical.value >= sign.level) {
-        message("don't reject the null hypothesis of separability at ",
-                sign.level, " level of significance")
+        message("Don't reject the null hypothesis of non positive non separability at
+          ", sign.level, " level of significance")
       } else {
-        message("reject the null hypothesis of separability at ",
-                sign.level, " level of significance")
+        message("Reject the null hypothesis of non positive non separability at
+          ", sign.level, " level of significance")
       }
     }
 
@@ -229,11 +230,11 @@ covaprop <- function(cblock, cstat, typetest, nonseptype = NULL, sign.level = 0.
       print(critical.value)
 
       if (critical.value >= sign.level) {
-        message("don't reject the null hypothesis of separability at ",
-                sign.level, " level of significance")
+        message("Don't reject the null hypothesis of non negative non separability at
+          ", sign.level, " level of significance")
       } else {
-        message("reject the null hypothesis of separability at ",
-                sign.level, " level of significance")
+        message("Reject the null hypothesis of non negative non separability at
+          ", sign.level, " level of significance")
       }
     }
 
@@ -263,10 +264,10 @@ covaprop <- function(cblock, cstat, typetest, nonseptype = NULL, sign.level = 0.
 
 
       if (critical.value >= sign.level) {
-        message("don't reject the null hypothesis on the type of the model at ",
+        message("Don't reject the null hypothesis on the type of the model at ",
                 sign.level, " level of significance")
       } else {
-        message("reject the null hypothesis on the type of the model at ",
+        message("Reject the null hypothesis on the type of the model at ",
                 sign.level, " level of significance")
       }
     }
@@ -296,10 +297,10 @@ covaprop <- function(cblock, cstat, typetest, nonseptype = NULL, sign.level = 0.
         print(critical.value)
 
         if (critical.value[i, 1] >= sign.level) {
-        message("don't reject the null hypothesis on the type of the model at ",
+        message("Don't reject the null hypothesis on the type of the model at ",
                   sign.level, " level of significance for beta", i)
         } else {
-          message("reject the null hypothesis on the type of the model at ",
+          message("Reject the null hypothesis on the type of the model at ",
                   sign.level, " level of significance for beta", i)
         }
 

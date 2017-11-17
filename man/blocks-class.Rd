@@ -93,7 +93,7 @@ blocks is close to the number of spatio-temporal comparisons defined in
 }
 }
 \examples{
-# In the example regarding the simmetry test (typetest = 0), the length of
+# In the example regarding the symmetry test (typetest = 0), the length of
 # each block is equal to 40 (lb=40) and the number of overlapped data between
 # two consecutive blocks is equal to 10 (ls=10). In this way, 24 blocks, for
 # each time series of 730 data have been obtained [24 = (730 - 1) / (40 - 10)].
@@ -122,9 +122,10 @@ De Iaco, S., Palma, M., Posa, D., 2016. A general procedure for selecting a
 class of fully symmetric space-time covariance functions.
 Environmentrics, \bold{27(4)} 212--224.
 
-Cappello, C., De Iaco, S., Posa, D., 2016, Testing the type of
+Cappello, C., De Iaco, S., Posa, D., 2017, Testing the type of
 non-separability and some classes of covariance models for space-time data.
-(submitted)
+Stochastic Environmental Research and Risk Assessment,
+doi 10.1007/s00477-017-1472-2
 }
 \seealso{
 \code{\link{couples}}
