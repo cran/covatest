@@ -7,7 +7,7 @@
 dataprep()
 }
 \value{
-object of the STFDF-class or \code{data frame}, which contains
+object of the STFDF-class or \code{data.frame}, which contains
 coordinates of the spatial points, the identification code of the spatial
 locations, the indentification code of the temporal observations and the observed
 values of the variable
@@ -33,7 +33,7 @@ is:
    }
 Moreover it is allowed the user to choose between two options for saving the
 data: 1. save the data as an STFDF (\code{spacetime} class) 2. save the
-data as a \code{data frame}. If the first option is selected (save the data
+data as a \code{data.frame}. If the first option is selected (save the data
 as a STFDF), it is also necessary to specify
   \itemize{
    \item the \code{Start Date} of the STFDF
@@ -41,7 +41,7 @@ as a STFDF), it is also necessary to specify
    }
 
 The user must provide the aforementioned arguments concerning the
-structure of the \code{GSLIB} file in order to convert it in a \code{data frame}
+structure of the \code{GSLIB} file in order to convert it in a \code{data.frame}
 or in a STFDF
 }
 \note{

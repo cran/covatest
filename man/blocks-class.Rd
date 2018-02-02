@@ -4,9 +4,25 @@
 \name{blocks-class}
 \alias{blocks-class}
 \alias{blocks}
+\alias{boxplot,blocks-method}
+\alias{blocks-class}
+\alias{show,blocks-method}
+\alias{blocks-class}
+\alias{[,blocks-method}
+\alias{blocks-class}
+\alias{summary,blocks-method}
+\alias{blocks-class}
 \title{Class "blocks"}
 \usage{
-blocks(lb, ls, matdata, stpairs)
+blocks(lb, ls, matdata, pardata1, pardata2, stpairs)
+
+\S4method{boxplot}{blocks}(x, i, j, ...)
+
+\S4method{show}{blocks}(object)
+
+\S4method{[}{blocks}(x, i, j)
+
+\S4method{summary}{blocks}(object, i, j)
 }
 \arguments{
 \item{lb}{integer, length of each block. The number of terms in each block
@@ -15,15 +31,40 @@ each time series}
 
 \item{ls}{integer, number of overlapped data between two consecutive blocks.
 The number of overlapped terms between two consecutive blocks must in the
-interval [0,lb/2]}
+interval [0, lb/2]}
 
-\item{matdata}{STFDF/STSDF or \code{data frame}; which contains the
+\item{matdata}{STFDF/STSDF or \code{data.frame}; which contains the
 coordinates of the spatial points, the identification code of the spatial
 points, the indentification code of the temporal points and the values of
 the variable, typically output from \code{dataprep}}
 
+\item{pardata1}{integer, it represents the column in which the spatial ID is
+stored (if the spatio-temporal data set is given as data.frame) or the number
+of variables in the STFDF/STSDF (if the data are given as a STFDF/STSDF)}
+
+\item{pardata2}{integer, it represents the column in which the values of the
+variable are stored (if the spatio-temporal data set is given as data.frame)
+or the slot in which the values of the variable of interest are stored
+(if the data are given as a STFDF/STSDF). Note that for STFDF/STSDF the
+argument is set, by default, equal to 1 if the number of variables is equal
+to 1}
+
 \item{stpairs}{object of class \code{couples}, containing the spatial
 points and the corresponding temporal lags to be analyzed}
+
+\item{x}{object of class \code{blocks} for methods \code{boxplot} and \code{extract}}
+
+\item{i}{index specifing the block to be selected. If \code{i=0} all blocks are
+selected automatically (option available only for \code{boxplot} and \code{summary}
+methods)}
+
+\item{j}{index specifing the spatial point to be selected. If \code{i=0} all
+spatial points are selected automatically (option available only for \code{boxplot}
+and \code{summary} methods)}
+
+\item{...}{any arguments that will be passed to the panel plotting functions}
+
+\item{object}{object of class \code{blocks} for methods \code{show} and \code{summary}}
 }
 \description{
 A class for overlapped blocks of the time series associated with the given
@@ -31,23 +72,7 @@ spatial points specified in \code{couples}. Thus, it is necessary to
 execute \linkS4class{couples} first and then \linkS4class{blocks}
 }
 \details{
-The function requires the user to set some external arguments. In particular,
-if the spatio-temporal data are given as a \code{data} \code{frame} it is
-necessary to specify
-\itemize{
-\item the column in which the spatial ID is stored
-\item the column in which the values of the variable are stored.
-}
-On the other hand, if the data are given as a STFDF/STSDF it is necessary to
-specify
-\itemize{
-\item the number of variables in the STFDF/STSDF
-\item the slot in which the values of the variable of interest are stored
-(only if more than one variable is stored in the STFDF/STSDF).
-}
-
-Moreover, a message informs the user of the number of blocks computed. The
-user can choose to continue or not with this number of blocks.
+A message informs the user of the number of blocks computed
 }
 \section{Slots}{
 
@@ -62,19 +87,22 @@ defined in \code{stpairs@sel.staz}}
 blocks for each selected spatial points} x \emph{number of spatial points}).
 In each table of this array, the overlapped blocks for each spatial location
 are available}
+
+\item{\code{sel.staz}}{numeric or character; contains the ID codes of the selected
+spatial points}
 }}
 
 \note{
 \itemize{
-\item "Error in matdata[, clvr]: subscript out of bounds" appears if the
-second external arguments required for the given \code{data} \code{frame}
+\item "Error in matdata[, clvr]: subscript out of bounds" appears if \code{pardata2}
 does not exist in the argument \code{matdata}
 
 \item If "Error in matdata[, clvr]" appears, no data for some of the
 spatial points, specified in \code{stpairs}, are available. The user has to
 go back to \code{couples} and revise the vector of the selected spatial points
+(\code{sel.staz} and \code{sp.couples.in} arguments)
 
-\item A stop running message occurs if the length of the time series for each
+\item A stop occurs if the length of the time series for each
 spatial points is less than 29
 
 \item A message appears if the length of the time series for each
@@ -93,24 +121,43 @@ blocks is close to the number of spatio-temporal comparisons defined in
 }
 }
 \examples{
-# In the example regarding the symmetry test (typetest = 0), the length of
-# each block is equal to 40 (lb=40) and the number of overlapped data between
-# two consecutive blocks is equal to 10 (ls=10). In this way, 24 blocks, for
-# each time series of 730 data have been obtained [24 = (730 - 1) / (40 - 10)].
-# This number of blocks is consistent with respect the number of comparisons
-# (24) defined in couples. Moreover, it is necessary to specify some external
-# arguments: the number of variables in the analyzed STFDF (rr_13) and to
-# confirm whether or not one wants to proceed
-# with the number of blocks obtained with the aforementioned combination of
-# lb and ls
-#
-# To run the example, paste and copy the following lines
-# (without the symbol '#') in the console
-#
-# coupl_sim <- couples(typetest = 0, typecode = character())
-# blocks_sim <- blocks(lb = 40, ls = 10, matdata = rr_13, stpairs = coupl_sim)
-# 1
-# Y
+sel.staz.sym <- c("DERP016", "DENW065", "DEHE051", "DETH026", "DENW063", "DENI019",
+"DENW068", "DEHE046", "DEUB029", "DEBY047", "DETH061", "DESN049")
+
+sp.couples.in.sym <- matrix(data = c("DERP016", "DENW065", "DEHE051", "DETH026",
+"DENW063", "DENI019", "DENW068", "DEHE046", "DEUB029", "DEBY047", "DETH061", "DESN049"),
+ncol = 2, byrow = TRUE)
+
+t.couples.in.sym <- c(1, 2)
+
+couples.sym <- couples(sel.staz = sel.staz.sym, sp.couples.in = sp.couples.in.sym,
+t.couples.in = t.couples.in.sym, typetest = 0, typecode = character())
+
+block.sym <- blocks(lb=40, ls=10, matdata = rr_13, pardata1 = 1, pardata2 = 1,
+stpairs = couples.sym)
+
+###methods for blocks
+#1. show
+block.sym
+
+#2. [  extract
+block.sym[1,] #select the 1st block of each spatial location
+block.sym[,1] #select all blocks of the 1st spatial location
+block.sym[1:2, 1:3] #select the first two blocks of the first 3 spatial locations
+
+#3. summary
+summary(block.sym, 1:2, 1:3) #to obtain the summary associated to the first
+#two blocks of the first 3 spatial locations
+
+summary(block.sym, 0, 1) #to obtain the summary associated to all blocks of
+#the 1st spatial location
+
+#4. boxplot
+boxplot(block.sym, 1:5, 1:2) #boxplots of the first 5 blocks of associated to
+#the first 2 spatial locations
+
+boxplot(block.sym, 0 ,1) #boxplots of all blocks of associated to the 1st
+#spatial location
 
 }
 \references{

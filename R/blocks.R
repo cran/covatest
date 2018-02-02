@@ -13,54 +13,52 @@
 #' blocks for each selected spatial points} x \emph{number of spatial points}).
 #' In each table of this array, the overlapped blocks for each spatial location
 #' are available
+#' @slot sel.staz numeric or character; contains the ID codes of the selected
+#' spatial points
 #'
 #' @rdname blocks-class
 #' @exportClass blocks
 setClass("blocks", slots = c(mat.block = "matrix",
-                                       array.block = "array"))
+                                       array.block = "array",
+                                       sel.staz = "ANY"))
 
 #' @param lb integer, length of each block. The number of terms in each block
 #' must be greater than 5 and smaller than the quarter part of the length of
 #' each time series
 #' @param ls integer, number of overlapped data between two consecutive blocks.
 #' The number of overlapped terms between two consecutive blocks must in the
-#' interval [0,lb/2]
-#' @param matdata STFDF/STSDF or \code{data frame}; which contains the
+#' interval [0, lb/2]
+#' @param matdata STFDF/STSDF or \code{data.frame}; which contains the
 #' coordinates of the spatial points, the identification code of the spatial
 #' points, the indentification code of the temporal points and the values of
 #' the variable, typically output from \code{dataprep}
+#' @param pardata1 integer, it represents the column in which the spatial ID is
+#' stored (if the spatio-temporal data set is given as data.frame) or the number
+#' of variables in the STFDF/STSDF (if the data are given as a STFDF/STSDF)
+#' @param pardata2 integer, it represents the column in which the values of the
+#' variable are stored (if the spatio-temporal data set is given as data.frame)
+#' or the slot in which the values of the variable of interest are stored
+#' (if the data are given as a STFDF/STSDF). Note that for STFDF/STSDF the
+#' argument is set, by default, equal to 1 if the number of variables is equal
+#' to 1
 #' @param stpairs object of class \code{couples}, containing the spatial
 #' points and the corresponding temporal lags to be analyzed
 #'
 #' @details
-#' The function requires the user to set some external arguments. In particular,
-#' if the spatio-temporal data are given as a \code{data} \code{frame} it is
-#' necessary to specify
-#' \itemize{
-#' \item the column in which the spatial ID is stored
-#' \item the column in which the values of the variable are stored.
-#' }
-#' On the other hand, if the data are given as a STFDF/STSDF it is necessary to
-#' specify
-#' \itemize{
-#' \item the number of variables in the STFDF/STSDF
-#' \item the slot in which the values of the variable of interest are stored
-#' (only if more than one variable is stored in the STFDF/STSDF).
-#' }
+#' A message informs the user of the number of blocks computed
 #'
-#' Moreover, a message informs the user of the number of blocks computed. The
-#' user can choose to continue or not with this number of blocks.
+#'
 #' @note
 #' \itemize{
-#' \item "Error in matdata[, clvr]: subscript out of bounds" appears if the
-#' second external arguments required for the given \code{data} \code{frame}
+#' \item "Error in matdata[, clvr]: subscript out of bounds" appears if \code{pardata2}
 #' does not exist in the argument \code{matdata}
 #'
 #' \item If "Error in matdata[, clvr]" appears, no data for some of the
 #' spatial points, specified in \code{stpairs}, are available. The user has to
 #' go back to \code{couples} and revise the vector of the selected spatial points
+#' (\code{sel.staz} and \code{sp.couples.in} arguments)
 #'
-#' \item A stop running message occurs if the length of the time series for each
+#' \item A stop occurs if the length of the time series for each
 #' spatial points is less than 29
 #'
 #' \item A message appears if the length of the time series for each
@@ -93,41 +91,86 @@ setClass("blocks", slots = c(mat.block = "matrix",
 #' doi 10.1007/s00477-017-1472-2
 #'
 #' @examples
-#' # In the example regarding the symmetry test (typetest = 0), the length of
-#' # each block is equal to 40 (lb=40) and the number of overlapped data between
-#' # two consecutive blocks is equal to 10 (ls=10). In this way, 24 blocks, for
-#' # each time series of 730 data have been obtained [24 = (730 - 1) / (40 - 10)].
-#' # This number of blocks is consistent with respect the number of comparisons
-#' # (24) defined in couples. Moreover, it is necessary to specify some external
-#' # arguments: the number of variables in the analyzed STFDF (rr_13) and to
-#' # confirm whether or not one wants to proceed
-#' # with the number of blocks obtained with the aforementioned combination of
-#' # lb and ls
-#' #
-#' # To run the example, paste and copy the following lines
-#' # (without the symbol '#') in the console
-#' #
-#' # coupl_sim <- couples(typetest = 0, typecode = character())
-#' # blocks_sim <- blocks(lb = 40, ls = 10, matdata = rr_13, stpairs = coupl_sim)
-#' # 1
-#' # Y
+#' sel.staz.sym <- c("DERP016", "DENW065", "DEHE051", "DETH026", "DENW063", "DENI019",
+#' "DENW068", "DEHE046", "DEUB029", "DEBY047", "DETH061", "DESN049")
+#'
+#' sp.couples.in.sym <- matrix(data = c("DERP016", "DENW065", "DEHE051", "DETH026",
+#' "DENW063", "DENI019", "DENW068", "DEHE046", "DEUB029", "DEBY047", "DETH061", "DESN049"),
+#' ncol = 2, byrow = TRUE)
+#'
+#' t.couples.in.sym <- c(1, 2)
+#'
+#' couples.sym <- couples(sel.staz = sel.staz.sym, sp.couples.in = sp.couples.in.sym,
+#' t.couples.in = t.couples.in.sym, typetest = 0, typecode = character())
+#'
+#' block.sym <- blocks(lb=40, ls=10, matdata = rr_13, pardata1 = 1, pardata2 = 1,
+#' stpairs = couples.sym)
+#'
+#' ###methods for blocks
+#' #1. show
+#' block.sym
+#'
+#' #2. [  extract
+#' block.sym[1,] #select the 1st block of each spatial location
+#' block.sym[,1] #select all blocks of the 1st spatial location
+#' block.sym[1:2, 1:3] #select the first two blocks of the first 3 spatial locations
+#'
+#' #3. summary
+#' summary(block.sym, 1:2, 1:3) #to obtain the summary associated to the first
+#' #two blocks of the first 3 spatial locations
+#'
+#' summary(block.sym, 0, 1) #to obtain the summary associated to all blocks of
+#' #the 1st spatial location
+#'
+#' #4. boxplot
+#' boxplot(block.sym, 1:5, 1:2) #boxplots of the first 5 blocks of associated to
+#' #the first 2 spatial locations
+#'
+#' boxplot(block.sym, 0 ,1) #boxplots of all blocks of associated to the 1st
+#' #spatial location
+
 #'
 #' @seealso \code{\link{couples}}
 #' @seealso \code{\link{dataprep}}
 #' @rdname blocks-class
 #' @export
-blocks <- function(lb, ls, matdata, stpairs) {
+blocks <- function(lb, ls, matdata, pardata1, pardata2, stpairs) {
   # blocks creates a matrix which cointains all blocks of the same length
   # that can be extracted from each time series
-  selstaz <- stpairs@sel.staz
 
+  is.scalar <- function (x){length(x) == 1L && is.vector(x, mode = "numeric")}
+
+  ### SOME CHECKS ON THE ARGUMENTS ###
+
+  if (is.scalar(lb) == FALSE || is.scalar(ls) == FALSE  || is.scalar(pardata1) == FALSE ||
+      is.scalar(pardata2) == FALSE) {
+    stop("Some of the arguments are not numeric. Stop running")
+  }
+
+
+  if(lb != as.integer(lb) || ls != as.integer(ls) || pardata1 != as.integer(pardata1) ||
+     pardata2 != as.integer(pardata2)){
+    lb <- as.integer(lb)
+    ls <- as.integer(ls)
+    pardata1 <- as.integer(pardata1)
+    pardata2 <- as.integer(pardata2)
+    warning("The arguments expected to be integer are forced to be integer numbers.")
+  }
+
+
+  if (!inherits(stpairs, "couples")){
+    stop("stpairs argument has to be of class couples")
+  }
+
+
+  selstaz <- stpairs@sel.staz
   # ==================================#
   # == Some checks on class of data ==#
   # ==================================#
 
   if (class(matdata) == "matrix" || class(matdata) == "data.frame") {
-    iclsp.id <- as.integer(readline(prompt = "Enter the column in which the spatial id is stored: "))
-    iclvr <- as.integer(readline(prompt = "Enter the column in which the values of the variable are stored: "))
+    iclsp.id <- as.integer(pardata1)
+    iclvr <- as.integer(pardata2)
   }
   flag <- 0
   if (is.vector(selstaz) == TRUE && length(selstaz) >= 2) {
@@ -138,10 +181,12 @@ blocks <- function(lb, ls, matdata, stpairs) {
 
       ### data in GSLIB format###
       if (class(matdata) == "matrix" || class(matdata) == "data.frame") {
-        selstaz.names <- matdata[, iclsp.id]
+        if (i == 1) {
+          selstaz.names <- matdata[, iclsp.id]
         selstaz.inter <- intersect(selstaz.names, selstaz)
         if (length(selstaz.inter) != length(selstaz)) {
           stop("No data for some of the selected spatial points. Please go back to the function 'couples' and revise the vector of the selected spatial points")
+        }
         }
 
         if (is.numeric(matdata[, iclvr]) == FALSE)
@@ -160,11 +205,10 @@ blocks <- function(lb, ls, matdata, stpairs) {
               stop("No data for some of the selected spatial points.Please go back to the function 'couples' and revise the vector of the selected spatial points")
 
             }
-            nvr <- readline(prompt = "Enter the number of variables in the STFDF: ")
-            nvr <- as.integer(nvr)
-            iclvr <- 1
-            if (nvr > 1) {
-              iclvr <- as.integer(readline(prompt = "Enter the slot in which the values of the variable of interest are stored: "))
+            nvr <- as.integer(pardata1)
+            iclvr <- as.integer(pardata2)
+            if (nvr == 1) {
+              iclvr <- 1
             }
           }
 
@@ -184,11 +228,11 @@ blocks <- function(lb, ls, matdata, stpairs) {
               if (length(selstaz.inter) != length(selstaz))
                 stop("No data for some of the selected spatial points.Please go back to the function 'couples' and revise the vector of the selected spatial points")
 
-              nvr <- readline(prompt = "Enter the number of variables in the STSDF ")
-              nvr <- as.integer(nvr)
-              iclvr <- 1
-              if (nvr > 1) {
-                iclvr <- as.integer(readline(prompt = "Enter the slot in which the values of the variable of interest are stored: "))
+              nvr <- as.integer(pardata1)
+              iclvr <- as.integer(pardata2)
+
+              if (nvr == 1) {
+                iclvr <- 1
               }
             }
             datistaz <- matrix(matdata[selstaz[i], ], ncol = (1 + nvr))[, iclvr]
@@ -234,11 +278,7 @@ blocks <- function(lb, ls, matdata, stpairs) {
             message("* See the manual for more details                                           *")
             message("*****************************************************************************")
 
-            ans_YN <- readline(prompt = "Would you like to continue? (Y/N)")
-            if (ans_YN == "N" || ans_YN == "n") {
-              stop("Stop running")
-            }
-          }
+           }
 
           if (lb > (lt / 2)) {
             stop("The number of terms in each block must be less than a quarter part of the length of each time series")
@@ -267,10 +307,6 @@ blocks <- function(lb, ls, matdata, stpairs) {
         message("* See the manual for more details                                           *")
         message("*****************************************************************************")
 
-        ans_YN <- readline(prompt = "Would you like to continue with this number of blocks? (Y/N)")
-        if (ans_YN == "N" || ans_YN == "n") {
-          stop("Stop running")
-        }
         arrayblock <- array(data = NA, dim = c(lb, nb, length(selstaz)))
 
       }
@@ -284,7 +320,6 @@ blocks <- function(lb, ls, matdata, stpairs) {
       lused <- lb + (nb - 2) * ld
 
 
-      # if(((nb+1)*ld)-lt>(0.15*lb)&&flag==0){
       if ((lb - (ls + (lt - lused))) > (0.15 * lb) && flag == 0) {
         flag <- 1
 
@@ -307,7 +342,7 @@ blocks <- function(lb, ls, matdata, stpairs) {
       }
 
       arrayblock[, , i] <- bmat1
-      matrix.names.matblock[i] <- paste("BlockStaz", selstaz[i], sep = "_")
+      matrix.names.matblock[i] <- paste("SpatialPoint", selstaz[i], sep = "_")
 
     }
 
@@ -319,7 +354,7 @@ blocks <- function(lb, ls, matdata, stpairs) {
                          dimnames = list(NULL, NULL, matrix.names.matblock))
 
 
-    new("blocks", mat.block = matblock, array.block = array.block)
+    new("blocks", mat.block = matblock, array.block = array.block, sel.staz = selstaz)
 
 
   } else {
@@ -330,3 +365,185 @@ blocks <- function(lb, ls, matdata, stpairs) {
 }
 #' @include sepindex.R couples.R
 NULL
+#' @param x object of class \code{blocks} for methods \code{boxplot} and \code{extract}
+#' @param i index specifing the block to be selected. If \code{i=0} all blocks are
+#' selected automatically (option available only for \code{boxplot} and \code{summary}
+#' methods)
+#' @param j index specifing the spatial point to be selected. If \code{i=0} all
+#' spatial points are selected automatically (option available only for \code{boxplot}
+#' and \code{summary} methods)
+#' @param ... any arguments that will be passed to the panel plotting functions
+#' @rdname blocks-class
+#' @aliases blocks-class
+#' @aliases blocks-method
+#' @aliases boxplot
+#' @export
+setMethod("boxplot", signature = c(x = "blocks"),
+          function(x, i, j, ...) {
+            is.scalar <- function (y){length(y) == 1L && is.vector(y, mode = "numeric")}
+            if(is.scalar(i) == TRUE){
+              if(i == 0){
+              i <- c(1:dim(x@array.block)[2])
+              }
+            }
+
+            if(is.scalar(j) == TRUE){
+              if(j == 0){
+              j = c(1:dim(x@array.block)[3])
+              }
+              }
+
+            if(is.scalar(j) == FALSE && is.scalar(i) == FALSE){
+              z <- x@array.block[, i, j]
+              nstat <- dim(z)[3]
+
+              nb <- dim(z)[2]
+
+              lb <- dim(z)[1]
+              w <- as.vector(dimnames(z)[3][[1]])
+
+
+            }
+            if(is.scalar(j) == TRUE || is.scalar(i) == TRUE){
+              z <- as.matrix(x@array.block[, i, j])
+              if(is.scalar(j) == TRUE){
+                nstat <- 1
+                nb <- ncol(z)
+                lb <- nrow(z)
+                w <- dimnames(x@array.block)[3][[1]]}
+              if(is.scalar(i) == TRUE){
+                nstat <- ncol(z)
+                nb <- 1
+                lb <- nrow(z)
+                w <- dimnames(x@array.block)[3][[1]]}
+            }
+
+            data.block <- matrix(NA, ncol = 2, nrow = lb*nb)
+            for(k in 1:nstat){
+              if(is.scalar(j) == FALSE && is.scalar(i) == FALSE){
+                z.data <- as.matrix(z[,,k])
+              }else{z.data <- z}
+              for(l in 1:nb){
+
+                data.block[(1+(l-1)*lb):(lb+(l-1)*lb), 1] <- z.data[,l]
+                data.block[(1+(l-1)*lb):(lb+(l-1)*lb), 2] <- rep(l,lb)
+              }
+              cat("\n")
+              cat("Box plot for ", w[k], "built \n")
+              boxplot(data.block[,1] ~ data.block[,2],
+                      data = data.block, xlab="Block", ylab = "Value", main = w[k], ...)
+            }
+
+          }
+
+)
+#' @param object object of class \code{blocks} for methods \code{show} and \code{summary}
+#' @rdname blocks-class
+#' @aliases blocks-class
+#' @aliases blocks-method
+#' @aliases show
+#' @export
+setMethod(f="show", signature="blocks", definition=function(object) {
+  lb <- nrow(object@mat.block)
+  nsp <- dim(object@array.block)[3]
+  nb <- dim(object@array.block)[2]
+  NA_data<- round((length(object@array.block[, nb, 1][is.na(object@array.block[, nb, 1])])/lb)*100, digits=3)
+
+  cat("An object of class 'blocks', with", "\n")
+  cat("number of spatial points = ", nsp, "\n")
+  cat("number of blocks = ", nb, "\n")
+  cat("length of each block = ", nrow(object@mat.block), "\n")
+  cat("% of NA in the last block = ", NA_data, "\n")
+  cat("\n")
+  cat("Slot 'mat.block':")
+  cat("\n")
+  print(object@mat.block)
+  cat("\n")
+  cat("Slot 'array.block':")
+  cat("\n")
+  print(object@array.block)
+  cat("\n")
+  cat("Slot 'sel.staz':")
+  cat("\n")
+  print(object@sel.staz)
+}
+)
+#' @rdname blocks-class
+#' @aliases blocks-class
+#' @aliases blocks-method
+#' @aliases select
+#' @export
+setMethod(f="[", signature="blocks", definition=function(x, i, j) {
+
+  x@array.block[, i, j]
+
+}
+)
+#' @rdname blocks-class
+#' @aliases blocks-class
+#' @aliases blocks-method
+#' @aliases summary
+#' @export
+setMethod(f = "summary", signature = "blocks",
+          definition = function(object, i, j) {
+
+            is.scalar <- function (y){length(y) == 1L && is.vector(y, mode = "numeric")}
+            if(is.scalar(i) == TRUE){
+              if(i == 0){
+                i <- c(1:dim(object@array.block)[2])
+              }
+            }
+
+            if(is.scalar(j) == TRUE){
+              if(j == 0){
+                j = c(1:dim(object@array.block)[3])
+              }
+            }
+
+            if(is.scalar(j) == FALSE && is.scalar(i) == FALSE){
+              z <- object@array.block[, i, j]
+
+              nstat <- dim(z)[3]
+
+              nb <- dim(z)[2]
+
+              lb <- dim(z)[1]
+              w <- as.vector(dimnames(z)[3][[1]])
+            }
+            if(is.scalar(j) == TRUE || is.scalar(i) == TRUE){
+              z <- as.matrix(object@array.block[, i, j])
+              if(is.scalar(j) == TRUE){
+                nstat <- 1
+                nb <- ncol(z)
+                lb <- nrow(z)
+                w <- dimnames(object@array.block)[3][[1]]}
+              if(is.scalar(i) == TRUE){
+                nstat <- ncol(z)
+                nb <- 1
+                lb <- nrow(z)
+                w <- dimnames(object@array.block)[3][[1]]}
+            }
+
+            for(k in 1:nstat){
+            cat("\n")
+            cat("\n")
+            cat("Descriptive statistics for ", w[k], "\n")
+            cat("\n")
+            y <- matrix(data = 0, nrow = nb, ncol = 7)
+            colnames(y) <- c(" Min. ", "  Q1  ", "Median", " Mean ", "  Q3  ", " Max. ", "St. Dev.")
+            for(l in 1:nb){
+              x <- object@array.block[,l,k]
+              y[l, 1] <- round(min(x, na.rm = TRUE), digits=2)
+              y[l, 2] <- round(quantile(x, probs = 0.25, na.rm = TRUE), digits=2)
+              y[l, 3] <- round(median(x, na.rm = TRUE), digits=2)
+              y[l, 4] <- round(mean(x, na.rm = TRUE), digits=2)
+              y[l, 5] <- round(quantile(x, probs = 0.75, na.rm = TRUE), digits=2)
+              y[l, 6] <- round(max(x, na.rm = TRUE), digits=2)
+              y[l, 7] <- round(sd(x, na.rm = TRUE), digits=2)
+            }
+
+            print(y)
+            }
+
+
+          })

@@ -9,24 +9,33 @@
 #' lags. For all tests, except for the symmetry test (\code{typetest=0}), the
 #' sample variance and the sample spatial and temporal marginal covariances are
 #' also computed and stored in \code{G}
-#'
 #' @slot cova.h matrix; containing the sample spatial marginal covariances
 #' for the specified lags
-#'
 #' @slot cova.u matrix; containing the sample temporal marginal covariances
 #' for the specified lags
-#'
 #' @slot f.G array; containing the computation of specific functions of the
 #' elements of \code{G}, see references
-#'
 #' @slot B matrix; containing the computation of the derivatives of each element
 #' of \code{f.G} with respect to each element of \code{G}
-#'
 #' @slot A contrast matrix
+#' @slot beta.data vector; containing the different values of the parameter beta,
+#' available only for the test on the Gneiting class of model (\code{typetest=5})
+#' @slot typetest numeric; contains the code of the test to be performed
 #'
-#' @note
-#'  A stop occurs if the number of spatial points fixed in \code{stpairs}
-#'  (object of class \code{couples}) is less than 2
+#' @note {
+#' A stop occurs if the number of spatial points fixed in \code{stpairs}
+#' (object of class \code{couples}) is less than 2.
+#' \itemize{
+#' \item If \code{typetest} is equal to 0 (symmetry test) \code{cova.h}, \code{cova.u},
+#' \code{f.G} and \code{B} are not available
+#'
+#' \item If \code{typetest} is equal to 4 (test on the integrated product class
+#' of models) \code{cova.h} and \code{cova.u} are not available
+#'
+#' \item If \code{typetest} is equal to 5 (test on the Gneiting class of models),
+#' \code{cova.h} is not available
+#' }
+#' }
 #'
 #' @rdname covastat-class
 #' @exportClass covastat
@@ -35,40 +44,38 @@ setClass("covastat", slots = c(G = "matrix",
                                cova.u = "matrix",
                                f.G = "array",
                                B = "array",
-                               A = "matrix"))
+                               A = "matrix",
+                               typetest = "numeric",
+                               beta.data = "ANY"))
 
-#' @param matdata STFDF/STSDF or \code{data frame}; which contains the
+#' @param matdata STFDF/STSDF or \code{data.frame}; which contains the
 #' coordinates of the spatial points, the identification code of the spatial
 #' points, the indentification code of the temporal points and the values of
-#' the variable
-#'
+#' the variable, typically output from \code{dataprep}
+#' @param pardata1 integer, it represents the column in which the spatial ID is
+#' stored (if the spatio-temporal data set is given as data.frame) or the number of
+#' variables in the STFDF/STSDF (if the data are given as a STFDF/STSDF)
+#' @param pardata2 integer, it represents the column in which the values of the
+#' variable are stored (if the spatio-temporal data set is given as data.frame) or
+#' the slot in which the values of the variable of interest are stored
+#' (if the data are given as a STFDF/STSDF). Note that for STFDF/STSDF the
+#' argument is set, by default, equal to 1 if the number of variables is equal to 1
 #' @param stpairs object of class \code{couples}, containing the spatial
 #' points and the corresponding temporal lags to be analyzed
-#'
 #' @param typetest integer; set \code{typetest=0} for symmetry test (default
 #' choice), \code{typetest=1} for separability test, \code{typetest=2} for type
 #' of non separability test, \code{typetest=3} for the test on the product-sum
 #' class of models, \code{typetest=4} for the test on the integrated product
 #' class of models, \code{typetest=5} for the test on the Gneiting class of
 #' models
+#' @param beta.data vector; this argument is required only for \code{typetest=5},
+#' otherwise it has to be set equal to NULL (default choice). It contains the
+#' different values of the parameter beta, which can assume values in the range 0-1
 #'
 #' @details
-#' The function requires the user to set some external arguments. In particular,
-#' if the spatio-temporal data are given as a \code{data} \code{frame} it is
-#' necessary to specify
-#' \itemize{
-#' \item the column in which the spatial ID is stored
-#' \item the column in which the values of the variable are stored.
-#' }
-#' On the other hand, if the data are given as a STFDF/STSDF it is necessary to
-#' specify
-#' \itemize{
-#' \item the number of variables in the STFDF/STSDF
-#' \item the slot in which the values of the variable of interest are stored
-#' (only if more than one variable is stored in the STFDF/STSDF).
-#' } Note that a message appears on the user's console if the \code{G} vector
+#' A message appears on the user's console if the \code{G} vector
 #' contains spatio-temporal negative covariances. The message returns the negative
-#' value/values and it will help to identify the spatial and and the temporal lags
+#' value/values and it will help to identify the spatial and the temporal lags
 #' involved.
 #'
 #' @seealso \linkS4class{couples}
@@ -83,27 +90,89 @@ setClass("covastat", slots = c(G = "matrix",
 #' class of fully symmetric space-time covariance functions.
 #' Environmentrics, \bold{27(4)} 212--224.
 #'
-#' Cappello, C., De Iaco, S., Posa, D., 2016, Testing the type of
+#' Cappello, C., De Iaco, S., Posa, D., 2017, Testing the type of
 #' non-separability and some classes of covariance models for space-time data.
 #' Stochastic Environmental Research and Risk Assessment,
 #' doi 10.1007/s00477-017-1472-2
 #'
 #' @examples
-#' ## The function requires to set some external arguments. In this example, it
-#' # is only necessary to specify the number of variables in the STFDF (rr_13).
-#' #
-#' # To run the example, paste and copy the following lines
-#' # (without the symbol '#') in the console
-#' #
-#' # coupl_sim <- couples(typetest = 0, typecode = character())
-#' # blocks_sim <- blocks(lb = 40, ls = 10, matdata = rr_13, stpairs = coupl_sim)
-#' # covabl_sim <- covablocks(stblocks = blocks_sim, stpairs = coupl_sim, typetest = 0)
-#' # covast_sim <- covastat(matdata = rr_13, stpairs = coupl_sim, typetest = 0)
-#' # 1
+#' sel.staz.sym <- c("DERP016", "DENW065", "DEHE051", "DETH026", "DENW063", "DENI019",
+#' "DENW068", "DEHE046", "DEUB029", "DEBY047", "DETH061", "DESN049")
+#'
+#' sp.couples.in.sym <- matrix(data = c("DERP016", "DENW065", "DEHE051", "DETH026",
+#' "DENW063", "DENI019", "DENW068", "DEHE046", "DEUB029", "DEBY047", "DETH061", "DESN049"),
+#' ncol = 2, byrow = TRUE)
+#'
+#' t.couples.in.sym <- c(1, 2)
+#'
+#' couples.sym <- couples(sel.staz = sel.staz.sym, sp.couples.in = sp.couples.in.sym,
+#' t.couples.in = t.couples.in.sym, typetest = 0, typecode = character())
+#'
+#' covast.sym <- covastat(matdata = rr_13, pardata1 = 1, pardata2 = 1,
+#' stpairs = couples.sym, typetest = 0, beta.data = NULL)
+#'
+#' ###method for covastat
+#' #1. show
+#' covast.sym
 #'
 #' @rdname covastat-class
 #' @export
-covastat <- function(matdata, stpairs, typetest = 0) {
+covastat <- function(matdata, pardata1, pardata2, stpairs, typetest = 0, beta.data = NULL) {
+
+  is.wholenumber <- function(x, tol = .Machine$double.eps^0.5) {abs(x - round(x)) <
+      tol}
+
+  is.scalar <- function (x){length(x) == 1L && is.vector(x, mode = "numeric")}
+
+  ### SOME CHECKS ON THE ARGUMENTS ###
+
+  if (is.scalar(pardata1) == FALSE || is.scalar(pardata2) == FALSE) {
+    stop("Some of the arguments are not numeric. Stop running")
+  }
+
+
+  if(pardata1 != as.integer(pardata1) || pardata2 != as.integer(pardata2)){
+
+    pardata1 <- as.integer(pardata1)
+    pardata2 <- as.integer(pardata2)
+    warning("The arguments expected to be integer are forced to be integer numbers.")
+  }
+
+
+  if (!inherits(stpairs, "couples")){
+    stop("stpairs argument has to be of class couples")
+  }
+
+  if(typetest == 5 && !is.numeric(beta.data) == TRUE){
+    stop("beta.data argument has to be numeric")
+  }
+
+  if(typetest == 5 && is.null(beta.data) == TRUE){
+    stop("beta.data argument has to be set")
+  }
+
+  if(typetest == 5 && max(beta.data) > 1 ){
+    stop("beta.data argument has to be in the interval 0-1")
+  }
+
+  if(typetest == 5 && min(beta.data) < 0 ){
+    stop("beta.data argument has to be in the interval 0-1")
+  }
+
+  if(stpairs@typetest != typetest){
+    warning("Reminder: the argument typetest is different from the one defined in stpairs")
+  }
+
+  if(stpairs@typetest == 0 && typetest>=3){
+    stop("The argument typetest is not consistent with respect to the one defined in stpairs. Please change typetest or define a new stpairs")
+  }
+
+   if(any(stpairs@tl.couples < 0) && typetest>=3){
+     stop("The argument typetest is not consistent with respect to the one defined in stpairs. Please change typetest or define a new stpairs")
+   }
+
+
+
   selstaz <- stpairs@sel.staz
   couples <- stpairs@couples.st
   nstaz <- length(selstaz)
@@ -115,11 +184,8 @@ covastat <- function(matdata, stpairs, typetest = 0) {
   #= 6= Gneiting, 7= Cressie-Huang)                                       =#
   #========================================================================#
 
-  is.wholenumber <- function(x, tol = .Machine$double.eps^0.5) abs(x - round(x)) <
-    tol
 
-
-  if (is.wholenumber(typetest) == FALSE || typetest < 0 || typetest > 7) {
+  if (is.scalar(typetest) == FALSE || typetest < 0 || typetest > 5) {
     stop("The argument for typetest is not admissible.")
   }
 
@@ -132,8 +198,8 @@ covastat <- function(matdata, stpairs, typetest = 0) {
   #========================================================================#
 
   if (class(matdata) == "matrix" || class(matdata) == "data.frame") {
-    iclsp.id <- as.integer(readline(prompt = "Enter the column in which the spatial id is stored: "))
-    iclvr <- as.integer(readline(prompt = "Enter the column in which the values of the variable are stored: "))
+    iclsp.id <- as.integer(pardata1)
+    iclvr <- as.integer(pardata2)
   }
 
   if (is.vector(selstaz) && length(selstaz) >= 2) {
@@ -143,6 +209,15 @@ covastat <- function(matdata, stpairs, typetest = 0) {
       if (class(matdata) == "matrix" || class(matdata) == "data.frame") {
 
         if (is.numeric(matdata[, iclvr]) == TRUE) {
+
+          if (i == 1) {
+            selstaz.names <- matdata[, iclsp.id]
+            selstaz.inter <- intersect(selstaz.names, selstaz)
+            if (length(selstaz.inter) != length(selstaz)) {
+              stop("No data for some of the selected spatial points.Please go back to the function 'couples' and revise the vector of the selected spatial points")
+
+            }
+            }
 
           datistaz <- matdata[matdata[, iclsp.id] == selstaz[i], iclvr]
         } else {
@@ -155,12 +230,18 @@ covastat <- function(matdata, stpairs, typetest = 0) {
           #= data in gstat format =#
           if (class(matdata) == "STFDF") {
             if (i == 1) {
+              selstaz.names <- row.names(matdata@sp)
+              selstaz.inter <- intersect(selstaz.names, selstaz)
+              if (length(selstaz.inter) != length(selstaz)) {
+                stop("No data for some of the selected spatial points.Please go back to the function 'couples' and revise the vector of the selected spatial points")
 
-              nvr <- readline(prompt = "Enter the number of variables in the STFDF: ")
-              nvr <- as.integer(nvr)
-              iclvr <- 1
-              if (nvr > 1) {
-                iclvr <- as.integer(readline(prompt = "Enter the slot in which the values of the variable of interest are stored: "))
+              }
+              nvr <- as.integer(pardata1)
+              iclvr <- as.integer(pardata2)
+
+
+              if (nvr == 1) {
+                iclvr <- 1
               }
             }
             datistaz <- matrix(matdata[selstaz[i], ], ncol = (1 + nvr))[,
@@ -173,13 +254,18 @@ covastat <- function(matdata, stpairs, typetest = 0) {
             if (class(matdata) == "STSDF") {
               matdata <- as(matdata, "STFDF")
               if (i == 1) {
+                  selstaz.names <- row.names(matdata@sp)
+                  selstaz.inter <- intersect(selstaz.names, selstaz)
+                  if (length(selstaz.inter) != length(selstaz)) {
+                    stop("No data for some of the selected spatial points.Please go back to the function 'couples' and revise the vector of the selected spatial points")
 
-                nvr <- readline(prompt = "Enter the number of variables in the STSDF: ")
-                nvr <- as.integer(nvr)
-                iclvr <- 1
-                if (nvr > 1) {
-                  iclvr <- as.integer(readline(prompt = "Enter the slot in which the values of the variable of interest are stored: "))
-                }
+                  }
+                  nvr <- as.integer(pardata1)
+                  iclvr <- as.integer(pardata2)
+                  if (nvr == 1) {
+                    iclvr <- 1
+                  }
+
               }
 
 
@@ -308,8 +394,7 @@ covastat <- function(matdata, stpairs, typetest = 0) {
 
     if (nflag.cova.nv != 0) {
       message(nflag.cova.nv, " negative spatio-temporal covariance/es detected.")
-      ans_YN <- readline(prompt = "Would you like to visualize the spatial points and the temporal lags involved? (Y/N) ")
-      if (ans_YN == "Y" || ans_YN == "y") {
+      message("In the following the spatial points and the temporal lags involved are visualized.")
         for (i in 1:couples.nrow) {
           if(cova.nv[i,1] != "-"  && cova.nv[i,2] != "-"){
 
@@ -317,7 +402,7 @@ covastat <- function(matdata, stpairs, typetest = 0) {
 
           }
         }
-        }
+
     }
     }
 
@@ -379,14 +464,13 @@ covastat <- function(matdata, stpairs, typetest = 0) {
 
       if (nflag.cova.nv != 0) {
         message(nflag.cova.nv, " negative spatio-temporal covariance/es detected.")
-        ans_YN <- readline(prompt = "Would you like to visualize the spatial points and the temporal lags involved? (Y/N) ")
-        if (ans_YN == "Y" || ans_YN == "y") {
+        message("In the following the spatial points and the temporal lags involved are visualized.")
           for (i in 1:couples.nrow) {
             if(cova.nv[i,1] != "-" && cova.nv[i,2] != "-"){
               print(cova.nv[i,])
-            }
           }
         }
+
       }
 
       #= Check on columns and rows with non-zero values
@@ -533,17 +617,14 @@ covastat <- function(matdata, stpairs, typetest = 0) {
       }
 
       if (nflag.cova.h.nv != 0) {
-        message(nflag.cova.h.nv, " negative spatial covariances have been
-                detected.")
-        ans_YN <- readline(prompt = "Would you like to visualize the spatial points
-                            involved? (Y/N) ")
-        if (ans_YN == "Y" || ans_YN == "y") {
+        message(nflag.cova.h.nv, " negative spatial covariances have been detected.")
+        message("In the following the spatial points and the temporal lags involved are visualized.")
           for (i in 1:couples.nrow) {
             if(is.na(cova.h.nv[i, 1]) == FALSE && is.na(cova.h.nv[i, 2]) == FALSE){
               print(cova.h.nv[i, ])
             }
-          }
         }
+
       }
 
       #= Compute the temporal marginal covariance =#
@@ -579,17 +660,14 @@ covastat <- function(matdata, stpairs, typetest = 0) {
     }
 
     if (nflag.cova.u.nv != 0) {
-      message(nflag.cova.u.nv, " negative temporal covariances have been
-              detected.")
-      ans_YN <- readline(prompt = "Would you like to visualize the temporal lags
-                         involved? (Y/N) ")
-      if (ans_YN == "Y" || ans_YN == "y") {
-        for (i in 1:cova.u.ncol) {
+      message(nflag.cova.u.nv, " negative temporal covariances have been detected.")
+      message("In the following the spatial points and the temporal lags involved are visualized.")
+      for (i in 1:cova.u.ncol) {
           if(is.na(cova.u.nv[i, ]) == FALSE){
             print(cova.u.nv[i, ])
           }
-        }
       }
+
     }
 
     lstaz_zero <- 0
@@ -656,17 +734,14 @@ covastat <- function(matdata, stpairs, typetest = 0) {
       }
 
       if (nflag.cova.h.nv != 0) {
-        message(nflag.cova.h.nv, " negative spatial covariances have been
-                detected.")
-        ans_YN <- readline(prompt = "Would you like to visualize the spatial points
-                           involved? (Y/N) ")
-        if (ans_YN == "Y" || ans_YN == "y") {
-          for (i in 1:(nspaz * 3)) {
+        message(nflag.cova.h.nv, " negative spatial covariances have been detected.")
+        message("In the following the spatial points and the temporal lags involved are visualized.")
+        for (i in 1:(nspaz * 3)) {
             if(is.na(cova.h.nv[i, 1]) == FALSE && is.na(cova.h.nv[i, 2]) == FALSE){
               print(cova.h.nv[i, ])
             }
-          }
         }
+
       }
 
       #= Compute the temporal marginal covariance =#
@@ -737,17 +812,14 @@ covastat <- function(matdata, stpairs, typetest = 0) {
       }
 
       if (nflag.cova.u.nv != 0) {
-        message(nflag.cova.u.nv, " negative temporal covariances have been
-                detected.")
-        ans_YN <- readline(prompt = "Would you like to visualize the temporal lags
-                           involved? (Y/N) ")
-        if (ans_YN == "Y" || ans_YN == "y") {
+        message(nflag.cova.u.nv, " negative temporal covariances have been detected.")
+        message("In the following the spatial points and the temporal lags involved are visualized.")
           for (i in 1:cova.u.ncol) {
             if(is.na(cova.u.nv[i, ]) == FALSE){
               print(cova.u.nv[i, ])
             }
           }
-        }
+
       }
 
     }
@@ -1386,27 +1458,8 @@ covastat <- function(matdata, stpairs, typetest = 0) {
       #========================================================================#
 
       if (typetest == 6) {
-        message("******************************************************************************************")
-        message("***The test statistic for this model type depends on the parameter beta                ***")
-        message("***Different tests will be computed for some values of beta in the  range 0-1          ***")
-        message("***The default segmentation of beta is in 10 values from 0.1 to 1 with increment of 0.1***")
-        message("******************************************************************************************")
-        beta <- 0
-        delta_beta <- 0.1
-        delta_beta <- round(delta_beta, digits = 1)
-        nbeta <- 10
-        ans_YN <- readline(prompt = "Would you like to change the default choice? (y to change; any key for default choice)")
-        if (ans_YN == "Y" || ans_YN == "y") {
-          nbeta <- readline(prompt = "How many values of beta would you like to consider? ")
-          nbeta <- as.integer(nbeta)
-          delta_beta <- 1/nbeta
-          if (nbeta == 1) {
-            delta_beta <- readline(prompt = "Which value of beta would you like to consider? ")
-            delta_beta <- as.numeric(delta_beta)
-          }
-          delta_beta <- round(delta_beta, digits = 1)
-        }
 
+        nbeta <- length(beta.data)
         count_colfull <- sum(count_nozero_col[, ] == 3)
         count_rowfull <- sum(count_nozero_row[, ] == 3)
         arrayB <- array(0, dim = c(nct + ntemp, ((count_colfull + count_rowfull) *
@@ -1414,20 +1467,17 @@ covastat <- function(matdata, stpairs, typetest = 0) {
         arrayF <- array(0, dim = c(((count_colfull + count_rowfull) *
                                       2), 1, nbeta))
         for (ciclebeta in 1:nbeta) {
-          beta <- beta + delta_beta
-          beta <- round(beta, digits = 1)
 
-
+          beta <- round(beta.data[ciclebeta], digits = 1)
 
           #= f(G) for typetest= 6 =#
 
 
-          #= for(l in 1:nbeta){
+
 
           f.cova.sub <- matrix(0, nrow = 2, ncol = 1)
           jj <- 0
           ii <- -2
-          #= iflag<-matrix(0, nrow=(nrow(sp.couples)/3), ncol=((n.temp/3)/2))
           flag1 <- 0
           flag2 <- 0
           for (i in 1:(nrow(couples)/3)) {
@@ -1438,9 +1488,6 @@ covastat <- function(matdata, stpairs, typetest = 0) {
               kk <- kk + 6
               ki <- ki + 3
               col_tlag <- c((kk + 2), (kk + 4), (kk + 6))
-              #= count_nozero_col<- colSums(couples[ii:(ii+2), col_tlag] != 0)
-              #= count_nozero_row<- rowSums(couples[ii:(ii+2), col_tlag] != 0)
-
 
               if (iflag[i, k] == 1) {
                 #= jj<-jj+1
@@ -1449,11 +1496,6 @@ covastat <- function(matdata, stpairs, typetest = 0) {
                 for (z in 1:3) {
                   zz <- zz + 1
                   if (count_nozero_col[i, zz] == 3) {
-                    #= f.cova.sub[1,]<- (log(covacouple[(ii+1),col_tlag[z]-2], base=exp(1))) -
-                    #= (log(covacouple[(ii),col_tlag[z]-2], base=exp(1))) f.cova.sub[2,]<-
-                    #= (log(covacouple[(ii+2),col_tlag[z]-2], base=exp(1))) -
-                    #= (log(covacouple[(ii+1),col_tlag[z]-2], base=exp(1)))
-
                     f.cova.sub[1, ] <- ((covacouple[(ii + 1), col_tlag[z] -
                                                       2]))/(covacouple[(ii), col_tlag[z] - 2])
 
@@ -1511,10 +1553,6 @@ covastat <- function(matdata, stpairs, typetest = 0) {
             }
           }
           f.cova <- as.matrix(rbind(f.cova1, f.cova2), ncol = 1)
-          #= if(l==1){ f.cova<-
-          #= matrix(0,nrow=lenght(as.vector(rbind(f.cova1,f.cova2))), ncol=nbeta)}
-          #= f.cova[,l]<- as.vector(rbind(f.cova1,f.cova2))
-
 
           #= Compute the matrix B for typetest = 6 =#
 
@@ -1722,11 +1760,6 @@ covastat <- function(matdata, stpairs, typetest = 0) {
               for (z in 1:3) {
                 zz <- zz + 1
                 if (count_nozero_col[i, zz] == 3) {
-                  #= f.cova.sub[1,]<-
-                  #= (log(cova.u[z+(k-1)*3,]/(covacouple[(ii+1),col_tlag[z]-2]),
-                  #= base=exp(1)))^(0.5) -
-                  #= (log(cova.u[z+(k-1)*3,]/(covacouple[(ii),col_tlag[z]-2]),
-                  #= base=exp(1)))^(0.5)
 
                   f.cova.sub[1, ] <- ((covacouple[(ii + 1), col_tlag[z] -
                                                     2]))/((covacouple[(ii), col_tlag[z] - 2]))
@@ -2259,11 +2292,77 @@ covastat <- function(matdata, stpairs, typetest = 0) {
     A <- A.4
   }
 
+  if (typetest >= 4) {
+      typetest <- typetest -1
+    }
+
   new("covastat", G = cova, cova.h = cova.h, cova.u = cova.u, f.G = f.G,
-      B = B, A = A)
+      B = B, A = A, beta.data = beta.data, typetest = typetest)
 
 
   #= End defining the class covastat =#
 }
 #' @include sepindex.R couples.R blocks.R covablocks.R
 NULL
+#' @param object object of class \code{covastat} for method \code{show}
+#' @rdname covastat-class
+#' @aliases covastat-class
+#' @aliases covastat-method
+#' @aliases show
+#' @export
+setMethod(f="show", signature="covastat", definition=function(object) {
+  cat("An object of class covastat", "\n")
+  cat("\n")
+  cat("Slot 'G':")
+  cat("\n")
+  print(object@G)
+  cat("\n")
+  cat("Slot 'cova.h':")
+  cat("\n")
+  if(object@typetest == 0 || object@typetest == 4 || object@typetest == 5){
+    print("This slot is not available for the required typetest")
+  }else{
+    print(object@cova.h)
+  }
+  cat("\n")
+  cat("Slot 'cov.u':")
+  cat("\n")
+  if(object@typetest == 0 || object@typetest == 4){
+    print("This slot is not available for the required typetest")
+  }else{
+    print(object@cova.u)
+  }
+  cat("\n")
+  cat("Slot 'f.G':")
+  cat("\n")
+  if(object@typetest == 0){
+    print("This slot is not available for the required typetest")
+  }else{
+    print(object@f.G)
+  }
+  cat("\n")
+  cat("Slot 'B':")
+  cat("\n")
+  if(object@typetest == 0){
+    print("This slot is not available for the required typetest")
+  }else{
+    print(object@B)
+  }
+  cat("\n")
+  cat("Slot 'A':")
+  cat("\n")
+  print(object@A)
+  cat("\n")
+  cat("Slot 'beta.data':")
+  cat("\n")
+  if(object@typetest != 5){
+    print("This slot is not available for the required typetest")
+  }else{
+    print(object@beta.data)
+  }
+  cat("\n")
+  cat("Slot 'typetest':")
+  cat("\n")
+  print(object@typetest)
+}
+)

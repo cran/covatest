@@ -4,11 +4,37 @@
 \name{couples-class}
 \alias{couples-class}
 \alias{couples}
+\alias{show,couples-method}
+\alias{couples-class}
+\alias{[,couples-method}
+\alias{couples-class}
+\alias{summary,couples-method}
+\alias{couples-class}
 \title{Class "couples"}
 \usage{
-couples(typetest = 0, typecode = numeric())
+couples(sel.staz, sp.couples.in, t.couples.in, typetest = 0,
+  typecode = numeric())
+
+\S4method{show}{couples}(object)
+
+\S4method{[}{couples}(x, i, by.row = FALSE)
+
+\S4method{summary}{couples}(object)
 }
 \arguments{
+\item{sel.staz}{vector; the sequence of ID codes which denote the spatial
+points to be analyzed}
+
+\item{sp.couples.in}{two-column matrix: rows corresponding to the couples
+of different spatial points, chosen among the ones fixed in \code{sel.staz}
+argument, to be compared}
+
+\item{t.couples.in}{vector of only positive (negative) temporal lags to be
+analyzed. The corresponding negative (positive) temporal lags are included
+authomatically for \code{typetest=0,1,2}. If some temporal lags, corresponding
+to some couples of spatial points, are not required for the specific test,
+they can be set equal to zero, through the specific \code{\link{setzero}} method}
+
 \item{typetest}{integer; set typetest=0 for symmetry test (default choice),
 \code{typetest=1} for separability test, \code{typetest=2} for type of non
 separability test,
@@ -17,25 +43,25 @@ separability test,
 \code{typetest=5} for the test on the Gneiting class of models}
 
 \item{typecode}{numeric or character; specifies the codification of the
-spatial points in the \code{data frame} or in the STFDF/STSDF, typically
-output from \code{\link{dataprep}}}
+spatial points in the \code{data frame} or in the STFDF/STSDF}
+
+\item{object}{object of class \code{couples} for methods \code{show} and \code{summary}}
+
+\item{x}{object of class \code{couples} for method \code{extract}}
+
+\item{i}{selection of rows or columns of the slot \code{@couples.st}. Rows or
+columns depending on the logical parameter \code{by.row} to be set}
+
+\item{by.row}{logical; if \code{TRUE} rows of the slot \code{@couples.st} are
+selected (the temporal lags associated to the i-th spatial couple are given).
+If \code{FALSE} (the default) columns of the slot \code{@couples.st} are
+selected. In particular, the spatial couples associated to the i-th temporal
+lag (i >= 3, temporal lags are stored from the third column) are given}
 }
 \description{
 A class for spatial points and the corresponding temporal lags to be
 analyzed in order to test some covariance properties and some well known
 classes of space-time covariance functions models
-}
-\details{
-The function requires the user to set some external arguments:
-\enumerate{
-\item the number of spatial points to be analyzed
-\item the sequence of ID codes which denote the spatial points to be analyzed
-\item the number of spatial couples to be compared
-\item the couples of different spatial points
-\item the couples of positive and negative temporal lags
-}
-If some temporal lags, corresponding to some couples of spatial
-points, are not required for the specific test, might be set equal to zero.
 }
 \section{Slots}{
 
@@ -53,39 +79,40 @@ ID codes}
 
 \item{\code{tl.couples}}{numeric; contains the temporal lags associated to the
 couples of the selected spatial points}
+
+\item{\code{typetest}}{numeric; contains the code of the test to be performed}
 }}
 
 \note{
-It is important to point out that for:
+It is important to point out that:
 \itemize{
-\item symmetry test (\code{typetest=0}), both positive and negative
-temporal lags have to be considered;
+\item both positive and negative temporal lags are automatically considered in
+the slot \code{@couples.st} and \code{@tl.couples} for symmetry test (\code{typetest=0}),
+separability test (\code{typetest=1}) and type of non separability tests
+(\code{typetest=2}). If the symmetry hyphotesis has not been rejected, only
+positive temporal lags might be considered for the test on separability and type
+of non separability (\code{typetest=1} and \code{typetest=2}), hence the
+specific \code{\link{setzero}} method must be used to set the negative temporal
+lags equal to zero.
 
-\item separability and type of non separability tests (\code{typetest=1} and
-\code{typetest=2}, respectively), both positive and negative
-temporal lags have to be considered. Hovewer, if the symmetry hyphotesis
-has not been rejected, only positive temporal lags should be set.
-Moreover for \code{typetest=2} the temporal lags should be chosen according
-to the results of the sample non separability ratios, plotted through
-a boxplot classified for temporal lags (see \linkS4class{sepindex} for more
-details);
+\item For \code{typetest=2} the temporal lags should be chosen according to
+the results of the sample non separability ratios, plotted through a boxplot
+classified for temporal lags (see \linkS4class{sepindex} for more details).
 
-\item model tests (\code{typetest} from 3 to 5), the number of analyzed spatial
+\item For model tests (\code{typetest} from 3 to 5), the number of analyzed spatial
 points must be used to create at least 3 spatial couples or multiple of 3,
-such that each triplet satisfies the condition h1-h2=h2-h3 (only for typetest=4
-and 5). The number of positive temporal lags must be at least 3, or multiple
-of 3, too. The condition u1-u2=u2-u3 (only for typetest=4 and 5) must be satisfied
-for each triplet. Note that for each spatial triplet and each temporal triplet, 6
-contrasts can be defined. However, for typetest=4 (test on the integrated model)
-2 contrasts are not necessary (user has to set arbitrarily one temporal lag equal
-to zero in order to delete redundant contrasts).
-
-
-
+such that each triplet satisfies the condition h1-h2=h2-h3 (only for \code{typetest}
+=4 and 5). The number of positive temporal lags must be at least 3, or multiple
+of 3, too. The condition u1-u2=u2-u3 (only for \code{typetest}=4 and 5) must
+be satisfied for each triplet. Note that for each spatial triplet and each
+temporal triplet, 6 contrasts can be defined. However, for \code{typetest}=4
+(test on the integrated model) the user has to set arbitrarily one temporal
+lag equal to zero in order to delete redundant contrasts, through the specific
+\code{\link{setzero}} method
 }
 
 
-Moreover, errors occur if
+Errors occur if
 \itemize{
 \item some spatial points, given in the sequence at the beginning of the
 function, have not been used to generate the couples of spatial points
@@ -95,55 +122,33 @@ temporal lags
 
 \item no temporal lags have been specified
 
-\item the number of spatial points fixed in \code{stpairs} (object of class
-\code{couples}) is less than 2
+\item the number of spatial points fixed in \code{sel.staz} is less than 2
 }
 }
 \examples{
-## The function requires to set some external arguments.
-# In the example regarding the symmetry test (typetest = 0),
-# 12 spatial points, with ID codes: DERP016, ..., DESN049, have been selected,
-# then 6 spatial couples ([DERP016, DENW065], .., [DEBY047, DESN049])
-# have been formed for comparison. Moreover, 4 positive and negative temporal
-# lags have been considered (i.e. +1, -1, +2, -2). Finally, no temporal
-# lag has been set equal to zero (Answer "N" to the question "Would you like
-# to set some temporal lags equal to 0?"). Hence, for the symmetry test 24 (6*4)
-# spatio-temporal comparisons have been fixed.
-#
-# To run the example, paste and copy the following lines
-# (without the symbol '#') in the console
-#
-#coupl_sim <- couples(typetest = 0, typecode = character())
-#12
-#DERP016
-#DENW065
-#DENW063
-#DENI019
-#DENW068
-#DEHE046
-#DEHE051
-#DETH026
-#DEUB029
-#DETH061
-#DEBY047
-#DESN049
-#6
-#DERP016
-#DENW065
-#DENW063
-#DENI019
-#DENW068
-#DEHE046
-#DEHE051
-#DETH026
-#DEUB029
-#DETH061
-#DEBY047
-#DESN049
-#4
-#1
-#-1
-#2
-#-2
-#N
+sel.staz.sym <- c("DERP016", "DENW065", "DEHE051", "DETH026", "DENW063", "DENI019",
+"DENW068", "DEHE046", "DEUB029", "DEBY047", "DETH061", "DESN049")
+
+sp.couples.in.sym <- matrix(data = c("DERP016", "DENW065", "DEHE051", "DETH026",
+"DENW063", "DENI019", "DENW068", "DEHE046", "DEUB029", "DEBY047", "DETH061", "DESN049"),
+ncol = 2, byrow = TRUE)
+
+t.couples.in.sym <- c(1, 2)
+
+couples.sym <- couples(sel.staz = sel.staz.sym, sp.couples.in = sp.couples.in.sym,
+t.couples.in = t.couples.in.sym, typetest = 0, typecode = character())
+###methods for couples
+#1. show
+couples.sym
+
+#2. [ extract
+couples.sym[3, by.row = FALSE]
+couples.sym[3, by.row = TRUE]
+
+#3. summary
+summary(couples.sym)
+
+}
+\seealso{
+\code{\link{setzero}}
 }

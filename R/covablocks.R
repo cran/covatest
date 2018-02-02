@@ -18,13 +18,15 @@
 #' @slot mat.cova.cova matrix of sample covariances between space-time
 #' covariances for each block, computed for the spatial and temporal lags given
 #' in \code{stpairs} (object of class \code{couples})
+#' @slot typetest numeric; contains the code of the test to be performed
 #'
 #' @rdname covablocks-class
 #' @exportClass covablocks
 setClass("covablocks", slots = c(mat.cova = "matrix",
                                  mat.cova.h = "matrix",
                                  mat.cova.u = "matrix",
-                                 mat.cova.cova = "matrix"))
+                                 mat.cova.cova = "matrix",
+                                 typetest = "numeric"))
 
 #' @param stblocks object of class \code{blocks}
 #'
@@ -57,16 +59,26 @@ setClass("covablocks", slots = c(mat.cova = "matrix",
 #' }
 #'
 #' @examples
-#' # Before running this function, it is necessary to execute couples and blocks,
-#' # as specified in the examples of the corresponding help pages.
-#' #
-#' # To run the example, paste and copy the following lines
-#' # (without the symbol '#') in the console
-#' #
-#' # coupl_sim <- couples(typetest = 0, typecode = character())
-#' # blocks_sim <- blocks(lb = 40, ls = 10, matdata = rr_13, stpairs = coupl_sim)
-#' # covabl_sim <- covablocks(stblocks = blocks_sim, stpairs = coupl_sim, typetest = 0)
+#' sel.staz.sym <- c("DERP016", "DENW065", "DEHE051", "DETH026", "DENW063", "DENI019",
+#' "DENW068", "DEHE046", "DEUB029", "DEBY047", "DETH061", "DESN049")
 #'
+#' sp.couples.in.sym <- matrix(data = c("DERP016", "DENW065", "DEHE051", "DETH026",
+#' "DENW063", "DENI019", "DENW068", "DEHE046", "DEUB029", "DEBY047", "DETH061", "DESN049"),
+#' ncol = 2, byrow = TRUE)
+#'
+#' t.couples.in.sym <- c(1, 2)
+#'
+#' couples.sym <- couples(sel.staz = sel.staz.sym, sp.couples.in = sp.couples.in.sym,
+#' t.couples.in = t.couples.in.sym, typetest = 0, typecode = character())
+#'
+#' block.sym <- blocks(lb=40, ls=10, matdata = rr_13, pardata1 = 1, pardata2 = 1,
+#' stpairs = couples.sym)
+#'
+#' covabl.sym <- covablocks(stblocks = block.sym, stpairs = couples.sym, typetest = 0)
+#'
+#' ###method for covablock
+#' #1. show
+#' covabl.sym
 #'
 #' @seealso \linkS4class{blocks}
 #' @seealso \linkS4class{couples}
@@ -80,7 +92,7 @@ setClass("covablocks", slots = c(mat.cova = "matrix",
 #' class of fully symmetric space-time covariance functions.
 #' Environmentrics, \bold{27(4)} 212--224.
 #'
-#' Cappello, C., De Iaco, S., Posa, D., 2016, Testing the type of
+#' Cappello, C., De Iaco, S., Posa, D., 2017, Testing the type of
 #' non-separability and some classes of covariance models for space-time data.
 #' Stochastic Environmental Research and Risk Assessment,
 #' doi 10.1007/s00477-017-1472-2
@@ -88,6 +100,38 @@ setClass("covablocks", slots = c(mat.cova = "matrix",
 #' @rdname covablocks-class
 #' @export
 covablocks <- function(stblocks, stpairs, typetest = 0) {
+
+  is.wholenumber <- function(x, tol = .Machine$double.eps^0.5) abs(x - round(x)) <
+    tol
+
+  is.scalar <- function (x){length(x) == 1L && is.vector(x, mode = "numeric")}
+
+  ### SOME CHECKS ON THE ARGUMENTS ###
+
+  if (!inherits(stpairs, "couples")){
+    stop("stpairs argument has to be of class couples")
+  }
+
+  if (!inherits(stblocks, "blocks")){
+    stop("stblocks argument has to be of class blocks")
+  }
+
+  if(identical(stpairs@sel.staz,stblocks@sel.staz) == FALSE){
+    stop("The objects stpairs and stblocks have not been defined for the same set of spatial points")
+  }
+
+  if(stpairs@typetest != typetest){
+    warning("Reminder: the argument typetest is different from the one defined in stpairs")
+  }
+
+  if(stpairs@typetest == 0 && typetest>=3){
+    stop("The argument typetest is not consistent with respect to the one defined in stpairs. Please change typetest or define a new stpairs")
+  }
+
+  if(any(stpairs@tl.couples < 0) && typetest>=3){
+    stop("The argument typetest is not consistent with respect to the one defined in stpairs. Please change typetest or define a new stpairs")
+  }
+
   matblock <- stblocks@mat.block
   selstaz <- stpairs@sel.staz
   couples <- stpairs@couples.st
@@ -101,11 +145,8 @@ covablocks <- function(stblocks, stpairs, typetest = 0) {
   #= 2= type of non separability, 3=type of variability            =#
   #= 4 up to 7 = type of model                                     =#
   #=================================================================#
-  is.wholenumber <- function(x, tol = .Machine$double.eps^0.5) abs(x - round(x)) <
-    tol
 
-
-  if (is.wholenumber(typetest) == FALSE || typetest < 0 || typetest > 7) {
+  if (is.scalar(typetest) == FALSE || typetest < 0 || typetest > 5) {
     stop("The argument for typetest is not admissible.")
   }
 
@@ -120,10 +161,6 @@ covablocks <- function(stblocks, stpairs, typetest = 0) {
     message("Warning: the proportion ", ratio.max.t, " between the maximum
             temporal lag defined in function 'couples' and block length in defined in function 'blocks' is greater
             than 0.25. The covariance estimation might not be reliable.")
-    ans_YN <- readline(prompt = "Ignore the warning and continue? (Y/N)")
-    if (ans_YN == "N" || ans_YN == "n") {
-      stop("Stop running")
-    }
   }
 
   if (typetest >= 3) {
@@ -621,11 +658,66 @@ covablocks <- function(stblocks, stpairs, typetest = 0) {
     #= mat.cova.cova = mat.cova.cova
   }
 
+  if (typetest >= 4) {
+    typetest <- typetest -1
+  }
+
   new("covablocks", mat.cova = mat.cova, mat.cova.h = mat.cova.h, mat.cova.u = mat.cova.u,
-      mat.cova.cova = mat.cova.cova)
+      mat.cova.cova = mat.cova.cova, typetest = typetest)
 
   #= End defining the class covastat  =#
 
 }
 #' @include sepindex.R couples.R blocks.R
 NULL
+#' @param object object of class \code{covablocks} for method \code{show}
+#' @rdname covablocks-class
+#' @aliases covablocks-class
+#' @aliases covablocks-method
+#' @aliases show
+#' @export
+setMethod(f="show", signature="covablocks", definition=function(object) {
+  nb <- nrow(object@mat.cova)
+
+  cat("An object of class 'covablocks', with", "\n")
+  cat("number of blocks=", nb, "\n")
+  cat("Slot 'mat.cova':")
+  cat("\n")
+  print(object@mat.cova)
+  cat("\n")
+  cat("Slot 'mat.cova.h':")
+  cat("\n")
+  # if(is.na(object@mat.cova.h) == TRUE){
+  #   print("This slot is not available for the required typetest")
+  # }else{
+  #   print(object@mat.cova.h)
+  # }
+  if(object@typetest == 0 || object@typetest == 4 || object@typetest == 5){
+    print("This slot is not available for the required typetest")
+  }else{
+    print(object@mat.cova.h)
+  }
+  cat("\n")
+  cat("Slot 'mat.cova.u':")
+  cat("\n")
+  # if(!is.na(object@mat.cova.u)){
+  #   print(object@mat.cova.u)
+  # }else{
+  #   print("This slot is not available for the required typetest")
+  # }
+  if(object@typetest == 0 || object@typetest == 4){
+    print("This slot is not available for the required typetest")
+  }else{
+    print(object@mat.cova.u)
+  }
+  cat("\n")
+  cat("Slot 'mat.cova.cova':")
+  cat("\n")
+  print(object@mat.cova.cova)
+  cat("\n")
+  cat("Slot 'typetest':")
+  cat("\n")
+  print(object@typetest)
+}
+
+)

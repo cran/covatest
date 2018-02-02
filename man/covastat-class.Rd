@@ -4,15 +4,30 @@
 \name{covastat-class}
 \alias{covastat-class}
 \alias{covastat}
+\alias{show,covastat-method}
+\alias{covastat-class}
 \title{Class "covastat"}
 \usage{
-covastat(matdata, stpairs, typetest = 0)
+covastat(matdata, pardata1, pardata2, stpairs, typetest = 0,
+  beta.data = NULL)
+
+\S4method{show}{covastat}(object)
 }
 \arguments{
-\item{matdata}{STFDF/STSDF or \code{data frame}; which contains the
+\item{matdata}{STFDF/STSDF or \code{data.frame}; which contains the
 coordinates of the spatial points, the identification code of the spatial
 points, the indentification code of the temporal points and the values of
-the variable}
+the variable, typically output from \code{dataprep}}
+
+\item{pardata1}{integer, it represents the column in which the spatial ID is
+stored (if the spatio-temporal data set is given as data.frame) or the number of
+variables in the STFDF/STSDF (if the data are given as a STFDF/STSDF)}
+
+\item{pardata2}{integer, it represents the column in which the values of the
+variable are stored (if the spatio-temporal data set is given as data.frame) or
+the slot in which the values of the variable of interest are stored
+(if the data are given as a STFDF/STSDF). Note that for STFDF/STSDF the
+argument is set, by default, equal to 1 if the number of variables is equal to 1}
 
 \item{stpairs}{object of class \code{couples}, containing the spatial
 points and the corresponding temporal lags to be analyzed}
@@ -23,6 +38,12 @@ of non separability test, \code{typetest=3} for the test on the product-sum
 class of models, \code{typetest=4} for the test on the integrated product
 class of models, \code{typetest=5} for the test on the Gneiting class of
 models}
+
+\item{beta.data}{vector; this argument is required only for \code{typetest=5},
+otherwise it has to be set equal to NULL (default choice). It contains the
+different values of the parameter beta, which can assume values in the range 0-1}
+
+\item{object}{object of class \code{covastat} for method \code{show}}
 }
 \description{
 A class for the sample spatio-temporal covariances for the specified spatial
@@ -31,22 +52,9 @@ Depending on the type of test, the empirical variance, the sample spatial
 and temporal marginal covariances are also computed.
 }
 \details{
-The function requires the user to set some external arguments. In particular,
-if the spatio-temporal data are given as a \code{data} \code{frame} it is
-necessary to specify
-\itemize{
-\item the column in which the spatial ID is stored
-\item the column in which the values of the variable are stored.
-}
-On the other hand, if the data are given as a STFDF/STSDF it is necessary to
-specify
-\itemize{
-\item the number of variables in the STFDF/STSDF
-\item the slot in which the values of the variable of interest are stored
-(only if more than one variable is stored in the STFDF/STSDF).
-} Note that a message appears on the user's console if the \code{G} vector
+A message appears on the user's console if the \code{G} vector
 contains spatio-temporal negative covariances. The message returns the negative
-value/values and it will help to identify the spatial and and the temporal lags
+value/values and it will help to identify the spatial and the temporal lags
 involved.
 }
 \section{Slots}{
@@ -70,24 +78,48 @@ elements of \code{G}, see references}
 of \code{f.G} with respect to each element of \code{G}}
 
 \item{\code{A}}{contrast matrix}
+
+\item{\code{beta.data}}{vector; containing the different values of the parameter beta,
+available only for the test on the Gneiting class of model (\code{typetest=5})}
+
+\item{\code{typetest}}{numeric; contains the code of the test to be performed}
 }}
 
 \note{
+{
 A stop occurs if the number of spatial points fixed in \code{stpairs}
- (object of class \code{couples}) is less than 2
+(object of class \code{couples}) is less than 2.
+\itemize{
+\item If \code{typetest} is equal to 0 (symmetry test) \code{cova.h}, \code{cova.u},
+\code{f.G} and \code{B} are not available
+
+\item If \code{typetest} is equal to 4 (test on the integrated product class
+of models) \code{cova.h} and \code{cova.u} are not available
+
+\item If \code{typetest} is equal to 5 (test on the Gneiting class of models),
+\code{cova.h} is not available
+}
+}
 }
 \examples{
-## The function requires to set some external arguments. In this example, it
-# is only necessary to specify the number of variables in the STFDF (rr_13).
-#
-# To run the example, paste and copy the following lines
-# (without the symbol '#') in the console
-#
-# coupl_sim <- couples(typetest = 0, typecode = character())
-# blocks_sim <- blocks(lb = 40, ls = 10, matdata = rr_13, stpairs = coupl_sim)
-# covabl_sim <- covablocks(stblocks = blocks_sim, stpairs = coupl_sim, typetest = 0)
-# covast_sim <- covastat(matdata = rr_13, stpairs = coupl_sim, typetest = 0)
-# 1
+sel.staz.sym <- c("DERP016", "DENW065", "DEHE051", "DETH026", "DENW063", "DENI019",
+"DENW068", "DEHE046", "DEUB029", "DEBY047", "DETH061", "DESN049")
+
+sp.couples.in.sym <- matrix(data = c("DERP016", "DENW065", "DEHE051", "DETH026",
+"DENW063", "DENI019", "DENW068", "DEHE046", "DEUB029", "DEBY047", "DETH061", "DESN049"),
+ncol = 2, byrow = TRUE)
+
+t.couples.in.sym <- c(1, 2)
+
+couples.sym <- couples(sel.staz = sel.staz.sym, sp.couples.in = sp.couples.in.sym,
+t.couples.in = t.couples.in.sym, typetest = 0, typecode = character())
+
+covast.sym <- covastat(matdata = rr_13, pardata1 = 1, pardata2 = 1,
+stpairs = couples.sym, typetest = 0, beta.data = NULL)
+
+###method for covastat
+#1. show
+covast.sym
 
 }
 \references{
@@ -99,7 +131,7 @@ De Iaco, S., Palma, M., Posa, D., 2016. A general procedure for selecting a
 class of fully symmetric space-time covariance functions.
 Environmentrics, \bold{27(4)} 212--224.
 
-Cappello, C., De Iaco, S., Posa, D., 2016, Testing the type of
+Cappello, C., De Iaco, S., Posa, D., 2017, Testing the type of
 non-separability and some classes of covariance models for space-time data.
 Stochastic Environmental Research and Risk Assessment,
 doi 10.1007/s00477-017-1472-2

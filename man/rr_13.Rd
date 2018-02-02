@@ -43,7 +43,7 @@ rr_13 <- r5to10[c("DEHE046","DESN049","DETH026","DENW063","DETH061","DEBY047",
 \url{http://acm.eionet.europa.eu/databases/airbase}
 
 Graeler, B., Pebesma, E., Heuvelink, G., 2016. Spatio-Temporal Interpolation
-using gstat. The R Journal \1bold{8(1)} 204--218
+using gstat. The R Journal \bold{8(1)} 204--218
 }
 \seealso{
 \code{\link[spacetime]{air}}

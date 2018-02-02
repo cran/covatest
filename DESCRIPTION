@@ -1,7 +1,7 @@
 Package: covatest
 Type: Package
 Title: Tests on Properties of Space-Time Covariance Functions
-Version: 0.3.0
+Version: 1.0.0
 Authors@R: c(person("Sandra", "De Iaco", role = c("aut", "cre"), 
     email = "sandra.deiaco@unisalento.it"),
     person("Claudia", "Cappello", role = "aut", email = "claudia.cappello@unisalento.it"),
@@ -13,7 +13,7 @@ Description: Tests on properties of space-time covariance functions.
     some classes of covariance functions, such that the classes of 
     product-sum models, Gneiting models and integrated product models have 
     been provided.
-Depends: R(>= 3.3.2)
+Depends: R(>= 3.3.0)
 Imports: utils, stats, graphics, methods, matrixcalc, gstat, sp (>=
         0.9-72), spacetime (>= 1.0-0)
 Maintainer: Sandra De Iaco <sandra.deiaco@unisalento.it>
@@ -24,10 +24,10 @@ RoxygenNote: 6.0.1
 Collate: 'sepindex.R' 'couples.R' 'blocks.R' 'covablocks.R'
         'covastat.R' 'covaprop.R' 'dataprep.R' 'rr_13.R' 'vv_13.R'
 NeedsCompilation: no
-Packaged: 2017-11-17 10:56:02 UTC; sandra
+Packaged: 2018-02-02 15:15:48 UTC; claudiacappello
 Author: Sandra De Iaco [aut, cre],
   Claudia Cappello [aut],
   Donato Posa [aut],
   Sabrina Maggio [ctb]
 Repository: CRAN
-Date/Publication: 2017-11-17 12:17:13 UTC
+Date/Publication: 2018-02-02 15:26:02 UTC

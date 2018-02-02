@@ -24,7 +24,7 @@
 #' \url{http://acm.eionet.europa.eu/databases/airbase}
 #'
 #' Graeler, B., Pebesma, E., Heuvelink, G., 2016. Spatio-Temporal Interpolation
-#' using gstat. The R Journal \1bold{8(1)} 204--218
+#' using gstat. The R Journal \bold{8(1)} 204--218
 #'
 #' @examples
 #' ## Not run:

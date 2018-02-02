@@ -5,26 +5,47 @@
 \alias{sepindex-class}
 \alias{sepindex}
 \alias{boxplot,sepindex-method}
+\alias{sepindex-method}
+\alias{show,sepindex-method}
+\alias{sepindex-class}
+\alias{[,sepindex-method}
+\alias{sepindex-class}
+\alias{summary,sepindex-method}
 \alias{sepindex-class}
 \title{Class "sepindex"}
 \usage{
-sepindex(nt, ns, vario_st, globalSill)
+sepindex(vario_st, nt, ns, globalSill)
 
 \S4method{boxplot}{sepindex}(x, ...)
+
+\S4method{show}{sepindex}(object)
+
+\S4method{[}{sepindex}(x, i, j)
+
+\S4method{summary}{sepindex}(object)
 }
 \arguments{
+\item{vario_st}{spatio-temporal sample variogram, output from
+\code{\link[gstat]{variogramST}}}
+
 \item{nt}{integer, the number of temporal lags in \code{vario_st}}
 
 \item{ns}{integer, the number of spatial lags in \code{vario_st}}
 
-\item{vario_st}{spatio-temporal sample variogram, output from
-\code{\link[gstat]{variogramST}}}
-
 \item{globalSill}{numeric, the value of the sample variance}
 
-\item{x}{object of class \code{sepindex}}
+\item{x}{object of class \code{sepindex} for methods \code{boxplot} and \code{extract}}
 
 \item{...}{any arguments that will be passed to the panel plotting functions}
+
+\item{object}{object of class \code{sepindex} for methods \code{show} and \code{summary}}
+
+\item{i}{index specifing elements to extract. Each row includes data for specific
+spatio-temporal lags}
+
+\item{j}{index specifing elements to extract. Set \code{1} for spatial lags (hs),
+\code{2} for temporal lags (ht) and \code{3} for the non-separability index
+(SepIndex)}
 }
 \description{
 A class for the non-separability index (r) for different spatial
@@ -37,23 +58,44 @@ function can be analyzed.
 \section{Slots}{
 
 \describe{
-\item{\code{sep.index.ratio}}{the empirical non-separability index ratio}
+\item{\code{sep.index.ratio}}{the empirical non-separability index ratio and the
+corresponding spatio-temporal lags}
 
-\item{\code{cov.tm}}{the purely temporal sample covariance function}
+\item{\code{cov.st}}{the spatio-temporal sample covariance function and the
+corresponding spatio-temporal lags}
 
-\item{\code{cov.sp}}{the purely spatial sample covariance function}
+\item{\code{cov.tm}}{the purely temporal sample covariance function and the
+corresponding temporal lags}
 
-\item{\code{cov.st}}{the spatio-temporal sample covariance function}
+\item{\code{cov.sp}}{the purely spatial sample covariance function and the
+corresponding spatial lags}
 }}
 
 \examples{
 library(covatest)
-data(rr_13)
-data(vv_13)
-#compute the globalSill
-C00_13 <- var(rr_13[, ,"PM10"]@data[[1]], na.rm = TRUE)
-nonsepind <- sepindex(nt = 16, ns = 4, vario_st = vv_13, globalSill = C00_13)
+library(gstat)
 
+#compute the Global Sill
+C00_13<-var(rr_13[,,"PM10"]@data[[1]], na.rm = TRUE)
+
+#estimate the spatio-temporal variogram
+data(vv_13)
+nonsep.index<-sepindex(vario_st=vv_13, nt=16, ns=4, globalSill=C00_13)
+
+##methods for sepindex
+
+#1. show
+nonsep.index
+
+#2. summary
+summary(nonsep.index)
+
+#3. boxplot
+boxplot(nonsep.index, ylab="Non-separability ratio")
+
+#4. [ extract
+nonsep.index[1:8, ] #selection of the first 8 rows
+nonsep.index[1:8, 1:2] #selection of the first 2 columns
 }
 \references{
 De Iaco, S., Posa, D., 2013, Positive and negative non-separability
