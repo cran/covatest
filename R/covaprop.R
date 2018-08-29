@@ -5,20 +5,20 @@
 #' of space-time covariance models
 #'
 #' @slot test.statistics numeric; the value of the test statistic
-#' @slot p.value numeric; the lower tail p-value of the test statistic
+#' @slot p.value numeric; the lower tail p value of the test statistic
 #' @slot df numeric; the degrees of freedom, if available
-#' @slot typetest numeric; contains the code of the test to be performed
+#' @slot typetest character; contains the code of the test to be performed
 #'
 #' @rdname covaprop-class
 #' @exportClass covaprop
 setClass("covaprop", slots = c(test.statistics = "matrix",
                                p.value = "matrix",
                                df = "ANY",
-                               typetest = "numeric"))
+                               typetest = "character"))
 
 #' @param cblock object of class \code{covablocks}
-#' @param cstat object of class \code{covastat}
-#' @param nonseptype integer; this argumet is required only for \code{typetest=2},
+#' @param cstat object of class \code{covastat} or \code{covastatM}
+#' @param nonseptype integer; this argumet is required only for \code{typetest = "tnSep"},
 #' otherwise it has to be set equal to \code{NULL} (default choice).
 #' Set \code{nonseptype=0} for testing the null hypothesis that the non
 #' separability is non positive; set \code{nonseptype=1} for testing the null
@@ -29,17 +29,20 @@ setClass("covaprop", slots = c(test.statistics = "matrix",
 #' A message helps to decide for either reject the null hypothesis in favor of
 #' the alternative or not reject it, at a specific level of significance
 #' \itemize{
-#' \item The test on full symmetry (\code{typetest=0}) represents the first step
+#' \item The test on full symmetry (the argument of the slot \code{@typetest} is
+#' equal to \code{"sym"}) represents the first step
 #' for the selection of a suitable class of spatio-temporal covariance functions.
 #' According to the definition of full symmetry, the null hypothesis to be
 #' tested is \eqn{H_0: C(h,u) - C(h,-u)=0}
 #'
-#' \item The test of separability (\code{typetest=1}) represents the second
+#' \item The test of separability (the argument of the slot \code{@typetest} is
+#' equal to \code{"sep"}) represents the second
 #' step of the testing procedure. According to the definition of separability,
 #' the null hypothesis to be tested is
 #' \eqn{H_0: C(h, u)/C(h, 0) - C(0, u)/C(0,0)=0}
 #'
-#' \item The test on the type of non separability (\code{typetest=2})
+#' \item The test on the type of non separability (the argument of the slot
+#' \code{@typetest} is equal to \code{"tnSep"})
 #' represents the third step for the selection of a suitable class of space-time
 #' covariance functions.
 #' According to the definition of type of non separability, the null hypothesis
@@ -49,8 +52,9 @@ setClass("covaprop", slots = c(test.statistics = "matrix",
 #' \eqn{H_0: C(h,u)/C(h,0) - C(0,u)/C(0,0) < 0}
 #' if the null hypothesis to test is that the non separability is non positive
 #'
-#' \item \code{typetest} from 3 to 5 are useful to test the goodness of a
-#' specific class of space-time covariance function. For this testing procedure
+#' \item If the argument of the slot \code{@typetest} is equal to \code{"productSum"}
+#' \code{"intProduct"} or \code{"gneiting"}, the goodness of a specific class of
+#' space-time covariance function will be tested. For this testing procedure
 #' the generic null hypothesis is: \eqn{H_0: Af(G)=0}
 #' }
 #' For the analytic expression of each test statistic and its probability
@@ -70,10 +74,10 @@ setClass("covaprop", slots = c(test.statistics = "matrix",
 #' class of fully symmetric space-time covariance functions.
 #' Environmentrics, \bold{27(4)} 212--224.
 #'
-#' Cappello, C., De Iaco, S., Posa, D., 2017, Testing the type of
+#' Cappello, C., De Iaco, S., Posa, D., 2018, Testing the type of
 #' non-separability and some classes of covariance models for space-time data.
 #' Stochastic Environmental Research and Risk Assessment,
-#' doi 10.1007/s00477-017-1472-2
+#' \bold{32} 17--35
 #'
 #' @seealso \linkS4class{couples}
 #' @seealso \linkS4class{blocks}
@@ -81,6 +85,22 @@ setClass("covaprop", slots = c(test.statistics = "matrix",
 #' @seealso \linkS4class{covastat}
 #'
 #' @examples
+#' # --start define the STFDF rr_13-- #
+#' library(sp)
+#' library(spacetime)
+#' library(gstat)
+#' data(air)
+#' ls()
+#' if (!exists("rural")) rural = STFDF(stations, dates, data.frame(PM10 =
+#' as.vector(air)))
+#' rr = rural[,"2005::2010"]
+#' unsel = which(apply(as(rr, "xts"), 2, function(x) all(is.na(x))))
+#' r5to10 = rr[-unsel,]
+#' rr_13 <- r5to10[c("DEHE046","DESN049","DETH026","DENW063","DETH061","DEBY047",
+#' "DENW065","DEUB029","DENW068","DENI019","DEHE051","DERP016","DENI051"),
+#' "2005::2006"]
+#' # --end define the STFDF rr_13-- #
+#'
 #' sel.staz.sym <- c("DERP016", "DENW065", "DEHE051", "DETH026", "DENW063", "DENI019",
 #' "DENW068", "DEHE046", "DEUB029", "DEBY047", "DETH061", "DESN049")
 #'
@@ -91,15 +111,15 @@ setClass("covaprop", slots = c(test.statistics = "matrix",
 #' t.couples.in.sym <- c(1, 2)
 #'
 #' couples.sym <- couples(sel.staz = sel.staz.sym, sp.couples.in = sp.couples.in.sym,
-#' t.couples.in = t.couples.in.sym, typetest = 0, typecode = character())
+#' t.couples.in = t.couples.in.sym, typetest = "sym", typecode = character())
 #'
-#' block.sym <- blocks(lb=40, ls=10, matdata = rr_13, pardata1 = 1, pardata2 = 1,
+#' block.sym <- blocks(lb = 40, ls = 10, matdata = rr_13, pardata1 = 1, pardata2 = 1,
 #' stpairs = couples.sym)
 #'
-#' covabl.sym <- covablocks(stblocks = block.sym, stpairs = couples.sym, typetest = 0)
+#' covabl.sym <- covablocks(stblocks = block.sym, stpairs = couples.sym, typetest = "sym")
 #'
 #' covast.sym <- covastat(matdata = rr_13, pardata1 = 1, pardata2 = 1,
-#' stpairs = couples.sym, typetest = 0, beta.data = NULL)
+#' stpairs = couples.sym, typetest = "sym")
 #'
 #' test.sym <- covaprop(cblock = covabl.sym, cstat = covast.sym, nonseptype = NULL,
 #' sign.level = 0.05)
@@ -121,24 +141,39 @@ covaprop <- function(cblock, cstat, nonseptype = NULL, sign.level = 0.05) {
 
 
   if (!inherits(cblock, "covablocks")){
-    stop("cblock argument has to be of class covablocks")
+    stop("cblock argument has to be of class covablocks.")
   }
 
-  if (!inherits(cstat, "covastat")){
-    stop("cstat argument has to be of class covastat")
+  if (!inherits(cstat, "covastat") && !inherits(cstat, "covastatM")){
+    stop("cstat argument has to be of class covastat.")
   }
 
  if(cblock@typetest != cstat@typetest){
-    stop("The arguments cblocks and cstat are referred to different typetest. Please verify the consistency of the arguments")
+    stop("The arguments cblocks and cstat are referred to different typetest. Please verify the consistency of the arguments.")
   }
 
   typetest <- cblock@typetest
-
-  if (is.null(nonseptype) == FALSE && typetest != 2) {
-    message("The nonseptype will be ignored since it is not required for the
-            selected type of test.")
+  if (typetest == "sym") {
+    type.test <- 0
+  }else{if (typetest == "sep"){
+    type.test <- 1
+  }else{if (typetest == "tnSep"){
+    type.test <- 2
+  }else{if (typetest == "productSum"){
+    type.test <- 4
+  }else{if (typetest == "intProduct"){
+    type.test <- 5
+  }else{type.test <- 6 #Gneiting
   }
-  if (typetest == 2) {
+  }
+  }
+  }
+  }
+
+  if (is.null(nonseptype) == FALSE && type.test != 2) {
+    message("The nonseptype will be ignored since it is not required for the selected type of test.")
+  }
+  if (type.test == 2) {
   if (is.scalar(nonseptype) == FALSE || nonseptype < 0 || nonseptype >
       1) {stop("The argument for nonseptype is not admissible.")}
   }
@@ -148,17 +183,14 @@ covaprop <- function(cblock, cstat, nonseptype = NULL, sign.level = 0.05) {
     }
 
   if (sign.level <= 0 || sign.level >= 1) {
-    message("The specified level of significance is not admissible.
-            It must be between 0 and 1")
-    stop("Stop running")
+    message("The specified level of significance is not admissible. It must be between 0 and 1.")
+    stop("Stop running.")
   }
 
 
-  if (typetest >= 3) {
-    typetest <- typetest + 1
-  }
 
-  if (typetest == 0) {
+
+  if (type.test == 0) {
     matrix_cova_cova <- cblock@mat.cova.cova
     G_vect <- cstat@G
     matrixA1 <- cstat@A
@@ -175,7 +207,7 @@ covaprop <- function(cblock, cstat, nonseptype = NULL, sign.level = 0.05) {
     critical.value <- pchisq(test.statistics, df = nrow(matrixA1),
                              lower.tail = FALSE)
 
-    message("The p-value is equal to")
+    message("The p value is equal to")
     print(critical.value)
 
     if (critical.value >= sign.level) {
@@ -187,7 +219,7 @@ covaprop <- function(cblock, cstat, nonseptype = NULL, sign.level = 0.05) {
     }
   }
 
-  if (typetest == 1) {
+  if (type.test == 1) {
     matrix_cova_cova <- cblock@mat.cova.cova
     f_G <- cstat@f.G
     matrixA1 <- cstat@A
@@ -205,7 +237,7 @@ covaprop <- function(cblock, cstat, nonseptype = NULL, sign.level = 0.05) {
     message("The test statistic is equal to")
     print(test.statistics)
 
-    message("The p-value is equal to")
+    message("The p value is equal to")
     print(critical.value)
 
     if (critical.value >= sign.level) {
@@ -217,10 +249,10 @@ covaprop <- function(cblock, cstat, nonseptype = NULL, sign.level = 0.05) {
     }
   }
 
-  if (typetest == 2) {
+  if (type.test == 2) {
     if (is.null(nonseptype) == TRUE) {
-      message("The argument nonseptype must to be set")
-      stop("Stop running")
+      message("The argument nonseptype must to be set.")
+      stop("Stop running.")
 
     }
 
@@ -251,7 +283,7 @@ covaprop <- function(cblock, cstat, nonseptype = NULL, sign.level = 0.05) {
                               lower.tail = FALSE)
       critical.value2 <- pnorm(test.statistics, mean = 0.5, sd = 1,
                                lower.tail = TRUE)
-      message("The p-value is equal to")
+      message("The p value is equal to")
       print(critical.value)
       if (critical.value >= sign.level) {
         message("Don't reject the null hypothesis of non positive non separability at
@@ -269,7 +301,7 @@ covaprop <- function(cblock, cstat, nonseptype = NULL, sign.level = 0.05) {
       critical.value2 <- pnorm(test.statistics, mean = -0.5, sd = 1,
                                lower.tail = FALSE)
 
-      message("The p-value is equal to")
+      message("The p value is equal to")
       print(critical.value)
 
       if (critical.value >= sign.level) {
@@ -284,7 +316,7 @@ covaprop <- function(cblock, cstat, nonseptype = NULL, sign.level = 0.05) {
     df <- NA
   }
 
-  if (typetest >= 4) {
+  if (type.test >= 4) {
     matrix_cova_cova <- cblock@mat.cova.cova
     f_G <- cstat@f.G
     matrixA.m <- cstat@A
@@ -293,7 +325,7 @@ covaprop <- function(cblock, cstat, nonseptype = NULL, sign.level = 0.05) {
 
 
     # the test statistic is equal to the one used for the separability test
-    if (typetest == 4 || typetest == 5 || typetest == 7) {
+    if (type.test == 4 || type.test == 5 || type.test == 7) {
 
       y <- crossprod(matrix_cova_cova, mat_B)
       x <- crossprod(mat_B, y)
@@ -306,7 +338,7 @@ covaprop <- function(cblock, cstat, nonseptype = NULL, sign.level = 0.05) {
       message("The test statistic is equal to")
       print(test.statistics)
 
-      message("The p-value is equal to")
+      message("The p value is equal to")
       print(critical.value)
 
 
@@ -320,14 +352,14 @@ covaprop <- function(cblock, cstat, nonseptype = NULL, sign.level = 0.05) {
     }
 
 
-    if (typetest == 6) {
+    if (type.test == 6) {
 
       nbeta <- dim(f_G)[3]
       test.statistics <- matrix(0, nrow = nbeta, ncol = 2)
       critical.value <- matrix(0, nrow = nbeta, ncol = 2)
 
       colnames(test.statistics) <- c("Test Statistics", "Beta")
-      colnames(critical.value) <- c("p-value", "Beta")
+      colnames(critical.value) <- c("p value", "Beta")
 
       for (i in 1:nbeta) {
         y <- crossprod(matrix_cova_cova, mat_B[, , i])
@@ -347,7 +379,7 @@ covaprop <- function(cblock, cstat, nonseptype = NULL, sign.level = 0.05) {
         message("The test statistic is equal to")
         print(test.statistics)
 
-        message("The p-value is equal to")
+        message("The p value is equal to")
         print(critical.value)
 
         if (critical.value[i, 1] >= sign.level) {
@@ -362,9 +394,7 @@ covaprop <- function(cblock, cstat, nonseptype = NULL, sign.level = 0.05) {
     }
   }
 
-  if (typetest >= 4) {
-    typetest <- typetest -1
-  }
+
 
   new("covaprop", test.statistics = test.statistics, p.value = critical.value,
       df = df, typetest = typetest)
@@ -380,48 +410,49 @@ NULL
 #' @aliases show
 #' @export
 setMethod(f="show", signature="covaprop", definition=function(object) {
-  if(object@typetest == 0){
+  if(object@typetest == "sym"){
     test <- "symmetry test"
   }
 
-  if(object@typetest == 1){
+  if(object@typetest == "sep"){
     test <- "separability test"
   }
 
-  if(object@typetest == 2){
+  if(object@typetest == "tnSep"){
     test <- "type of non-separability test"
   }
 
-  if(object@typetest == 3){
+  if(object@typetest == "productSum"){
     test <- "test on the product-sum class of models"
   }
 
-  if(object@typetest == 4){
+  if(object@typetest == "intProduct"){
     test <- "test on the integrated class of models"
   }
 
-  if(object@typetest == 5){
+  if(object@typetest == "gneiting"){
     test <- "test on the Gneiting class of models"
   }
 
   cat("Results of the ",test, "\n")
 
-  if(object@typetest == 0 || object@typetest == 1 || object@typetest == 3 || object@typetest == 4){
+  if(object@typetest == "sym" || object@typetest == "sep" || object@typetest == "productSum" ||
+     object@typetest == "intProduct"){
     cat("X-squared=", object@test.statistics, "\n")
     cat("df=", object@df, "\n")
-    cat("p-value=", object@p.value, "\n")
+    cat("p value=", object@p.value, "\n")
   }
 
-  if(object@typetest == 2){
+  if(object@typetest == "tnSep"){
     cat("Z=", object@test.statistics, "\n")
-    cat("p-value=", object@p.value, "\n")
+    cat("p value=", object@p.value, "\n")
   }
 
-  if(object@typetest == 5){
+  if(object@typetest == "gneiting"){
     cat("X-squared=", object@test.statistics[,1], "\n")
     cat("Beta=", object@test.statistics[,2], "\n")
     cat("df=", object@df, "\n")
-    cat("p-value=", object@p.value, "\n")
+    cat("p value=", object@p.value, "\n")
   }
 
 

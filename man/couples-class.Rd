@@ -5,14 +5,11 @@
 \alias{couples-class}
 \alias{couples}
 \alias{show,couples-method}
-\alias{couples-class}
 \alias{[,couples-method}
-\alias{couples-class}
 \alias{summary,couples-method}
-\alias{couples-class}
 \title{Class "couples"}
 \usage{
-couples(sel.staz, sp.couples.in, t.couples.in, typetest = 0,
+couples(sel.staz, sp.couples.in, t.couples.in, typetest = "sym",
   typecode = numeric())
 
 \S4method{show}{couples}(object)
@@ -31,16 +28,17 @@ argument, to be compared}
 
 \item{t.couples.in}{vector of only positive (negative) temporal lags to be
 analyzed. The corresponding negative (positive) temporal lags are included
-authomatically for \code{typetest=0,1,2}. If some temporal lags, corresponding
-to some couples of spatial points, are not required for the specific test,
-they can be set equal to zero, through the specific \code{\link{setzero}} method}
+authomatically for \code{typetest = "sym","sep","tnSep"}. If some temporal lags,
+corresponding to some couples of spatial points, are not required for the specific
+test, they can be set equal to zero, through the specific \code{\link{setzero}}
+method}
 
-\item{typetest}{integer; set typetest=0 for symmetry test (default choice),
-\code{typetest=1} for separability test, \code{typetest=2} for type of non
-separability test,
-\code{typetest=3} for the test on the product-sum class of models,
-\code{typetest=4} for the test on the integrated product class of models,
-\code{typetest=5} for the test on the Gneiting class of models}
+\item{typetest}{character; set \code{typetest = "sym"} for symmetry test
+(default choice), \code{typetest = "sep"} for separability test, \code{typetest = "tnSep"}
+for type of non separability test,\code{typetest = "productSum"} for the test
+on the product-sum class of models, \code{typetest = "intProduct"} for the test
+on the integrated product class of models, \code{typetest = "gneiting"} for the
+test on the Gneiting class of models}
 
 \item{typecode}{numeric or character; specifies the codification of the
 spatial points in the \code{data frame} or in the STFDF/STSDF}
@@ -80,34 +78,36 @@ ID codes}
 \item{\code{tl.couples}}{numeric; contains the temporal lags associated to the
 couples of the selected spatial points}
 
-\item{\code{typetest}}{numeric; contains the code of the test to be performed}
+\item{\code{typetest}}{character; contains the code of the test to be performed}
 }}
 
 \note{
 It is important to point out that:
 \itemize{
 \item both positive and negative temporal lags are automatically considered in
-the slot \code{@couples.st} and \code{@tl.couples} for symmetry test (\code{typetest=0}),
-separability test (\code{typetest=1}) and type of non separability tests
-(\code{typetest=2}). If the symmetry hyphotesis has not been rejected, only
+the slot \code{@couples.st} and \code{@tl.couples} for symmetry test (\code{typetest = "sym"}),
+separability test (\code{typetest = "sep"}) and type of non separability tests
+(\code{typetest = "tnSep"}). If the symmetry hyphotesis has not been rejected, only
 positive temporal lags might be considered for the test on separability and type
-of non separability (\code{typetest=1} and \code{typetest=2}), hence the
+of non separability (\code{typetest = "sep"} and \code{typetest = "tnSep"}), hence the
 specific \code{\link{setzero}} method must be used to set the negative temporal
-lags equal to zero.
+lags equal to zero
 
-\item For \code{typetest=2} the temporal lags should be chosen according to
+\item For \code{typetest = "tnSep"} the temporal lags should be chosen according to
 the results of the sample non separability ratios, plotted through a boxplot
-classified for temporal lags (see \linkS4class{sepindex} for more details).
+classified for temporal lags (see \linkS4class{sepindex} for more details)
 
-\item For model tests (\code{typetest} from 3 to 5), the number of analyzed spatial
-points must be used to create at least 3 spatial couples or multiple of 3,
-such that each triplet satisfies the condition h1-h2=h2-h3 (only for \code{typetest}
-=4 and 5). The number of positive temporal lags must be at least 3, or multiple
-of 3, too. The condition u1-u2=u2-u3 (only for \code{typetest}=4 and 5) must
-be satisfied for each triplet. Note that for each spatial triplet and each
-temporal triplet, 6 contrasts can be defined. However, for \code{typetest}=4
-(test on the integrated model) the user has to set arbitrarily one temporal
-lag equal to zero in order to delete redundant contrasts, through the specific
+\item For model tests (\code{typetest} equal to "productSum", "intProduct"
+and "gneiting"), the number of analyzed spatial points must be used to create
+at least 3 spatial couples or multiple of 3, such that each triplet satisfies
+the condition h1-h2=h2-h3 (only for \code{typetest = "intProduct"} and \code{"gneiting"}).
+The number of positive temporal lags must be at least 3, or multiple
+of 3, too. The condition u1-u2=u2-u3 (only for \code{typetest = "intProduct"} and
+\code{"gneiting"}) must be satisfied for each triplet.
+Note that for each spatial triplet and each temporal triplet, 6 contrasts can
+be defined. However, for \code{typetest = "intProduct"} (test on the integrated
+model) the user has to set arbitrarily one temporal lag equal to zero in
+order to delete redundant contrasts, through the specific
 \code{\link{setzero}} method
 }
 
@@ -136,7 +136,8 @@ ncol = 2, byrow = TRUE)
 t.couples.in.sym <- c(1, 2)
 
 couples.sym <- couples(sel.staz = sel.staz.sym, sp.couples.in = sp.couples.in.sym,
-t.couples.in = t.couples.in.sym, typetest = 0, typecode = character())
+t.couples.in = t.couples.in.sym, typetest = "sym", typecode = character())
+
 ###methods for couples
 #1. show
 couples.sym

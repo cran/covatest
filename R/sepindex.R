@@ -47,15 +47,28 @@ setClass("sepindex", slots = c(sep.index.ratio = "matrix",
 #' @importFrom graphics boxplot
 #'
 #' @examples
-#' library(covatest)
+#' # --start define the STFDF rr_13-- #
+#' library(sp)
+#' library(spacetime)
 #' library(gstat)
+#' data(air)
+#' ls()
+#' if (!exists("rural")) rural = STFDF(stations, dates, data.frame(PM10 =
+#' as.vector(air)))
+#' rr = rural[,"2005::2010"]
+#' unsel = which(apply(as(rr, "xts"), 2, function(x) all(is.na(x))))
+#' r5to10 = rr[-unsel,]
+#' rr_13 <- r5to10[c("DEHE046","DESN049","DETH026","DENW063","DETH061","DEBY047",
+#' "DENW065","DEUB029","DENW068","DENI019","DEHE051","DERP016","DENI051"),
+#' "2005::2006"]
+#' # --end define the STFDF rr_13-- #
 #'
 #' #compute the Global Sill
 #' C00_13<-var(rr_13[,,"PM10"]@data[[1]], na.rm = TRUE)
 #'
 #' #estimate the spatio-temporal variogram
 #' data(vv_13)
-#' nonsep.index<-sepindex(vario_st=vv_13, nt=16, ns=4, globalSill=C00_13)
+#' nonsep.index<-sepindex(vario_st = vv_13, nt = 16, ns = 4, globalSill = C00_13)
 #'
 #' ##methods for sepindex
 #'
@@ -80,12 +93,12 @@ sepindex <- function(vario_st, nt, ns, globalSill) {
   ### SOME CHECKS ON THE ARGUMENTS ###
 
   if (is.scalar(nt) == FALSE || is.scalar(ns) == FALSE  || is.scalar(globalSill) == FALSE) {
-    stop("Some of the arguments are not numeric. Stop running")
+    stop("Some of the arguments are not numeric. Stop running.")
   }
 
 
   if (!inherits(vario_st, "StVariogram") && !inherits(vario_st, "data.frame")){
-    stop("vario_st argument has to be of class StVariogram or data.frame")
+    stop("vario_st argument has to be of class StVariogram or data.frame.")
   }
 
   if(nt != as.integer(nt) || ns != as.integer(ns)){

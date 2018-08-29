@@ -15,9 +15,9 @@ setzero(x, zero = TRUE, index = NULL, value)
 \item{x}{object of class \code{couples}}
 
 \item{zero}{logical. If \code{TRUE} (the default) all negative temporal
-lags are replaced with zero. If \code{typetest=0} (symmetry test) the argument
-\code{setzero} is ignored because both positive and negative temporal lags
-are required for computing the test}
+lags are replaced with zero. If \code{x@typetest} is equal to
+\code{"sym"} (symmetry test) the argument \code{setzero} is ignored because
+both positive and negative temporal lags are required for computing the test}
 
 \item{index}{two column matrix. Each row of the matrix \code{index} contains
 the specific row and column, of the slot \code{@couples.st}, for which the
@@ -44,7 +44,7 @@ ncol = 2, byrow = TRUE)
 t.couples.in.sym <- c(1, 2)
 
 couples.sym <- couples(sel.staz = sel.staz.sym, sp.couples.in = sp.couples.in.sym,
-t.couples.in = t.couples.in.sym, typetest = 0, typecode = character())
+t.couples.in = t.couples.in.sym, typetest = "sym", typecode = character())
 
 zero.index <- matrix(data=c(1,3,1,4,2,5,2,6), ncol=2, byrow = TRUE)
 

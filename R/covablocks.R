@@ -18,7 +18,7 @@
 #' @slot mat.cova.cova matrix of sample covariances between space-time
 #' covariances for each block, computed for the spatial and temporal lags given
 #' in \code{stpairs} (object of class \code{couples})
-#' @slot typetest numeric; contains the code of the test to be performed
+#' @slot typetest character; contains the code of the test to be performed
 #'
 #' @rdname covablocks-class
 #' @exportClass covablocks
@@ -26,31 +26,31 @@ setClass("covablocks", slots = c(mat.cova = "matrix",
                                  mat.cova.h = "matrix",
                                  mat.cova.u = "matrix",
                                  mat.cova.cova = "matrix",
-                                 typetest = "numeric"))
+                                 typetest = "character"))
 
 #' @param stblocks object of class \code{blocks}
 #'
 #' @param stpairs object of class \code{couples}, containing the spatial
 #' points and the corresponding temporal lags to be analyzed
 #'
-#' @param typetest integer; set \code{typetest=0} for symmetry test (default
-#' choice), \code{typetest=1} for separability test, \code{typetest=2} for type
-#' of non separability test, \code{typetest=3} for the test on the product-sum
-#' class of models, \code{typetest=4} for the test on the integrated product
-#' class of models, \code{typetest=5} for the test on the Gneiting class of
-#' models
+#' @param typetest character; set \code{typetest ="sym"} for symmetry test
+#' (default choice), \code{typetest ="sep"} for separability test, \code{typetest ="tnSep"}
+#' for type of non separability test,\code{typetest ="productSum"} for the test
+#' on the product-sum class of models, \code{typetest ="intProduct"} for the test
+#' on the integrated product class of models, \code{typetest ="gneiting"} for the
+#' test on the Gneiting class of models
 #'
 #' @note {
 #' \itemize{
-#' \item If \code{typetest} is equal to 0 (symmetry test) or 4 (test on the
-#' integrated product class of models) \code{mat.cova.h} and \code{mat.cova.u}
+#' \item If \code{typetest} is equal to \code{"sym"} (symmetry test) or \code{"intProduct"}
+#' (test on the integrated product class of models) \code{mat.cova.h} and \code{mat.cova.u}
 #' are not available
 #'
-#' \item If \code{typetest} is equal to 5 (test on the Gneiting class of models),
-#' \code{mat.cova.h} is not available
+#' \item If \code{typetest} is equal to \code{"gneiting"} (test on the Gneiting
+#' class of models) \code{mat.cova.h} is not available
 #'
 #' \item If temporal lags in \code{stpairs} are not consistent with block length
-#' (\code{lb}) in \code{stblocks}, an error message will be returned
+#' (\code{lb}) in \code{stblocks} an error message will be returned
 #'
 #' \item If the proportion between the maximum temporal lag in \code{stpairs} and
 #' the block length (\code{lb}) in \code{stblocks} is greater than 0.25 a warning
@@ -59,6 +59,22 @@ setClass("covablocks", slots = c(mat.cova = "matrix",
 #' }
 #'
 #' @examples
+#' # --start define the STFDF rr_13-- #
+#' library(sp)
+#' library(spacetime)
+#' library(gstat)
+#' data(air)
+#' ls()
+#' if (!exists("rural")) rural = STFDF(stations, dates, data.frame(PM10 =
+#' as.vector(air)))
+#' rr = rural[,"2005::2010"]
+#' unsel = which(apply(as(rr, "xts"), 2, function(x) all(is.na(x))))
+#' r5to10 = rr[-unsel,]
+#' rr_13 <- r5to10[c("DEHE046","DESN049","DETH026","DENW063","DETH061","DEBY047",
+#' "DENW065","DEUB029","DENW068","DENI019","DEHE051","DERP016","DENI051"),
+#' "2005::2006"]
+#' # --end define the STFDF rr_13-- #
+#'
 #' sel.staz.sym <- c("DERP016", "DENW065", "DEHE051", "DETH026", "DENW063", "DENI019",
 #' "DENW068", "DEHE046", "DEUB029", "DEBY047", "DETH061", "DESN049")
 #'
@@ -69,12 +85,12 @@ setClass("covablocks", slots = c(mat.cova = "matrix",
 #' t.couples.in.sym <- c(1, 2)
 #'
 #' couples.sym <- couples(sel.staz = sel.staz.sym, sp.couples.in = sp.couples.in.sym,
-#' t.couples.in = t.couples.in.sym, typetest = 0, typecode = character())
+#' t.couples.in = t.couples.in.sym, typetest = "sym", typecode = character())
 #'
-#' block.sym <- blocks(lb=40, ls=10, matdata = rr_13, pardata1 = 1, pardata2 = 1,
+#' block.sym <- blocks(lb = 40, ls = 10, matdata = rr_13, pardata1 = 1, pardata2 = 1,
 #' stpairs = couples.sym)
 #'
-#' covabl.sym <- covablocks(stblocks = block.sym, stpairs = couples.sym, typetest = 0)
+#' covabl.sym <- covablocks(stblocks = block.sym, stpairs = couples.sym, typetest = "sym")
 #'
 #' ###method for covablock
 #' #1. show
@@ -92,14 +108,14 @@ setClass("covablocks", slots = c(mat.cova = "matrix",
 #' class of fully symmetric space-time covariance functions.
 #' Environmentrics, \bold{27(4)} 212--224.
 #'
-#' Cappello, C., De Iaco, S., Posa, D., 2017, Testing the type of
+#' Cappello, C., De Iaco, S., Posa, D., 2018, Testing the type of
 #' non-separability and some classes of covariance models for space-time data.
 #' Stochastic Environmental Research and Risk Assessment,
-#' doi 10.1007/s00477-017-1472-2
+#' \bold{32} 17--35
 #'
 #' @rdname covablocks-class
 #' @export
-covablocks <- function(stblocks, stpairs, typetest = 0) {
+covablocks <- function(stblocks, stpairs, typetest = "sym") {
 
   is.wholenumber <- function(x, tol = .Machine$double.eps^0.5) abs(x - round(x)) <
     tol
@@ -109,28 +125,22 @@ covablocks <- function(stblocks, stpairs, typetest = 0) {
   ### SOME CHECKS ON THE ARGUMENTS ###
 
   if (!inherits(stpairs, "couples")){
-    stop("stpairs argument has to be of class couples")
+    stop("stpairs argument has to be of class couples.")
   }
 
   if (!inherits(stblocks, "blocks")){
-    stop("stblocks argument has to be of class blocks")
+    stop("stblocks argument has to be of class blocks.")
   }
 
   if(identical(stpairs@sel.staz,stblocks@sel.staz) == FALSE){
-    stop("The objects stpairs and stblocks have not been defined for the same set of spatial points")
+    stop("The objects stpairs and stblocks have not been defined for the same set of spatial points.")
   }
 
   if(stpairs@typetest != typetest){
     warning("Reminder: the argument typetest is different from the one defined in stpairs")
   }
 
-  if(stpairs@typetest == 0 && typetest>=3){
-    stop("The argument typetest is not consistent with respect to the one defined in stpairs. Please change typetest or define a new stpairs")
-  }
 
-  if(any(stpairs@tl.couples < 0) && typetest>=3){
-    stop("The argument typetest is not consistent with respect to the one defined in stpairs. Please change typetest or define a new stpairs")
-  }
 
   matblock <- stblocks@mat.block
   selstaz <- stpairs@sel.staz
@@ -146,10 +156,40 @@ covablocks <- function(stblocks, stpairs, typetest = 0) {
   #= 4 up to 7 = type of model                                     =#
   #=================================================================#
 
-  if (is.scalar(typetest) == FALSE || typetest < 0 || typetest > 5) {
+  if (is.character(typetest) == FALSE) {
     stop("The argument for typetest is not admissible.")
   }
 
+  if (typetest != "sym" && typetest != "sep"  && typetest != "tnSep" && typetest != "productSum"
+      && typetest != "intProduct" && typetest != "gneiting") {
+    stop("The argument for typetest is not admissible.")
+  }
+
+  if (typetest == "sym") {
+    type.test <- 0
+  }else{if (typetest == "sep"){
+    type.test <- 1
+  }else{if (typetest == "tnSep"){
+    type.test <- 2
+  }else{if (typetest == "productSum"){
+    type.test <- 4
+  }else{if (typetest == "intProduct"){
+    type.test <- 5
+  }else{type.test <- 6 #Gneiting
+  }
+  }
+  }
+  }
+  }
+
+
+  if(stpairs@typetest == "sym" && type.test >= 4){
+    stop("The argument typetest is not consistent with respect to the one defined in stpairs. Please change typetest or define a new stpairs.")
+  }
+
+  if(any(stpairs@tl.couples < 0) && type.test>=4){
+    stop("The argument typetest is not consistent with respect to the one defined in stpairs. Please change typetest or define a new stpairs.")
+  }
 
   maxt <- max(abs(max(couples[, -c(1:2)])), abs(min(couples[, -c(1:2)])))
   if (maxt > nrow(matblock)) {
@@ -163,12 +203,9 @@ covablocks <- function(stblocks, stpairs, typetest = 0) {
             than 0.25. The covariance estimation might not be reliable.")
   }
 
-  if (typetest >= 3) {
-    typetest <- typetest + 1
-  }
 
   #=================================================================#
-  #= start test on typetest=0, 1, 2, 3 and 4 up to 7               =#
+  #= start test on type.test=0, 1, 2, 3 and 4 up to 7               =#
   #=================================================================#
 
   #= Compute spatio-temporal covariance (with hs and ht different from zero)  =#
@@ -241,7 +278,7 @@ covablocks <- function(stblocks, stpairs, typetest = 0) {
 
     #= Check on columns and rows with non-zero values =#
 
-    if (typetest >= 4) {
+    if (type.test >= 4) {
       ii <- -2
       jj <- 0
       count_nozero_col <- matrix(0, nrow = (nrow(couples)/3), ncol = ((ncol(couples) -
@@ -283,7 +320,7 @@ covablocks <- function(stblocks, stpairs, typetest = 0) {
     #= 3=variability, 4-7=type of model)                                      =#
     #==========================================================================#
 
-    if (typetest == 1 || typetest == 2 || typetest == 3 || typetest >= 4) {
+    if (type.test == 1 || type.test == 2 || type.test == 3 || type.test >= 4) {
 
       #= Compute C00
 
@@ -311,7 +348,7 @@ covablocks <- function(stblocks, stpairs, typetest = 0) {
       #=================================================================#
 
 
-      if (typetest == 1 || typetest == 2 || typetest == 3) {
+      if (type.test == 1 || type.test == 2 || type.test == 3) {
         #= Compute the spatial marginal covariance for each block=#
         mat.cova.h <- matrix(0, block.ncol, nrow(couples))
         for (i in 1:nrow(couples)) {
@@ -364,7 +401,7 @@ covablocks <- function(stblocks, stpairs, typetest = 0) {
 
       }
 
-      if (typetest >= 4) {
+      if (type.test >= 4) {
 
 
         #= Detect spatial points non used for comparisons (corresponding to rows of
@@ -509,14 +546,14 @@ covablocks <- function(stblocks, stpairs, typetest = 0) {
       #= Compute the matrix of covariances      =#
       #==========================================#
 
-      if (typetest == 1 || typetest == 2) {
+      if (type.test == 1 || type.test == 2) {
         mat.cova <- cbind(vec.cova00, mat.cova, mat.cova.h, mat.cova.u)
       }
 
-      if (typetest == 3) {
+      if (type.test == 3) {
         mat.cova <- cbind(mat.cova, mat.cova.h, mat.cova.u)
       }
-      if (typetest >= 4) {
+      if (type.test >= 4) {
 
 
 
@@ -590,13 +627,13 @@ covablocks <- function(stblocks, stpairs, typetest = 0) {
 
 
 
-        if (typetest == 4) {
+        if (type.test == 4) {
           mat.cova <- cbind(mat.cova, mat.cova.hsel, mat.cova.usel)
         }
-        if (typetest == 5) {
+        if (type.test == 5) {
           mat.cova <- mat.cova
         }
-        if (typetest == 6 || typetest == 7) {
+        if (type.test == 6 || type.test == 7) {
           mat.cova <- cbind(mat.cova, mat.cova.usel)
         }
 
@@ -617,13 +654,13 @@ covablocks <- function(stblocks, stpairs, typetest = 0) {
 
   }
   #==============================================#
-  #= end test on typetest=0, 1, 2, 3, 4-7       =#
+  #= end test on type.test=0, 1, 2, 3, 4-7       =#
   #==============================================#
 
 
   #= Start defining the class covblocks =#
 
-  if (typetest == 0) {
+  if (type.test == 0) {
 
     #= mat.cova <- mat.cova
     mat.cova.h <- matrix(NA, 1, 1)
@@ -631,26 +668,26 @@ covablocks <- function(stblocks, stpairs, typetest = 0) {
     #= mat.cova.cova <- mat.cova.cova
   }
 
-  if (typetest == 1 || typetest == 2 || typetest == 3) {
+  if (type.test == 1 || type.test == 2 || type.test == 3) {
     #= mat.cova = mat.cova mat.cova.h = mat.cova.h mat.cova.u = mat.cova.u
     #= mat.cova.cova = mat.cova.cova
   }
 
-  if (typetest == 4) {
+  if (type.test == 4) {
 
     #= mat.cova = mat.cova
     mat.cova.h <- mat.cova.hsel
     mat.cova.u <- mat.cova.usel
     #= mat.cova.cova = mat.cova.cova
   }
-  if (typetest == 5) {
+  if (type.test == 5) {
 
     #= mat.cova = mat.cova
     mat.cova.h <- matrix(NA, 1, 1)
     mat.cova.u <- matrix(NA, 1, 1)
     #= mat.cova.cova = mat.cova.cova
   }
-  if (typetest == 6 || typetest == 7) {
+  if (type.test == 6 || type.test == 7) {
 
     #= mat.cova = mat.cova,
     mat.cova.h <- matrix(NA, 1, 1)
@@ -658,9 +695,7 @@ covablocks <- function(stblocks, stpairs, typetest = 0) {
     #= mat.cova.cova = mat.cova.cova
   }
 
-  if (typetest >= 4) {
-    typetest <- typetest -1
-  }
+
 
   new("covablocks", mat.cova = mat.cova, mat.cova.h = mat.cova.h, mat.cova.u = mat.cova.u,
       mat.cova.cova = mat.cova.cova, typetest = typetest)
@@ -692,7 +727,7 @@ setMethod(f="show", signature="covablocks", definition=function(object) {
   # }else{
   #   print(object@mat.cova.h)
   # }
-  if(object@typetest == 0 || object@typetest == 4 || object@typetest == 5){
+  if(object@typetest == "sym" || object@typetest == "intProduct" || object@typetest == "gneiting"){
     print("This slot is not available for the required typetest")
   }else{
     print(object@mat.cova.h)
@@ -705,7 +740,7 @@ setMethod(f="show", signature="covablocks", definition=function(object) {
   # }else{
   #   print("This slot is not available for the required typetest")
   # }
-  if(object@typetest == 0 || object@typetest == 4){
+  if(object@typetest == "sym" || object@typetest == "intProduct"){
     print("This slot is not available for the required typetest")
   }else{
     print(object@mat.cova.u)

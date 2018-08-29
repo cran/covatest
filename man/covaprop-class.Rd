@@ -5,7 +5,6 @@
 \alias{covaprop-class}
 \alias{covaprop}
 \alias{show,covaprop-method}
-\alias{covaprop-class}
 \title{Class "covaprop"}
 \usage{
 covaprop(cblock, cstat, nonseptype = NULL, sign.level = 0.05)
@@ -15,9 +14,9 @@ covaprop(cblock, cstat, nonseptype = NULL, sign.level = 0.05)
 \arguments{
 \item{cblock}{object of class \code{covablocks}}
 
-\item{cstat}{object of class \code{covastat}}
+\item{cstat}{object of class \code{covastat} or \code{covastatM}}
 
-\item{nonseptype}{integer; this argumet is required only for \code{typetest=2},
+\item{nonseptype}{integer; this argumet is required only for \code{typetest = "tnSep"},
 otherwise it has to be set equal to \code{NULL} (default choice).
 Set \code{nonseptype=0} for testing the null hypothesis that the non
 separability is non positive; set \code{nonseptype=1} for testing the null
@@ -37,11 +36,11 @@ of space-time covariance models
 \describe{
 \item{\code{test.statistics}}{numeric; the value of the test statistic}
 
-\item{\code{p.value}}{numeric; the lower tail p-value of the test statistic}
+\item{\code{p.value}}{numeric; the lower tail p value of the test statistic}
 
 \item{\code{df}}{numeric; the degrees of freedom, if available}
 
-\item{\code{typetest}}{numeric; contains the code of the test to be performed}
+\item{\code{typetest}}{character; contains the code of the test to be performed}
 }}
 
 \note{
@@ -49,17 +48,20 @@ of space-time covariance models
 A message helps to decide for either reject the null hypothesis in favor of
 the alternative or not reject it, at a specific level of significance
 \itemize{
-\item The test on full symmetry (\code{typetest=0}) represents the first step
+\item The test on full symmetry (the argument of the slot \code{@typetest} is
+equal to \code{"sym"}) represents the first step
 for the selection of a suitable class of spatio-temporal covariance functions.
 According to the definition of full symmetry, the null hypothesis to be
 tested is \eqn{H_0: C(h,u) - C(h,-u)=0}
 
-\item The test of separability (\code{typetest=1}) represents the second
+\item The test of separability (the argument of the slot \code{@typetest} is
+equal to \code{"sep"}) represents the second
 step of the testing procedure. According to the definition of separability,
 the null hypothesis to be tested is
 \eqn{H_0: C(h, u)/C(h, 0) - C(0, u)/C(0,0)=0}
 
-\item The test on the type of non separability (\code{typetest=2})
+\item The test on the type of non separability (the argument of the slot
+\code{@typetest} is equal to \code{"tnSep"})
 represents the third step for the selection of a suitable class of space-time
 covariance functions.
 According to the definition of type of non separability, the null hypothesis
@@ -69,8 +71,9 @@ or
 \eqn{H_0: C(h,u)/C(h,0) - C(0,u)/C(0,0) < 0}
 if the null hypothesis to test is that the non separability is non positive
 
-\item \code{typetest} from 3 to 5 are useful to test the goodness of a
-specific class of space-time covariance function. For this testing procedure
+\item If the argument of the slot \code{@typetest} is equal to \code{"productSum"}
+\code{"intProduct"} or \code{"gneiting"}, the goodness of a specific class of
+space-time covariance function will be tested. For this testing procedure
 the generic null hypothesis is: \eqn{H_0: Af(G)=0}
 }
 For the analytic expression of each test statistic and its probability
@@ -82,6 +85,22 @@ the type of test set in \code{cstat}.
 }
 }
 \examples{
+# --start define the STFDF rr_13-- #
+library(sp)
+library(spacetime)
+library(gstat)
+data(air)
+ls()
+if (!exists("rural")) rural = STFDF(stations, dates, data.frame(PM10 =
+as.vector(air)))
+rr = rural[,"2005::2010"]
+unsel = which(apply(as(rr, "xts"), 2, function(x) all(is.na(x))))
+r5to10 = rr[-unsel,]
+rr_13 <- r5to10[c("DEHE046","DESN049","DETH026","DENW063","DETH061","DEBY047",
+"DENW065","DEUB029","DENW068","DENI019","DEHE051","DERP016","DENI051"),
+"2005::2006"]
+# --end define the STFDF rr_13-- #
+
 sel.staz.sym <- c("DERP016", "DENW065", "DEHE051", "DETH026", "DENW063", "DENI019",
 "DENW068", "DEHE046", "DEUB029", "DEBY047", "DETH061", "DESN049")
 
@@ -92,15 +111,15 @@ ncol = 2, byrow = TRUE)
 t.couples.in.sym <- c(1, 2)
 
 couples.sym <- couples(sel.staz = sel.staz.sym, sp.couples.in = sp.couples.in.sym,
-t.couples.in = t.couples.in.sym, typetest = 0, typecode = character())
+t.couples.in = t.couples.in.sym, typetest = "sym", typecode = character())
 
-block.sym <- blocks(lb=40, ls=10, matdata = rr_13, pardata1 = 1, pardata2 = 1,
+block.sym <- blocks(lb = 40, ls = 10, matdata = rr_13, pardata1 = 1, pardata2 = 1,
 stpairs = couples.sym)
 
-covabl.sym <- covablocks(stblocks = block.sym, stpairs = couples.sym, typetest = 0)
+covabl.sym <- covablocks(stblocks = block.sym, stpairs = couples.sym, typetest = "sym")
 
 covast.sym <- covastat(matdata = rr_13, pardata1 = 1, pardata2 = 1,
-stpairs = couples.sym, typetest = 0, beta.data = NULL)
+stpairs = couples.sym, typetest = "sym")
 
 test.sym <- covaprop(cblock = covabl.sym, cstat = covast.sym, nonseptype = NULL,
 sign.level = 0.05)
@@ -119,10 +138,10 @@ De Iaco, S., Palma, M., Posa, D., 2016. A general procedure for selecting a
 class of fully symmetric space-time covariance functions.
 Environmentrics, \bold{27(4)} 212--224.
 
-Cappello, C., De Iaco, S., Posa, D., 2017, Testing the type of
+Cappello, C., De Iaco, S., Posa, D., 2018, Testing the type of
 non-separability and some classes of covariance models for space-time data.
 Stochastic Environmental Research and Risk Assessment,
-doi 10.1007/s00477-017-1472-2
+\bold{32} 17--35
 }
 \seealso{
 \linkS4class{couples}
