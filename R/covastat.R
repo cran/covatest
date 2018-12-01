@@ -4,7 +4,7 @@
 #' and temporal lags, given in \code{stpairs} (object of class \code{couples}),
 #' for symmetry, separability and type of non separability tests.
 #' Depending on the type of test, the empirical variance, the sample spatial
-#' and temporal marginal covariances are also computed.
+#' and temporal marginal covariances are also computed
 #'
 #' @slot G matrix; containing the spatio-temporal covariances for the specified
 #' lags. For all tests, except for the symmetry test (\code{typetest = "sym"}), the
@@ -21,17 +21,6 @@
 #' @slot A contrast matrix
 #' @slot typetest character; contains the code of the test to be performed
 #'
-#' @note
-#' \itemize{
-#' \item A stop occurs if the number of spatial points fixed in \code{stpairs}
-#' (object of class \code{couples}) is less than 2
-#' \item If \code{typetest = "sym"} (symmetry test) \code{cova.h}, \code{cova.u},
-#' \code{f.G} and \code{B} are not available
-#' \item A stop occurs if more than 75\% of consecutive data are missing in the time
-#' series, since a large number of missing values do not guarantee the reliability
-#' of the tests
-#'
-#' }
 #'
 #' @rdname covastat-class
 #' @exportClass covastat
@@ -46,7 +35,7 @@ setClass("covastat", slots = c(G = "matrix",
 #' @param matdata STFDF/STSDF or \code{data.frame}; which contains the
 #' coordinates of the spatial points, the identification code of the spatial
 #' points, the indentification code of the temporal points and the values of
-#' the variable, typically output from \code{dataprep}
+#' the variable, typically output from \code{read.STdata}
 #' @param pardata1 integer, it represents the column in which the spatial ID is
 #' stored (if the spatio-temporal data set is given as data.frame) or the number of
 #' variables in the STFDF/STSDF (if the data are given as a STFDF/STSDF)
@@ -61,14 +50,28 @@ setClass("covastat", slots = c(G = "matrix",
 #' (default choice), \code{typetest = "sep"} for separability test, \code{typetest = "tnSep"}
 #' for type of non separability test
 #'
+#'
 #' @details
 #' A message appears on the user's console if the \code{G} vector
 #' contains spatio-temporal negative covariances. The message returns the negative
 #' value/values and it will help to identify the spatial and the temporal lags
-#' involved.
+#' involved
+#'
+#'
+#' @note
+#' \itemize{
+#' \item A stop occurs if the number of spatial points fixed in \code{stpairs}
+#' (object of class \code{couples}) is less than 2
+#' \item If \code{typetest = "sym"} (symmetry test) \code{cova.h}, \code{cova.u},
+#' \code{f.G} and \code{B} are not available
+#' \item A stop occurs if more than 75\% of consecutive data are missing in the time
+#' series, since a large number of missing values do not guarantee the reliability
+#' of the tests
+#' }
 #'
 #' @seealso \linkS4class{couples}
-#' @seealso \code{\link{dataprep}}
+#' @seealso \code{\link{read.STdata}}
+#'
 #'
 #' @references
 #' Li, B., Genton, M.G., Sherman, M., 2007, A nonparametric assessment
@@ -116,7 +119,7 @@ setClass("covastat", slots = c(G = "matrix",
 #' covast.sym <- covastat(matdata = rr_13, pardata1 = 1, pardata2 = 1,
 #' stpairs = couples.sym, typetest = "sym")
 #'
-#' ###method for covastat
+#' ### method for covastat
 #' #1. show
 #' covast.sym
 #'
@@ -132,7 +135,8 @@ covastat <- function(matdata, pardata1, pardata2, stpairs, typetest = "sym") {
   ### SOME CHECKS ON THE ARGUMENTS ###
 
   if (is.scalar(pardata1) == FALSE || is.scalar(pardata2) == FALSE) {
-    stop("Some of the arguments are not numeric. Stop running.")
+    message("Start error message. Some of the arguments are not numeric.")
+    stop("End error message. Stop running.")
   }
 
 
@@ -140,16 +144,17 @@ covastat <- function(matdata, pardata1, pardata2, stpairs, typetest = "sym") {
 
     pardata1 <- as.integer(pardata1)
     pardata2 <- as.integer(pardata2)
-    warning("The arguments expected to be integer are forced to be integer numbers.")
+    message("Warning message: the arguments expected to be integer are forced to be integer numbers.")
   }
 
 
   if (!inherits(stpairs, "couples")){
-    stop("stpairs argument has to be of class couples. Stop running.")
+    message("Start error message. stpairs argument has to be of class couples.")
+    stop("End error message. Stop running.")
   }
 
   if(stpairs@typetest != typetest){
-    warning("Reminder: the argument typetest is different from the one defined in stpairs.")
+    message("Warning message: the argument typetest is different from the one defined in stpairs.")
   }
 
 
@@ -163,11 +168,13 @@ covastat <- function(matdata, pardata1, pardata2, stpairs, typetest = "sym") {
   #========================================================================#
 
   if (is.character(typetest) == FALSE) {
-    stop("The argument for typetest is not admissible.")
+    message("Start error message. The argument for typetest is not admissible.")
+    stop("End error message. Stop running.")
   }
 
   if (typetest != "sym" && typetest != "sep"  && typetest != "tnSep") {
-    stop("The argument for typetest is not admissible.")
+    message("Start error message. The argument for typetest is not admissible.")
+    stop("End error message. Stop running.")
   }
 
   if (typetest == "sym") {
@@ -190,6 +197,8 @@ covastat <- function(matdata, pardata1, pardata2, stpairs, typetest = "sym") {
     iclvr <- as.integer(pardata2)
   }
   info.na <- NA
+  info.nna29 <- NA
+  info.nna89 <- NA
   if (is.vector(selstaz) && length(selstaz) >= 2) {
     for (i in 1:length(selstaz)) {
 
@@ -202,14 +211,16 @@ covastat <- function(matdata, pardata1, pardata2, stpairs, typetest = "sym") {
             selstaz.names <- matdata[, iclsp.id]
             selstaz.inter <- intersect(selstaz.names, selstaz)
             if (length(selstaz.inter) != length(selstaz)) {
-              stop("No data for some of the selected spatial points. Please go back to the function 'couples' and revise the vector of the selected spatial points. Stop running.")
+              message("Start error message. No data for some of the selected spatial points. Please go back to the function 'couples' and revise the vector of the selected spatial points.")
+              stop("End error message. Stop running.")
 
             }
             }
 
           datistaz <- matdata[matdata[, iclsp.id] == selstaz[i], iclvr]
         } else {
-          stop("Check the column in which the values of the variable are stored. Data must be numeric. Stop running.")
+          message("Start error message. Check the column in which the values of the variable are stored. Data must be numeric.")
+          stop("End error message. Stop running.")
         }
 
         } else {
@@ -220,7 +231,8 @@ covastat <- function(matdata, pardata1, pardata2, stpairs, typetest = "sym") {
               selstaz.names <- row.names(matdata@sp)
               selstaz.inter <- intersect(selstaz.names, selstaz)
               if (length(selstaz.inter) != length(selstaz)) {
-                stop("No data for some of the selected spatial points. Please go back to the function 'couples' and revise the vector of the selected spatial points. Stop running.")
+                message("Start error message. No data for some of the selected spatial points. Please go back to the function 'couples' and revise the vector of the selected spatial points.")
+                stop("End error message. Stop running.")
 
               }
               nvr <- as.integer(pardata1)
@@ -239,7 +251,8 @@ covastat <- function(matdata, pardata1, pardata2, stpairs, typetest = "sym") {
                   selstaz.names <- row.names(matdata@sp)
                   selstaz.inter <- intersect(selstaz.names, selstaz)
                   if (length(selstaz.inter) != length(selstaz)) {
-                    stop("No data for some of the selected spatial points. Please go back to the function 'couples' and revise the vector of the selected spatial points. Stop running.")
+                    message("Start error message. No data for some of the selected spatial points. Please go back to the function 'couples' and revise the vector of the selected spatial points.")
+                    stop("End error message. Stop running.")
 
                   }
                   nvr <- as.integer(pardata1)
@@ -253,7 +266,8 @@ covastat <- function(matdata, pardata1, pardata2, stpairs, typetest = "sym") {
                                                                           iclvr]
 
             } else {
-              stop("The class of data must be matrix (gslib format), data.frame, STFDF or STSDF. Stop running.")
+              message("Start error message. The class of data must be matrix (gslib format), data.frame, STFDF or STSDF.")
+              stop("End error message. Stop running.")
             }
             }
           }
@@ -263,7 +277,8 @@ covastat <- function(matdata, pardata1, pardata2, stpairs, typetest = "sym") {
         # ===== Some checks on lt          =====#
         # ======================================#
       if (lt <= 29) {
-        stop("The length of the time series (equal to ", lt,") for each spatial point must be greater than 29. Stop running.")
+        message("Start error message. The length of the time series (equal to ", lt,") for each spatial point must be greater than 29.")
+        stop("End error message. Stop running.")
       }
       if (lt <= 89 && lt > 29) {
         message("*****************************************************************************")
@@ -278,38 +293,83 @@ covastat <- function(matdata, pardata1, pardata2, stpairs, typetest = "sym") {
       #====================================================#
       count.na <- matrix(0, nrow = lt, ncol = 1)
       count.cons.na <- 0
+      count.nna <- matrix(0, nrow = lt, ncol = 1)
+      count.cons.nna <- 0
       for (ii in 1:lt) {
         if(is.na(datistaz[ii]) == TRUE){
           count.cons.na <- count.cons.na + 1
           count.na[ii, 1] <- count.cons.na
         }else{count.cons.na<- 0}
+        if(is.na(datistaz[ii]) == FALSE){
+          count.cons.nna <- count.cons.nna + 1
+          count.nna[ii, 1] <- count.cons.nna
+        }else{count.cons.nna<- 0}
       }
       max.count.na <-   max(count.na[,])/lt
+      max.count.nna <-   max(count.nna[,])
+      if(max.count.nna > 29){
+      if(max.count.nna <= 89){
+        if(is.na(info.nna89[1]) == TRUE){
+          info.nna89 <- selstaz[i]
+        }else{
+          info.nna89 <- rbind(info.nna89, selstaz[i])
+        }
+      }
+
       if(max.count.na > 0.75){
       if(is.na(info.na[1]) == TRUE){
         info.na <- selstaz[i]
       }else{info.na <- rbind(info.na, selstaz[i]) }
       }
+
       if (i == 1) {
         matdata.sel <- datistaz
       }
       if (i > 1) {
         matdata.sel <- cbind(matdata.sel, datistaz)
       }
+      }else{
+        if(is.na(info.nna29[1]) == TRUE){
+          info.nna29 <- selstaz[i]
+        }else{
+          info.nna29 <- rbind(info.nna29, selstaz[i])
+        }
+      }
+      #==========================================================#
+      #== END computing the number of consecutive missing values #
+      #==========================================================#
+
     }
     #==========================================================#
     #== END cicle over selstaz #                               #
     #==========================================================#
+
     if(is.na(info.na[1]) == FALSE){
-      message("The following spatial points are non-admissible. Too many consecutive NAs (greater than 75%).")
+      message("Start error message. The following spatial points are non-admissible. Too many consecutive NAs (greater than 75%).")
       for (i in 1:length(info.na)){
         message((info.na[i]))
       }
-      stop("Please exclude/change the non-admissible spatial points from the selection. Stop running.")
+      message("Please exclude/change the non-admissible spatial points from the selection.")
+      stop("End error message. Stop running.")
     }
-  } else {
-    stop("The number of spatial points selected in function 'couples' must be a vector with at least two components. Stop running.")
-  }
+    if(is.na(info.nna29[1]) == FALSE){
+      message("Start error message. The following spatial points are non-admissible. The number of valid consecutive values must be greater than 29.")
+      for (i in 1:length(info.nna29)){
+        message((info.nna29[i]))
+      }
+      message("Please exclude/change the non-admissible spatial points from the selection.")
+      stop("End error message. Stop running.")
+    }
+    if(is.na(info.nna89[1]) == FALSE){
+      message("Warning message: the number of valid consecutive values of the following spatial points is low (<=89) and may not guarantee the reliability of the some tests.")
+      for (i in 1:length(info.nna89)){
+        message((info.nna89[i]))
+      }
+    }
+    }else {
+      message("Start error message. The number of spatial points selected in function 'couples' must be a vector with at least two components.")
+    stop("End error message. Stop running.")
+    }
 
   #==========================#
   #=  End selection of data =#
@@ -331,6 +391,8 @@ covastat <- function(matdata, pardata1, pardata2, stpairs, typetest = "sym") {
     }
   }
 
+
+
   array.matdata.sel <- array(matdata.sel, dim = c(length(datistaz), 1, length(selstaz)))
   cova.nv <- matrix(data = "-", nrow = nrow(couples), ncol = ncol(couples))
   #========================================================================#
@@ -345,7 +407,8 @@ covastat <- function(matdata, pardata1, pardata2, stpairs, typetest = "sym") {
   #========================================================================#
   #= start test on type.test=0, 1,2,3                                      =#
   #========================================================================#
-
+   vec.na <- matrix(NA, length(datistaz), 1)
+   info.na.all <- matrix(NA, 1, 5)
     nflag.cova.nv <- 0
   if (type.test == 0 || type.test == 1 || type.test == 2 || type.test == 3) {
 
@@ -374,14 +437,60 @@ covastat <- function(matdata, pardata1, pardata2, stpairs, typetest = "sym") {
                                                          couples[i, j + 2] + 1:nrow(matdata.sel)), , couples[i,
                                                                                                              1]], array.matdata.sel[-(1:couples[i, j + 2]), , couples[i,
                                                                                                                                                                       2]], use = "pairwise.complete.obs")
-            }
+              if(is.na(cova[cov.n, ]) == TRUE){
+                  if(is.na(info.na.all[1,1]) == TRUE){
+                    info.na.all[1,1] <- couples[i,1]
+                    info.na.all[1,2] <- couples[i,2]
+                    info.na.all[1,5] <- couples[i,j +2]
+                    if(identical(vec.na,array.matdata.sel[-(nrow(matdata.sel) -
+                                                            couples[i, j + 2] + 1:nrow(matdata.sel)), , couples[i,
+                                                                                                                1]]) == TRUE){info.na.all[1,3] <- 1}
+                    if(identical(vec.na,array.matdata.sel[-(1:couples[i, j + 2]), , couples[i,
+                                                                                            2]]) == TRUE){info.na.all[1,4] <- 2}
+                  }else{
+                    info.na <- rbind(info.na, c(couples[i,1:2],NA,NA,NA))
+                    info.na[1,5] <- couples[i,j +2]
+                    if(identical(vec.na,array.matdata.sel[-(nrow(matdata.sel) -
+                                                            couples[i, j + 2] + 1:nrow(matdata.sel)), , couples[i,
+                                                                                                                1]]) == FALSE){info.na.all[1,3] <- 1}
+                    if(identical(vec.na,array.matdata.sel[-(1:couples[i, j + 2]), , couples[i,
+                                                                                            2]]) == FALSE){info.na.all[1,4] <- 2}
+
+
+                  }
+
+              }
+              }
 
             if (couples[i, j + 2] < 0) {
               cova[cov.n, ] <- cov(array.matdata.sel[-(1:(-couples[i,
                                                                    j + 2])), , couples[i, 1]], array.matdata.sel[-(nrow(matdata.sel) +
                                                                                                                      couples[i, j + 2] + 1:nrow(matdata.sel)), , couples[i,
                                                                                                                                                                          2]], use = "pairwise.complete.obs")
-            }
+              if(is.na(cova[cov.n, ]) == TRUE){
+                if(is.na(info.na.all[1,1]) == TRUE){
+                  info.na.all[1,1] <- couples[i,1]
+                  info.na.all[1,2] <- couples[i,2]
+                  info.na.all[1,5] <- couples[i,j +2]
+                  if(identical(vec.na,array.matdata.sel[-(1:(-couples[i,
+                                                                      j + 2])), , couples[i, 1]]) == TRUE){info.na.all[1,3] <- 1}
+                  if(identical(vec.na,array.matdata.sel[-(nrow(matdata.sel) +
+                                                          couples[i, j + 2] + 1:nrow(matdata.sel)), , couples[i,
+                                                                                                              2]]) == TRUE){info.na.all[1,4] <- 2}
+                }else{
+                  info.na <- rbind(info.na, c(couples[i,1:2],NA,NA,NA))
+                  info.na[1,5] <- couples[i,j +2]
+                  if(identical(vec.na,array.matdata.sel[-(1:(-couples[i,
+                                                                      j + 2])), , couples[i, 1]]) == FALSE){info.na.all[1,3] <- 1}
+                  if(identical(vec.na,array.matdata.sel[-(nrow(matdata.sel) +
+                                                          couples[i, j + 2] + 1:nrow(matdata.sel)), , couples[i,
+                                                                                                              2]]) == FALSE){info.na.all[1,4] <- 2}
+
+
+                }
+
+              }
+              }
 
             if (cova[cov.n,] < 0) {
               nflag.cova.nv <- nflag.cova.nv + 1
@@ -398,8 +507,17 @@ covastat <- function(matdata, pardata1, pardata2, stpairs, typetest = "sym") {
         nf <- 1
       }
 
+      if(is.na(info.na.all[1,1]) == FALSE){
+        message("Start error message. There are no enough data for computing the covariance: spatial couples, #point in the couple non-valid, #point in the couple non-valid, temporal lag non-valid.")
+        for (i in 1:length(info.na.all)){
+          print(info.na.all[i,])
+        }
+        message("Please exclude/change the non-valid spatial couples/points/temporal lag from the selection.")
+        stop("End error message. Stop running.")
+      }
+
     if (nflag.cova.nv != 0) {
-      message(nflag.cova.nv, " negative spatio-temporal covariance/es detected.")
+      message("Warning message: ", nflag.cova.nv, " negative spatio-temporal covariance/es are detected.")
       message("In the following the spatial points and the temporal lags involved are visualized.")
         for (i in 1:couples.nrow) {
           if(cova.nv[i,1] != "-"  && cova.nv[i,2] != "-"){
@@ -448,7 +566,7 @@ covastat <- function(matdata, pardata1, pardata2, stpairs, typetest = "sym") {
       }
 
       if (nflag.cova.h.nv != 0) {
-        message(nflag.cova.h.nv, " negative spatial covariances have been detected.")
+        message("Warning message: ", nflag.cova.h.nv, " negative spatial covariances are detected.")
         message("In the following the spatial points and the temporal lags involved are visualized.")
           for (i in 1:couples.nrow) {
             if(is.na(cova.h.nv[i, 1]) == FALSE && is.na(cova.h.nv[i, 2]) == FALSE){
@@ -491,7 +609,7 @@ covastat <- function(matdata, pardata1, pardata2, stpairs, typetest = "sym") {
     }
 
     if (nflag.cova.u.nv != 0) {
-      message(nflag.cova.u.nv, " negative temporal covariances have been detected.")
+      message("Warning message: ", nflag.cova.u.nv, " negative temporal covariances are detected.")
       message("In the following the spatial points and the temporal lags involved are visualized.")
       for (i in 1:cova.u.ncol) {
           if(is.na(cova.u.nv[i, ]) == FALSE){

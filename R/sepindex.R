@@ -93,18 +93,20 @@ sepindex <- function(vario_st, nt, ns, globalSill) {
   ### SOME CHECKS ON THE ARGUMENTS ###
 
   if (is.scalar(nt) == FALSE || is.scalar(ns) == FALSE  || is.scalar(globalSill) == FALSE) {
-    stop("Some of the arguments are not numeric. Stop running.")
+    message("Start error message. Some of the arguments are not numeric.")
+    stop("End error message. Stop running.")
   }
 
 
   if (!inherits(vario_st, "StVariogram") && !inherits(vario_st, "data.frame")){
-    stop("vario_st argument has to be of class StVariogram or data.frame.")
+    message("Start error message. vario_st argument has to be of class StVariogram or data.frame.")
+    stop("End error message. Stop running.")
   }
 
   if(nt != as.integer(nt) || ns != as.integer(ns)){
     nt <- as.integer(nt)
     ns <- as.integer(ns)
-    warning("nt and ns arguments are forced to be integer numbers.")
+    message("Warning message: nt and ns arguments are forced to be integer numbers.")
   }
 
   # Set 0 to NA data in vario_st
@@ -156,7 +158,7 @@ sepindex <- function(vario_st, nt, ns, globalSill) {
   y <- x[is.na(x)]
   z <- length(y) / n * 100
   if (z > 2) {
-    warning(round(z, digits = 3), "%  of non admissible values for the non-separability index (<0) have been removed")
+    message("Warning message: ", round(z, digits = 3), "%  of non admissible values for the non-separability index (<0) have been removed")
   }
 
   new("sepindex", sep.index.ratio = sep_index_ratio, cov.st = cov_st,

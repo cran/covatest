@@ -16,8 +16,9 @@ covaprop(cblock, cstat, nonseptype = NULL, sign.level = 0.05)
 
 \item{cstat}{object of class \code{covastat} or \code{covastatM}}
 
-\item{nonseptype}{integer; this argumet is required only for \code{typetest = "tnSep"},
-otherwise it has to be set equal to \code{NULL} (default choice).
+\item{nonseptype}{integer; this argumet is required only for objects
+(\code{cblock} and \code{cstat}) defined to perform the type of non
+separability test, otherwise it has to be set equal to \code{NULL} (default choice).
 Set \code{nonseptype=0} for testing the null hypothesis that the non
 separability is non positive; set \code{nonseptype=1} for testing the null
 hypothesis that the non separability is non negative}
@@ -77,7 +78,7 @@ space-time covariance function will be tested. For this testing procedure
 the generic null hypothesis is: \eqn{H_0: Af(G)=0}
 }
 For the analytic expression of each test statistic and its probability
-distribution see Cappello et al. (2017). In the same contribution the
+distribution see Cappello et al. (2018). In the same contribution the
 different \code{f(G)} are given for each test to be computed.
 
 A stop occurs if the type of test set in \code{cblock} is not consistent with
@@ -124,7 +125,7 @@ stpairs = couples.sym, typetest = "sym")
 test.sym <- covaprop(cblock = covabl.sym, cstat = covast.sym, nonseptype = NULL,
 sign.level = 0.05)
 
-###method for covaprop
+### method for covaprop
 #1. show
 test.sym
 

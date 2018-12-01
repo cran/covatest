@@ -15,7 +15,7 @@ covastat(matdata, pardata1, pardata2, stpairs, typetest = "sym")
 \item{matdata}{STFDF/STSDF or \code{data.frame}; which contains the
 coordinates of the spatial points, the identification code of the spatial
 points, the indentification code of the temporal points and the values of
-the variable, typically output from \code{dataprep}}
+the variable, typically output from \code{read.STdata}}
 
 \item{pardata1}{integer, it represents the column in which the spatial ID is
 stored (if the spatio-temporal data set is given as data.frame) or the number of
@@ -41,13 +41,13 @@ A class for the sample spatio-temporal covariances for the specified spatial
 and temporal lags, given in \code{stpairs} (object of class \code{couples}),
 for symmetry, separability and type of non separability tests.
 Depending on the type of test, the empirical variance, the sample spatial
-and temporal marginal covariances are also computed.
+and temporal marginal covariances are also computed
 }
 \details{
 A message appears on the user's console if the \code{G} vector
 contains spatio-temporal negative covariances. The message returns the negative
 value/values and it will help to identify the spatial and the temporal lags
-involved.
+involved
 }
 \section{Slots}{
 
@@ -83,7 +83,6 @@ of \code{f.G} with respect to each element of \code{G}}
 \item A stop occurs if more than 75\% of consecutive data are missing in the time
 series, since a large number of missing values do not guarantee the reliability
 of the tests
-
 }
 }
 \examples{
@@ -118,7 +117,7 @@ t.couples.in = t.couples.in.sym, typetest = "sym", typecode = character())
 covast.sym <- covastat(matdata = rr_13, pardata1 = 1, pardata2 = 1,
 stpairs = couples.sym, typetest = "sym")
 
-###method for covastat
+### method for covastat
 #1. show
 covast.sym
 
@@ -140,5 +139,5 @@ Stochastic Environmental Research and Risk Assessment,
 \seealso{
 \linkS4class{couples}
 
-\code{\link{dataprep}}
+\code{\link{read.STdata}}
 }

@@ -31,7 +31,7 @@ setClass("blocks", slots = c(mat.block = "matrix",
 #' @param matdata STFDF/STSDF or \code{data.frame}; which contains the
 #' coordinates of the spatial points, the identification code of the spatial
 #' points, the indentification code of the temporal points and the values of
-#' the variable, typically output from \code{dataprep}
+#' the variable, typically output from \code{read.STdata}
 #' @param pardata1 integer, it represents the column in which the spatial ID is
 #' stored (if the spatio-temporal data set is given as data.frame) or the number
 #' of variables in the STFDF/STSDF (if the data are given as a STFDF/STSDF)
@@ -45,7 +45,7 @@ setClass("blocks", slots = c(mat.block = "matrix",
 #' points and the corresponding temporal lags to be analyzed
 #'
 #' @details
-#' A message informs the user of the number of blocks computed
+#' A message informs the user of the number of blocks extracted
 #'
 #'
 #' @note
@@ -131,7 +131,7 @@ setClass("blocks", slots = c(mat.block = "matrix",
 #' block.sym <- blocks(lb = 40, ls = 10, matdata = rr_13, pardata1 = 1, pardata2 = 1,
 #' stpairs = couples.sym)
 #'
-#' ###methods for blocks
+#' ### methods for blocks
 #' #1. show
 #' block.sym
 #'
@@ -156,7 +156,7 @@ setClass("blocks", slots = c(mat.block = "matrix",
 
 #'
 #' @seealso \code{\link{couples}}
-#' @seealso \code{\link{dataprep}}
+#' @seealso \code{\link{read.STdata}}
 #' @rdname blocks-class
 #' @export
 blocks <- function(lb, ls, matdata, pardata1, pardata2, stpairs) {
@@ -169,7 +169,8 @@ blocks <- function(lb, ls, matdata, pardata1, pardata2, stpairs) {
 
   if (is.scalar(lb) == FALSE || is.scalar(ls) == FALSE  || is.scalar(pardata1) == FALSE ||
       is.scalar(pardata2) == FALSE) {
-    stop("Some of the arguments are not numeric. Stop running.")
+    message("Start error message. Some of the arguments are not numeric.")
+    stop("End error message. Stop running.")
   }
 
 
@@ -179,12 +180,13 @@ blocks <- function(lb, ls, matdata, pardata1, pardata2, stpairs) {
     ls <- as.integer(ls)
     pardata1 <- as.integer(pardata1)
     pardata2 <- as.integer(pardata2)
-    warning("The arguments expected to be integer are forced to be integer numbers.")
+    message("Warning message: the arguments expected to be integer are forced to be integer numbers.")
   }
 
 
   if (!inherits(stpairs, "couples")){
-    stop("stpairs argument has to be of class couples. Stop running.")
+    message("Start error message. stpairs argument has to be of class couples.")
+    stop("End error message. Stop running.")
   }
 
 
@@ -199,24 +201,26 @@ blocks <- function(lb, ls, matdata, pardata1, pardata2, stpairs) {
   }
   flag <- 0
   info.na <- NA
+  info.nna29 <- NA
+  info.nna89 <- NA
   if (is.vector(selstaz) == TRUE && length(selstaz) >= 2) {
     matrix.names.matblock <- vector(mode = typeof(selstaz),
                                     length = length(selstaz))
     for (i in 1:length(selstaz)) {
-
-
       ### data in GSLIB format###
       if (class(matdata) == "matrix" || class(matdata) == "data.frame") {
         if (i == 1) {
           selstaz.names <- matdata[, iclsp.id]
         selstaz.inter <- intersect(selstaz.names, selstaz)
         if (length(selstaz.inter) != length(selstaz)) {
-          stop("No data for some of the selected spatial points. Please go back to the function 'couples' and revise the vector of the selected spatial points. Stop running.")
+          message("Start error message. No data for some of the selected spatial points. Please go back to the function 'couples' and revise the vector of the selected spatial points.")
+          stop("End error message. Stop running.")
         }
         }
 
-        if (is.numeric(matdata[, iclvr]) == FALSE)
-          stop("Check the column in which the values of the variable are stored. Data must be numeric. Stop running.")
+        if (is.numeric(matdata[, iclvr]) == FALSE){
+          message("Start error message. Check the column in which the values of the variable are stored. Data must be numeric.")
+          stop("End error message. Stop running.")}
 
         datistaz <- matdata[matdata[, iclsp.id] == selstaz[i],
                             iclvr]
@@ -228,7 +232,8 @@ blocks <- function(lb, ls, matdata, pardata1, pardata2, stpairs) {
             selstaz.names <- row.names(matdata@sp)
             selstaz.inter <- intersect(selstaz.names, selstaz)
             if (length(selstaz.inter) != length(selstaz)) {
-              stop("No data for some of the selected spatial points.Please go back to the function 'couples' and revise the vector of the selected spatial points. Stop running.")
+              message("Start error message. No data for some of the selected spatial points.Please go back to the function 'couples' and revise the vector of the selected spatial points.")
+              stop("End error message. Stop running.")
 
             }
             nvr <- as.integer(pardata1)
@@ -237,8 +242,6 @@ blocks <- function(lb, ls, matdata, pardata1, pardata2, stpairs) {
               iclvr <- 1
             }
           }
-
-
 
           datistaz <- matrix(matdata[selstaz[i], ], ncol = (1 + nvr))[, iclvr]
 
@@ -252,7 +255,8 @@ blocks <- function(lb, ls, matdata, pardata1, pardata2, stpairs) {
               selstaz.names <- row.names(matdata@sp)
               selstaz.inter <- intersect(selstaz.names, selstaz)
               if (length(selstaz.inter) != length(selstaz))
-                stop("No data for some of the selected spatial points.Please go back to the function 'couples' and revise the vector of the selected spatial points. Stop running.")
+                message("Start error message. No data for some of the selected spatial points.Please go back to the function 'couples' and revise the vector of the selected spatial points.")
+                stop("End error message. Stop running.")
 
               nvr <- as.integer(pardata1)
               iclvr <- as.integer(pardata2)
@@ -264,7 +268,8 @@ blocks <- function(lb, ls, matdata, pardata1, pardata2, stpairs) {
             datistaz <- matrix(matdata[selstaz[i], ], ncol = (1 + nvr))[, iclvr]
 
           } else {
-            stop("The class of data must be matrix (gslib format), data.frame, STFDF or STSDF. Stop running.")
+            message("Start error message. The class of data must be matrix (gslib format), data.frame, STFDF or STSDF.")
+            stop("End error message. Stop running.")
           }
         }
       }
@@ -281,33 +286,38 @@ blocks <- function(lb, ls, matdata, pardata1, pardata2, stpairs) {
                                                                 round(x)) < tol
 
           if (is.wholenumber(lb) == FALSE || is.wholenumber(ls) == FALSE) {
-            stop("Check the first two parameters (lb,ls). Data must be integer. Stop running.")
+            message("Start error message. Check the first two parameters (lb,ls). Data must be integer.")
+            stop("End error message. Stop running.")
           }
 
           if (ls < 0 || ls > (lb / 2)) {
-            stop("The number of overlapped terms between two consecutive blocks must be in [0,lb/2]. Stop running.")
+            message("Start error message. The number of overlapped terms between two consecutive blocks must be in [0,lb/2].")
+            stop("End error message. Stop running.")
           }
 
           if (lb <= 5) {
-            stop("The number of terms in each block must be greater than 5. Stop running.")
+            message("Start error message. The number of terms in each block must be greater than 5.")
+            stop("End error message. Stop running.")
           }
 
           if (lt <= 29) {
-            stop("The length of the time series (equal to ", lt,
-                 ") for each spatial point must be greater than 29. Stop running.")
+            message("Start error message. The length of the time series (equal to ", lt, ") for each spatial point must be greater than 29.")
+            stop("End error message. Stop running.")
           }
           if (lt <= 89 && lt > 29) {
 
             message("*****************************************************************************")
             message("* The length of the time series (equal to ",lt, ") for each spatial point   *")
-            message("* is low and may not guarantee the reliability of the some tests.           *")
+            message("* is low and may not guarantee the reliability of the tests.                *")
             message("* See the manual for more details.                                          *")
             message("*****************************************************************************")
 
            }
 
-          if (lb > (lt / 2)) {
-            stop("The number of terms in each block must be less than a quarter part of the length of each time series. Stop running.")
+
+          if (lb > (lt / 4)) {
+            message("Start error message. The number of terms in each block must be less than a quarter part of the length of each time series.")
+            stop("End error message. Stop running.")
           }
           nflag <- 0
         }
@@ -320,10 +330,11 @@ blocks <- function(lb, ls, matdata, pardata1, pardata2, stpairs) {
         nb <- as.integer(((length(datistaz)) - 1) / ld)
 
         if (nb <= 5) {
-          message("Warning: the number of blocks is not greater than 5.")
+          message("Warning message: the number of blocks is not greater than 5.")
         }
         if (nb <= 0) {
-          stop("The number of blocks is not positive. Stop running.")
+          message("Start error message. The number of blocks is not positive.")
+          stop("End error message. Stop running.")
         }
 
 
@@ -345,37 +356,42 @@ blocks <- function(lb, ls, matdata, pardata1, pardata2, stpairs) {
 
       count.na <- matrix(0, nrow = lt, ncol = 1)
       count.cons.na <- 0
+      count.nna <- matrix(0, nrow = lt, ncol = 1)
+      count.cons.nna <- 0
       for (ii in 1:lt) {
         if(is.na(datistaz[ii]) == TRUE){
-
           count.cons.na <- count.cons.na + 1
           count.na[ii, 1] <- count.cons.na
         }else{count.cons.na<- 0}
+        if(is.na(datistaz[ii]) == FALSE){
+          count.cons.nna <- count.cons.nna + 1
+          count.nna[ii, 1] <- count.cons.nna
+        }else{count.cons.nna<- 0}
       }
       max.count.na <-   max(count.na[,])/lt
+      max.count.nna <-   max(count.nna[,])
+      if(max.count.nna > 29){
+      if(max.count.nna <= 89){
+        if(is.na(info.nna89[1]) == TRUE){
+          info.nna89 <- selstaz[i]
+        }else{
+          info.nna89 <- rbind(info.nna89, selstaz[i])
+        }
+              }
       if(max.count.na < 0.75){
-
       bmat1 <- matrix(0, nrow = lb, ncol = nb)
-
       n1 <- 1
       n2 <- lb
-
       lused <- lb + (nb - 2) * ld
-
-
       if ((lb - (ls + (lt - lused))) > (0.15 * lb) && flag == 0) {
         flag <- 1
-
-        warning("The last block is not complete ( missing values are greater than 15% of the fixed length) ")
-
+        message("Warning message: the last block is not complete (missing values are greater than 15% of the fixed length) ")
       }
       for (j in 1:nb) {
         bmat1[, j] <- c(datistaz[n1:n2])
         n1 <- n1 + ld
         n2 <- n2 + ld
-
       }
-
         if (i == 1){
         matblock <- bmat1
       }else{
@@ -383,7 +399,6 @@ blocks <- function(lb, ls, matdata, pardata1, pardata2, stpairs) {
         matblock <- cbind(matblock, bmat1)
       }
       }
-
       arrayblock[, , i] <- bmat1
       matrix.names.matblock[i] <- paste("SpatialPoint", selstaz[i], sep = "_")
 
@@ -395,6 +410,13 @@ blocks <- function(lb, ls, matdata, pardata1, pardata2, stpairs) {
         }
       }
 
+      }else{
+        if(is.na(info.nna29[1]) == TRUE){
+          info.nna29 <- selstaz[i]
+        }else{
+          info.nna29 <- rbind(info.nna29, selstaz[i])
+        }
+    }
 
       #==========================================================#
       #== END computing the number of consecutive missing values #
@@ -405,11 +427,27 @@ blocks <- function(lb, ls, matdata, pardata1, pardata2, stpairs) {
     #== END cicle over selstaz #                               #
     #==========================================================#
     if(is.na(info.na[1]) == FALSE){
-      message("The following spatial points are non-admissible. Too many consecutive NAs (greater than 75%).")
+      message("Start error message. Too many consecutive NAs (greater than 75%). The following spatial points are non-admissible:")
       for (i in 1:length(info.na)){
         message((info.na[i]))
       }
-      stop("Please exclude/change the non-admissible spatial points from the selection. Stop running.")
+      message("Please exclude/change the non-admissible spatial points from the selection.")
+      stop("End error message. Stop running.")
+    }
+
+    if(is.na(info.nna29[1]) == FALSE){
+      message("Start error message. The following spatial points are non-admissible. The number of valid consecutive values must be greater than 29.")
+      for (i in 1:length(info.nna29)){
+        message((info.nna29[i]))
+      }
+      message("Please exclude/change the non-admissible spatial points from the selection.")
+      stop("End error message. Stop running.")
+    }
+    if(is.na(info.nna89[1]) == FALSE){
+      message("Warning message: the number of valid consecutive values of the following spatial points is low (<=89) and may not guarantee the reliability of the tests.")
+      for (i in 1:length(info.nna89)){
+        message((info.nna89[i]))
+      }
     }
 
     matblock <- cbind(matblock, bmat1)
@@ -417,6 +455,7 @@ blocks <- function(lb, ls, matdata, pardata1, pardata2, stpairs) {
 
     array.block <- array(arrayblock, dim = c(lb, nb, length(selstaz)),
                          dimnames = list(NULL, NULL, matrix.names.matblock))
+
 
     #==============================================================#
     #== compute the number of consecutive missing values per block #
@@ -450,11 +489,12 @@ blocks <- function(lb, ls, matdata, pardata1, pardata2, stpairs) {
 
 
     if(is.na(info.block.na[1]) == FALSE){
-      message("The following spatial points are non-admissible. Too many consecutive NAs per block (greater than 80%).")
+      message("Start error message. Too many consecutive NAs per block (greater than 80%). The following spatial points are non-admissible:")
       for (ii in 1:length(info.block.na)) {
          message(info.block.na[ii])
       }
-      stop("Please exclude/change the non-admissible spatial points from the selection. Stop running.")
+      message("Please exclude/change the non-admissible spatial points from the selection.")
+      stop("End error message. Stop running.")
     }
 
     #====================================================================#
@@ -466,7 +506,8 @@ blocks <- function(lb, ls, matdata, pardata1, pardata2, stpairs) {
 
 
   } else {
-    stop("The number of spatial points selected in function 'couples' must be a vector with at least two components. Stop running.")
+    message("Start error message. The number of spatial points selected in function 'couples' must be a vector with at least two components.")
+    stop("End error message. Stop running.")
   }
 
 

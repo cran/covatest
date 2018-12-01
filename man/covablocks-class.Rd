@@ -27,8 +27,8 @@ test on the Gneiting class of models}
 \item{object}{object of class \code{covablocks} for method \code{show}}
 }
 \description{
-A class for the sample spatio-temporal covariance for each block
-of data to be computed for the selected spatial and temporal lags fixed
+A class for the sample spatio-temporal covariances to be computed for each
+block of data and for the selected spatial and temporal lags fixed
 in \code{stpairs} (output from \code{couples}). Depending on the type of
 test the empirical variance, the sample spatial and temporal marginal
 covariances for each block of data are also computed. Moreover, the sample
@@ -108,7 +108,7 @@ stpairs = couples.sym)
 
 covabl.sym <- covablocks(stblocks = block.sym, stpairs = couples.sym, typetest = "sym")
 
-###method for covablock
+### method for covablock
 #1. show
 covabl.sym
 

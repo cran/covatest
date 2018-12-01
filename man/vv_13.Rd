@@ -3,13 +3,14 @@
 \docType{data}
 \name{vv_13}
 \alias{vv_13}
-\title{Precomputed variogram for PM10 in data set rr_13}
+\title{Precomputed variogram for PM10 in data set air}
 \format{Object of class StVariogram}
 \usage{
 data(vv_13)
 }
 \description{
-Precomputed variogram for PM10 in data set rr_13.
+Precomputed variogram for PM10 in a subset of the air quality data set
+\code{\link[spacetime]{air}}
 }
 \examples{
 # --start define the STFDF rr_13-- #

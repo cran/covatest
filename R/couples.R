@@ -32,16 +32,17 @@ setClass("couples", slots = c(couples.st = "matrix",
 #' argument, to be compared
 #' @param t.couples.in vector of only positive (negative) temporal lags to be
 #' analyzed. The corresponding negative (positive) temporal lags are included
-#' authomatically for \code{typetest = "sym","sep","tnSep"}. If some temporal lags,
-#' corresponding to some couples of spatial points, are not required for the specific
-#' test, they can be set equal to zero, through the specific \code{\link{setzero}}
-#' method
+#' authomatically for \code{typetest = "sym", "sep", "tnSep"}. If some temporal
+#' lags, corresponding to some couples of spatial points, are not required for
+#' the specific test, they can be set equal to zero, through the specific
+#' \code{\link{setzero}} method
 #' @param typetest character; set \code{typetest = "sym"} for symmetry test
-#' (default choice), \code{typetest = "sep"} for separability test, \code{typetest = "tnSep"}
-#' for type of non separability test,\code{typetest = "productSum"} for the test
-#' on the product-sum class of models, \code{typetest = "intProduct"} for the test
-#' on the integrated product class of models, \code{typetest = "gneiting"} for the
-#' test on the Gneiting class of models
+#' (default choice), \code{typetest = "sep"} for separability test,
+#' \code{typetest = "tnSep"} for type of non separability test,
+#' \code{typetest = "productSum"} for the test on the product-sum class of models,
+#' \code{typetest = "intProduct"} for the test on the integrated product class
+#' of models, \code{typetest = "gneiting"} for the test on the Gneiting class
+#' of models
 #' @param typecode numeric or character; specifies the codification of the
 #' spatial points in the \code{data frame} or in the STFDF/STSDF
 #'
@@ -56,17 +57,18 @@ setClass("couples", slots = c(couples.st = "matrix",
 #' specific \code{\link{setzero}} method must be used to set the negative temporal
 #' lags equal to zero
 #'
-#' \item For \code{typetest = "tnSep"} the temporal lags should be chosen according to
+#' \item for \code{typetest = "tnSep"} the temporal lags should be chosen according to
 #' the results of the sample non separability ratios, plotted through a boxplot
 #' classified for temporal lags (see \linkS4class{sepindex} for more details)
 #'
-#' \item For model tests (\code{typetest} equal to "productSum", "intProduct"
-#' and "gneiting"), the number of analyzed spatial points must be used to create
-#' at least 3 spatial couples or multiple of 3, such that each triplet satisfies
-#' the condition h1-h2=h2-h3 (only for \code{typetest = "intProduct"} and \code{"gneiting"}).
+#' \item for model tests (\code{typetest} equal to \code{"productSum"},
+#' \code{"intProduct"} and \code{"gneiting"}), the number of analyzed spatial
+#' points must be used to create at least 3 spatial couples or multiple of 3,
+#' such that each triplet satisfies the condition h1-h2=h2-h3 (only for
+#' \code{typetest = "intProduct"} and \code{"gneiting"}).
 #' The number of positive temporal lags must be at least 3, or multiple
-#' of 3, too. The condition u1-u2=u2-u3 (only for \code{typetest = "intProduct"} and
-#' \code{"gneiting"}) must be satisfied for each triplet.
+#' of 3, too. The condition u1-u2=u2-u3 (only for \code{typetest = "intProduct"}
+#' and \code{"gneiting"}) must be satisfied for each triplet.
 #' Note that for each spatial triplet and each temporal triplet, 6 contrasts can
 #' be defined. However, for \code{typetest = "intProduct"} (test on the integrated
 #' model) the user has to set arbitrarily one temporal lag equal to zero in
@@ -103,7 +105,7 @@ setClass("couples", slots = c(couples.st = "matrix",
 #' couples.sym <- couples(sel.staz = sel.staz.sym, sp.couples.in = sp.couples.in.sym,
 #' t.couples.in = t.couples.in.sym, typetest = "sym", typecode = character())
 #'
-#' ###methods for couples
+#' ### methods for couples
 #' #1. show
 #' couples.sym
 #'
@@ -127,38 +129,46 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
   ### SOME CHECKS ON THE ARGUMENTS ###
 
   if (is.character(typetest) == FALSE) {
-    stop("The argument for typetest is not admissible.")
+    message("Start error message. The argument for typetest is not admissible.")
+    stop("End error message. Stop running.")
   }
 
   if (typetest != "sym" && typetest != "sep"  && typetest != "tnSep" && typetest != "productSum"
       && typetest != "intProduct" && typetest != "gneiting") {
-    stop("The argument for typetest is not admissible.")
+    message("Start error message. The argument for typetest is not admissible.")
+    stop("End error message. Stop running.")
   }
 
   if (typeof(typecode) != "double" && typeof(typecode) != "character") {
-    stop("The argument for typecode is not admissible. Stop running.")
+    message("Start error message. The argument for typecode is not admissible.")
+    stop("End error message. Stop running.")
   }
 
   if (is.vector(sel.staz) == FALSE || length(sel.staz) <2) {
-    stop("The argument sel.staz must be a vector of at least 2 elements. Stop running.")
+    message("Start error message. The argument sel.staz must be a vector of at least 2 elements.")
+    stop("End error message. Stop running.")
   }
 
   if (typeof(typecode) !=  typeof(sel.staz)) {
-    stop("The type of data in sel.staz are not consistent with the declared typecode. Stop running.")
+    message("Start error message. The type of data in sel.staz are not consistent with the declared typecode.")
+    stop("End error message. Stop running.")
   }
 
   if (is.matrix(sp.couples.in) == FALSE || ncol(sp.couples.in) != 2) {
-    stop("The argument sp.couples.in must be a matrix of 2 column. Please revise appropriately the argument sp.couples.in and run the function again. Stop running.")
+    message("Start error message. The argument sp.couples.in must be a matrix of 2 column. Please revise appropriately the argument sp.couples.in and run the function again.")
+    stop("End error message. Stop running.")
   }
 
   if (is.vector(t.couples.in) == FALSE || is.numeric(t.couples.in) == FALSE
       || match(0, t.couples.in, nomatch = 0) != 0) {
-    stop("The argument t.couples.in must be a numeric vector, with no zeros. Please revise appropriately the argument t.couples.in and run the function again. Stop running.")
+    message("Start error message. The argument t.couples.in must be a numeric vector, with no zeros. Please revise appropriately the argument t.couples.in and run the function again.")
+    stop("End error message. Stop running.")
   }
 
   t.couples.in <- abs(t.couples.in)
   if (match("TRUE", duplicated(t.couples.in, fromLast = TRUE), nomatch = 0) != 0) {
-    stop("The argument t.couples.in must contains different temporal lags in absolut value. Please revise appropriately the argument t.couples.in and run the function again. Stop running.")
+    message("Start error message. The argument t.couples.in must contains different temporal lags in absolut value. Please revise appropriately the argument t.couples.in and run the function again.")
+    stop("End error message. Stop running.")
   }
 
   if (typetest == "sym") {
@@ -197,7 +207,8 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
   ns <- length(sel.staz)
 
   if (ns < 2) {
-    stop("The number of spatial points to be analyzed must be at least equal to two. Stop running.")
+    message("Start error message. The number of spatial points to be analyzed must be at least equal to two.")
+    stop("End error message. Stop running.")
   }
 
 
@@ -216,12 +227,15 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
   }
 
  # message("Enter a sequence of ID codes which denote the spatial points to be analyzed: ")
- if(mode(sel.staz) != mode(typecode)) {stop("The ID codes are not consistent with the typecode.")}
+ if(mode(sel.staz) != mode(typecode)) {
+   message("Start error message. The ID codes are not consistent with the typecode.")
+   stop("End error message. Stop running.")}
 
   j <- 0
 
   while (anyDuplicated(sel.staz) >= 1) {
-    stop("There are duplicates in the sequence of ID codes. Please revise appropriately the argument sel.staz and run the function again. Stop running.")
+    message("Start error message. There are duplicates in the sequence of ID codes. Please revise appropriately the argument sel.staz and run the function again.")
+    stop("End error message. Stop running.")
   }
 
 
@@ -233,14 +247,17 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
 
   nc <- nrow(sp.couples.in)
   if(mode(sp.couples.in) != mode(typecode)) {
-                                        stop("The ID codes in sp.couples.in are not consistent with the typecode. Please revise appropriately the argument sp.couples.in and run the function again. Stop running.")}
+    message("Start error message. The ID codes in sp.couples.in are not consistent with the typecode. Please revise appropriately the argument sp.couples.in and run the function again.")
+    stop("End error message. Stop running.")
+    }
 
 
   if (type.test >= 4) {
 
     ns_multiple <- as.integer(nc / 3)
     if ((ns_multiple * 3) != nc) {
-      stop("The total number of spatial couples is not consistent with the number of couples required by the test. Please revise appropriately the arguments and run the function again. Stop running.")
+      message("Start error message. The total number of spatial couples is not consistent with the number of couples required by the test. Please revise appropriately the arguments and run the function again.")
+      stop("End error message. Stop running.")
     }
   }
 
@@ -249,7 +266,8 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
 
     check.na <- match(s.couples, sel.staz)
     while (s.couples[2] == s.couples[1] || anyNA(check.na) == TRUE) {
-      stop("Some couples of points are not admissible: the points must be different and must be chosen among the selected spatial points. Please revise appropriately the argument sp.couples.in and run the function again. Stop running.")
+      message("Start error message. Some couples of points are not admissible: the points must be different and must be chosen among the selected spatial points. Please revise appropriately the argument sp.couples.in and run the function again.")
+      stop("End error message. Stop running.")
     }
 
 
@@ -270,7 +288,8 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
       dupli.couple.perm <- duplicated(sp.couples.perm, fromLast = T)
 
       if(dupli.couple[1] == TRUE || dupli.couple.perm[1] == TRUE){
-        stop("Some couples of points are duplicated. Please revise appropriately the argument sp.couples.in and run the function again. Stop running.")
+        message("Start error message. Some couples of points are duplicated. Please revise appropriately the argument sp.couples.in and run the function again.")
+        stop("End error message. Stop running.")
       }
 
     }
@@ -278,9 +297,10 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
 
   }
   if (length(setdiff(sel.staz, sp.couples)) >= 1) {
-    message("Error: The following spatial points have not been used to generate the couples of spatial points.")
+    message("Start error message. The following spatial points have not been used to generate the couples of spatial points.")
     print(setdiff(sel.staz, sp.couples))
-    stop("Please revise appropriately the argument sp.couples.in and run the function again. Stop running.")
+    message("Please revise appropriately the argument sp.couples.in and run the function again.")
+    stop("End error message. Stop running.")
   }
   sp.couples2 <- sp.couples
   sp.couples <- matrix(match(sp.couples, sel.staz), nrow = nc, ncol = 2)
@@ -301,7 +321,8 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
     for (i in 1:(n.temp/2)) {
       t.couples <- t.couples.in[i,]
       if((t.couples[2] + t.couples[1] != 0) || (t.couples[1] == 0)) {
-        stop("This couple of temporal lags is not admissible: the temporal lags must be equal in absolut value and their absolut values must be greater than zero. Please revise appropriately the argument t.couples.in and run the function again. Stop running")
+        message("Start error message. This couple of temporal lags is not admissible: the temporal lags must be equal in absolut value and their absolut values must be greater than zero. Please revise appropriately the argument t.couples.in and run the function again.")
+        stop("End error message. Stop running.")
       }
 
 
@@ -321,8 +342,8 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
         dupli.couple.perm <- duplicated(tl.couples.perm, fromLast = T)
 
         if(dupli.couple[1] == TRUE || dupli.couple.perm[1] == TRUE) {
-
-          stop("The couple (# ", i, ") of temporal lags already exists or have been included in a different order. Please revise appropriately the argument t.couples.in and run the function again. Stop running.")
+          message("Start error message. The couple (# ", i, ") of temporal lags already exists or have been included in a different order. Please revise appropriately the argument t.couples.in and run the function again.")
+          stop("End error message. Stop running.")
         }
       }
     }
@@ -363,7 +384,8 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
 
     nt_multiple <- as.integer(n.temp/3)
     if ((nt_multiple * 3) != n.temp) {
-     stop("The total number of temporal lags is not consistent with the number of lags required by the test. Please revise appropriately the argument t.couples.in and run the function again. Stop running.")
+     message("Start error message. The total number of temporal lags is not consistent with the number of lags required by the test. Please revise appropriately the argument t.couples.in and run the function again.")
+     stop("End error message. Stop running.")
       }
 
 
@@ -374,7 +396,8 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
       t.couples[2] <- 0
 
       while (t.couples[1] <= 0) {
-        stop("This temporal lag is not admissible: the temporal lags must be greater than zero. Please revise appropriately the argument t.couples.in and run the function again. Stop running.")
+        message("Start error message. This temporal lag is not admissible: the temporal lags must be greater than zero. Please revise appropriately the argument t.couples.in and run the function again.")
+        stop("End error message. Stop running.")
       }
 
       if (i == 1) {
@@ -388,7 +411,8 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
 
 
         while (dupli.couple[1] == TRUE) {
-          stop("Some temporal lags are duplicated. Please revise appropriately the argument t.couples.in and run the function again. Stop running.")
+          message("Start error message. Some temporal lags are duplicated. Please revise appropriately the argument t.couples.in and run the function again.")
+          stop("End error message. Stop running.")
         }
 
       }
@@ -455,8 +479,8 @@ NULL
 #' @export
 setMethod(f="show", signature="couples", definition=function(object) {
 cat("Spatio-temporal lags defined throught the objects of the class 'couples'", "\n")
-  sp.couples <- as.matrix(object@sp.couples[, 3:4])
-  couples.st2 <- cbind(sp.couples, object@couples.st[, -(1:2)])
+  couples.st2 <- matrix(object@couples.st, nrow = nrow(object@couples.st), ncol = ncol(object@couples.st))
+  couples.st2[, 1:2] <- as.matrix(object@sp.couples[, 3:4], nrow = nrow(object@sp.couples))
   rownames(couples.st2) <- NULL
   colnames(couples.st2) <- NULL
   print(couples.st2)
@@ -479,8 +503,8 @@ cat("Spatio-temporal lags defined throught the objects of the class 'couples'", 
 }
 )
 #' @param x object of class \code{couples} for method \code{extract}
-#' @param i selection of rows or columns of the slot \code{@couples.st}. Rows or
-#' columns depending on the logical parameter \code{by.row} to be set
+#' @param i index specifing rows or columns of the slot \code{@couples.st}.
+#' Rows or columns depending on the logical parameter \code{by.row} to be set
 #' @param by.row logical; if \code{TRUE} rows of the slot \code{@couples.st} are
 #' selected (the temporal lags associated to the i-th spatial couple are given).
 #' If \code{FALSE} (the default) columns of the slot \code{@couples.st} are
@@ -495,7 +519,8 @@ cat("Spatio-temporal lags defined throught the objects of the class 'couples'", 
 setMethod(f="[", signature="couples", definition=function(x, i, by.row = FALSE) {
   if(by.row == FALSE){
     if(i <= 2){
-      stop("The column selected does not contain the temporal lags. Please select a column greater than 2.")
+      message("Start error message. The column selected does not contain the temporal lags. Please select a column greater than 2.")
+      stop("End error message. Stop running.")
     }
 
     y <-as.data.frame(cbind(x@sp.couples[, 3:4], x@couples.st[, i]))
@@ -575,20 +600,24 @@ setMethod(f="setzero", signature(x="couples"),
             setzero <- zero
 
             if(setzero == TRUE && is.null(index) == FALSE){
-              stop("Arguments not valid.")
+              message("Start error message. Arguments not valid.")
+              stop("End error message. Stop running.")
             }
 
             if(setzero == FALSE && is.null(index) == TRUE){
-              stop("Arguments not valid.")
+              message("Start error message. Arguments not valid.")
+              stop("End error message. Stop running.")
             }
 
             if(setzero == TRUE && x@typetest == "sym"){
-              stop("Argument setzero is ignored for symmetry test. See manual for details.")
+              message("Start error message. Argument setzero is ignored for symmetry test. See manual for details.")
+              stop("End error message. Stop running.")
               setzero == FALSE
             }
 
             if(value != 0){
-              stop("The value to be replaced has to be only zero.")
+              message("Start error message. The value to be replaced has to be only zero.")
+              stop("End error message. Stop running.")
             }
 
             couples.st2 <- x@couples.st
@@ -606,7 +635,8 @@ setMethod(f="setzero", signature(x="couples"),
             if(setzero == FALSE){
               for(i in 1:nrow(index)){
                 if(index[i,1] <= 2 && index[i,2] <= 2){
-                  stop("The editing of spatial points is not admissible.")
+                  message("Start error message. The editing of spatial points is not admissible.")
+                  stop("End error message. Stop running.")
                 }
                 couples.st2[index[i,1],index[i,2]] <- value
               }
@@ -626,9 +656,9 @@ setMethod(f="setzero", signature(x="couples"),
 
                     if ((x@couples.st[i, k + 2]) != (couples.st2[i, k + 2]) &&
                         (couples.st2[i, k + 2]) != 0) {
-                      message("Error: Regarding the spatial couple (", x@sp.couples[i, 3], " ; ", x@sp.couples[i, 4], " the temporal lag ", couples.st2[i, jj + 2], " is not admissible.")
-                      message("You can only substitute zeros to the existing lags just to esclude these temporal lags for this specific spatial couple.")
-                      stop("Please revise the arguments and run again. Stop running.")
+                      message("Start error message. Regarding the spatial couple (", x@sp.couples[i, 3], " ; ", x@sp.couples[i, 4], " the temporal lag ", couples.st2[i, jj + 2], " is not admissible.")
+                      message("You can only substitute zeros to the existing lags just to esclude these temporal lags for this specific spatial couple. Please revise the arguments and run again.")
+                      stop("End error message. Stop running.")
 
                     }
                   }
@@ -645,9 +675,9 @@ setMethod(f="setzero", signature(x="couples"),
                   for (j in 1:(t.lag / 2)) {
                     jj <- jj + 2
                     if (couples.st2[i, jj + 2] != abs(couples.st2[i, jj + 3])) {
-                      message("Error: Regarding the spatial couple (", x@sp.couples[i, 3], " ; ", x@sp.couples[i, 4], ") the temporal lags (", couples.st2[i, jj + 2], " ; ", couples.st2[i, jj + 3], ") are not admissible")
-                      message("For symmetry test, you need to substitute zero to both negative and positive temporal lags.")
-                      stop("Please revise the argument 'index' and run again. Stop running.")
+                      message("Start error message. Regarding the spatial couple (", x@sp.couples[i, 3], " ; ", x@sp.couples[i, 4], ") the temporal lags (", couples.st2[i, jj + 2], " ; ", couples.st2[i, jj + 3], ") are not admissible")
+                      message("For symmetry test, you need to substitute zero to both negative and positive temporal lags. Please revise the argument 'index' and run again.")
+                      stop("End error message. Stop running.")
                     }
                   }
                 }
@@ -656,7 +686,8 @@ setMethod(f="setzero", signature(x="couples"),
                 if (identical(as.integer(matrix(0, nrow = 1, ncol = (ncol(x@couples.st) -
                                                                      2))), as.integer(couples.st2[i, 3:ncol(x@couples.st)])) ==
                     TRUE) {
-                  stop("There is at least one spatial couple with no specification of temporal lags.")
+                  message("Start error message. There is at least one spatial couple with no specification of temporal lags.")
+                  stop("End error message. Stop running.")
                 }
               }
 
@@ -675,11 +706,9 @@ setMethod(f="setzero", signature(x="couples"),
                     if ((x@couples.st[i, k + 2]) != (couples.st2[i, k + 2]) &&
                         (couples.st2[i, k + 2]) != 0) {
 
-                      message("Error: Regarding the spatial couple (", x@sel.staz[couples.st2[i,
-                                                                                              1]], "", x@sel.staz[couples.st2[i, 2]], " the temporal lag ",
-                              couples.st2[i, k + 2], " is not admissible.")
-                      message("You can only substitute zeros to the existing lags just to esclude these temporal lags for this specific spatial couple.")
-                      stop("Please revise the arguments and run again. Stop running.")
+                      message("Start error message. Regarding the spatial couple (", x@sel.staz[couples.st2[i,1]], "", x@sel.staz[couples.st2[i, 2]], " the temporal lag ", couples.st2[i, k + 2], " is not admissible.")
+                      message("You can only substitute zeros to the existing lags just to esclude these temporal lags for this specific spatial couple. Please revise the arguments and run again.")
+                      stop("End error message. Stop running.")
 
                     }
 
@@ -689,7 +718,8 @@ setMethod(f="setzero", signature(x="couples"),
                   if (identical(matrix(0, nrow = 1, ncol = (ncol(x@couples.st) -
                                                             2)), as.integer(couples.st2[i, 3:ncol(x@couples.st)])) ==
                       TRUE) {
-                    stop("There is at least one spatial couple with no specification of temporal lags.")
+                    message("Start error message. There is at least one spatial couple with no specification of temporal lags.")
+                    stop("End error message. Stop running.")
 
                   }
 
@@ -724,7 +754,8 @@ setMethod(f="setzero", signature(x="couples"),
                   }
                 }
                 if (jj == 0) {
-                  stop("No temporal lags have been specified.")
+                  message("Start error message. No temporal lags have been specified.")
+                  stop("End error message. Stop running.")
                 }
 
                 ii <- -2

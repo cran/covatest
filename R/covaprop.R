@@ -18,8 +18,9 @@ setClass("covaprop", slots = c(test.statistics = "matrix",
 
 #' @param cblock object of class \code{covablocks}
 #' @param cstat object of class \code{covastat} or \code{covastatM}
-#' @param nonseptype integer; this argumet is required only for \code{typetest = "tnSep"},
-#' otherwise it has to be set equal to \code{NULL} (default choice).
+#' @param nonseptype integer; this argumet is required only for objects
+#' (\code{cblock} and \code{cstat}) defined to perform the type of non
+#' separability test, otherwise it has to be set equal to \code{NULL} (default choice).
 #' Set \code{nonseptype=0} for testing the null hypothesis that the non
 #' separability is non positive; set \code{nonseptype=1} for testing the null
 #' hypothesis that the non separability is non negative
@@ -58,7 +59,7 @@ setClass("covaprop", slots = c(test.statistics = "matrix",
 #' the generic null hypothesis is: \eqn{H_0: Af(G)=0}
 #' }
 #' For the analytic expression of each test statistic and its probability
-#' distribution see Cappello et al. (2017). In the same contribution the
+#' distribution see Cappello et al. (2018). In the same contribution the
 #' different \code{f(G)} are given for each test to be computed.
 #'
 #' A stop occurs if the type of test set in \code{cblock} is not consistent with
@@ -124,7 +125,7 @@ setClass("covaprop", slots = c(test.statistics = "matrix",
 #' test.sym <- covaprop(cblock = covabl.sym, cstat = covast.sym, nonseptype = NULL,
 #' sign.level = 0.05)
 #'
-#' ###method for covaprop
+#' ### method for covaprop
 #' #1. show
 #' test.sym
 #'
@@ -141,15 +142,18 @@ covaprop <- function(cblock, cstat, nonseptype = NULL, sign.level = 0.05) {
 
 
   if (!inherits(cblock, "covablocks")){
-    stop("cblock argument has to be of class covablocks.")
+    message("Start error message. cblock argument has to be of class covablocks.")
+    stop("End error message. Stop running.")
   }
 
   if (!inherits(cstat, "covastat") && !inherits(cstat, "covastatM")){
-    stop("cstat argument has to be of class covastat.")
+    message("Start error message. cstat argument has to be of class covastat.")
+    stop("End error message. Stop running.")
   }
 
  if(cblock@typetest != cstat@typetest){
-    stop("The arguments cblocks and cstat are referred to different typetest. Please verify the consistency of the arguments.")
+   message("Start error message. The arguments cblocks and cstat are referred to different typetest. Please verify the consistency of the arguments.")
+    stop("End error message. Stop running.")
   }
 
   typetest <- cblock@typetest
@@ -171,24 +175,24 @@ covaprop <- function(cblock, cstat, nonseptype = NULL, sign.level = 0.05) {
   }
 
   if (is.null(nonseptype) == FALSE && type.test != 2) {
-    message("The nonseptype will be ignored since it is not required for the selected type of test.")
+    message("Warning message: the nonseptype will be ignored since it is not required for the selected type of test.")
   }
   if (type.test == 2) {
-  if (is.scalar(nonseptype) == FALSE || nonseptype < 0 || nonseptype >
-      1) {stop("The argument for nonseptype is not admissible.")}
+  if (is.scalar(nonseptype) == FALSE || nonseptype < 0 || nonseptype > 1) {
+    message("Start error message. The argument for nonseptype is not admissible.")
+    stop("End error message. Stop running.")
+    }
   }
 
   if (is.numeric(sign.level) == FALSE) {
-    stop("The argument for sign.level is not admissible.")
+    message("Start error message. The argument for sign.level is not admissible.")
+    stop("End error message. Stop running.")
     }
 
   if (sign.level <= 0 || sign.level >= 1) {
-    message("The specified level of significance is not admissible. It must be between 0 and 1.")
-    stop("Stop running.")
+    message("Start error message. The specified level of significance is not admissible. It must be between 0 and 1.")
+    stop("End error message. Stop running.")
   }
-
-
-
 
   if (type.test == 0) {
     matrix_cova_cova <- cblock@mat.cova.cova
@@ -251,9 +255,8 @@ covaprop <- function(cblock, cstat, nonseptype = NULL, sign.level = 0.05) {
 
   if (type.test == 2) {
     if (is.null(nonseptype) == TRUE) {
-      message("The argument nonseptype must to be set.")
-      stop("Stop running.")
-
+      message("Start error message. The argument nonseptype must to be set.")
+      stop("End error message. Stop running.")
     }
 
 

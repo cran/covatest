@@ -32,7 +32,7 @@ interval [0, lb/2]}
 \item{matdata}{STFDF/STSDF or \code{data.frame}; which contains the
 coordinates of the spatial points, the identification code of the spatial
 points, the indentification code of the temporal points and the values of
-the variable, typically output from \code{dataprep}}
+the variable, typically output from \code{read.STdata}}
 
 \item{pardata1}{integer, it represents the column in which the spatial ID is
 stored (if the spatio-temporal data set is given as data.frame) or the number
@@ -68,7 +68,7 @@ spatial points specified in \code{couples}. Thus, it is necessary to
 execute \linkS4class{couples} first and then \linkS4class{blocks}
 }
 \details{
-A message informs the user of the number of blocks computed
+A message informs the user of the number of blocks extracted
 }
 \section{Slots}{
 
@@ -157,7 +157,7 @@ t.couples.in = t.couples.in.sym, typetest = "sym", typecode = character())
 block.sym <- blocks(lb = 40, ls = 10, matdata = rr_13, pardata1 = 1, pardata2 = 1,
 stpairs = couples.sym)
 
-###methods for blocks
+### methods for blocks
 #1. show
 block.sym
 
@@ -198,5 +198,5 @@ Stochastic Environmental Research and Risk Assessment,
 \seealso{
 \code{\link{couples}}
 
-\code{\link{dataprep}}
+\code{\link{read.STdata}}
 }

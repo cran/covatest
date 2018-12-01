@@ -1,7 +1,7 @@
 #' Class "covablocks"
 #'
-#' A class for the sample spatio-temporal covariance for each block
-#' of data to be computed for the selected spatial and temporal lags fixed
+#' A class for the sample spatio-temporal covariances to be computed for each
+#'block of data and for the selected spatial and temporal lags fixed
 #' in \code{stpairs} (output from \code{couples}). Depending on the type of
 #' test the empirical variance, the sample spatial and temporal marginal
 #' covariances for each block of data are also computed. Moreover, the sample
@@ -92,7 +92,7 @@ setClass("covablocks", slots = c(mat.cova = "matrix",
 #'
 #' covabl.sym <- covablocks(stblocks = block.sym, stpairs = couples.sym, typetest = "sym")
 #'
-#' ###method for covablock
+#' ### method for covablock
 #' #1. show
 #' covabl.sym
 #'
@@ -125,19 +125,22 @@ covablocks <- function(stblocks, stpairs, typetest = "sym") {
   ### SOME CHECKS ON THE ARGUMENTS ###
 
   if (!inherits(stpairs, "couples")){
-    stop("stpairs argument has to be of class couples.")
+    message("Start error message. stpairs argument has to be of class couples.")
+    stop("End error message. Stop running.")
   }
 
   if (!inherits(stblocks, "blocks")){
-    stop("stblocks argument has to be of class blocks.")
+    message("Start error message. stblocks argument has to be of class blocks.")
+    stop("End error message. Stop running.")
   }
 
   if(identical(stpairs@sel.staz,stblocks@sel.staz) == FALSE){
-    stop("The objects stpairs and stblocks have not been defined for the same set of spatial points.")
+    message("Start error message. The objects stpairs and stblocks have not been defined for the same set of spatial points.")
+    stop("End error message. Stop running.")
   }
 
   if(stpairs@typetest != typetest){
-    warning("Reminder: the argument typetest is different from the one defined in stpairs")
+    message("Warning message: the argument typetest is different from the one defined in stpairs")
   }
 
 
@@ -157,12 +160,14 @@ covablocks <- function(stblocks, stpairs, typetest = "sym") {
   #=================================================================#
 
   if (is.character(typetest) == FALSE) {
-    stop("The argument for typetest is not admissible.")
+    message("Start error message. The argument for typetest is not admissible.")
+    stop("End error message. Stop running.")
   }
 
   if (typetest != "sym" && typetest != "sep"  && typetest != "tnSep" && typetest != "productSum"
       && typetest != "intProduct" && typetest != "gneiting") {
-    stop("The argument for typetest is not admissible.")
+    message("Start error message. The argument for typetest is not admissible.")
+    stop("End error message. Stop running.")
   }
 
   if (typetest == "sym") {
@@ -184,23 +189,27 @@ covablocks <- function(stblocks, stpairs, typetest = "sym") {
 
 
   if(stpairs@typetest == "sym" && type.test >= 4){
-    stop("The argument typetest is not consistent with respect to the one defined in stpairs. Please change typetest or define a new stpairs.")
+    message("Start error message. The argument typetest is not consistent with respect to the one defined in stpairs. Please change typetest or define a new stpairs.")
+    stop("End error message. Stop running.")
   }
 
   if(any(stpairs@tl.couples < 0) && type.test>=4){
-    stop("The argument typetest is not consistent with respect to the one defined in stpairs. Please change typetest or define a new stpairs.")
+    message("Start error message. The argument typetest is not consistent with respect to the one defined in stpairs. Please change typetest or define a new stpairs.")
+    stop("End error message. Stop running.")
   }
 
   maxt <- max(abs(max(couples[, -c(1:2)])), abs(min(couples[, -c(1:2)])))
+
+
+
   if (maxt > nrow(matblock)) {
-    stop("Temporal lags defined in function 'couples' are not consistent with block length (lb) fixed in function 'blocks'.")
+    message("Start error message. Temporal lags defined in function 'couples' are not consistent with block length (lb) fixed in function 'blocks'.")
+    stop("End error message. Stop running.")
   }
 
   if (maxt > (nrow(matblock)/4)) {
     ratio.max.t <- round(maxt, 3)
-    message("Warning: the proportion ", ratio.max.t, " between the maximum
-            temporal lag defined in function 'couples' and block length in defined in function 'blocks' is greater
-            than 0.25. The covariance estimation might not be reliable.")
+    message("Warning message: the proportion ", ratio.max.t, " between the maximum temporal lag defined in function 'couples' and block length defined in function 'blocks' is greater than 0.25. The covariance estimation might not be reliable.")
   }
 
 
@@ -228,9 +237,10 @@ covablocks <- function(stblocks, stpairs, typetest = "sym") {
     matcov.ncol <- as.integer(nct)
     block.array <- array(matblock, c(block.nrow, block.ncol, nstaz))
     mat.cova <- matrix(0, block.ncol, matcov.ncol)
+    vec.na <- matrix(NA, block.nrow, 1)
 
     couples.ncol.r <- 0
-
+    info.na <- matrix(NA, 1, 5)
     for (i in 1:couples.nrow) {
       couples.nrow.r <- 0
       nf <- 0
@@ -241,17 +251,38 @@ covablocks <- function(stblocks, stpairs, typetest = "sym") {
           couples.nrow.r <- couples.nrow.r + 1
           matcov.n <- as.integer(couples.nrow.r + couples.ncol.r)
 
-
-
+          flag.block <- 0
           for (l in 1:block.ncol) {
-
 
             if (couples[i, j + 2] > 0) {
               mat.cova[l, matcov.n] <- cov(block.array[-(nrow(matblock) -
                                                            couples[i, j + 2] + 1:nrow(matblock)), l, couples[i,
                                                                                                              1]], block.array[-(1:couples[i, j + 2]), l, couples[i,
                                                                                                                                                                  2]], use = "pairwise.complete.obs")
-            }
+
+              if(is.na(mat.cova[l, matcov.n]) == TRUE){
+              if(flag.block == 0){
+              if(is.na(info.na[1,1]) == TRUE){
+                info.na[1,1] <- couples[i,1]
+                info.na[1,2] <- couples[i,2]
+                info.na[1,5] <- couples[i,j +2]
+                if(identical(vec.na,block.array[-(nrow(matblock) -
+                         couples[i, j + 2] + 1:nrow(matblock)), l, couples[i, 1]]) == TRUE){info.na[1,3] <- 1}
+                if(identical(vec.na,block.array[-(1:couples[i, j + 2]), l, couples[i, 2]]) == TRUE){info.na[1,4] <- 2}
+              }else{
+                info.na <- rbind(info.na, c(couples[i,1:2],NA,NA,NA))
+                info.na[1,5] <- couples[i,j +2]
+                if(identical(vec.na,block.array[-(nrow(matblock) -
+                                                  couples[i, j + 2] + 1:nrow(matblock)), l, couples[i, 1]]) == FALSE){info.na[1,3] <- 1}
+                if(identical(vec.na,block.array[-(1:couples[i, j + 2]), l, couples[i, 2]]) == FALSE){info.na[1,4] <- 2}
+
+
+              }
+              flag.block <- 1
+                }
+              }
+
+              }
 
             if (couples[i, j + 2] < 0) {
               mat.cova[l, matcov.n] <- cov(block.array[-(1:(-couples[i,
@@ -260,7 +291,32 @@ covablocks <- function(stblocks, stpairs, typetest = "sym") {
                                                                                                                                                                     2]], use = "pairwise.complete.obs")
 
 
-            }
+              if(is.na(mat.cova[l, matcov.n]) == TRUE){
+                if(flag.block == 0){
+                if(is.na(info.na[1,1]) == TRUE){
+                  info.na[1,1] <- couples[i,1]
+                  info.na[1,2] <- couples[i,2]
+                  info.na[1,5] <- couples[i,j +2]
+                  if(identical(vec.na,block.array[-(1:(-couples[i,
+                                                                j + 2])), l, couples[i, 1]]) == TRUE){info.na[1,3] <- 1}
+                  if(identical(vec.na,block.array[-(nrow(matblock) +
+                                                    couples[i, j + 2] + 1:nrow(matblock)), l, couples[i,
+                                                                                                      2]]) == TRUE){info.na[1,4] <- 2}
+                }else{
+                  info.na <- rbind(info.na, c(couples[i,1:2],NA,NA,NA))
+                  info.na[1,5] <- couples[i,j +2]
+                  if(identical(vec.na,block.array[-(1:(-couples[i,
+                                                                j + 2])), l, couples[i, 1]]) == FALSE){info.na[1,3] <- 1}
+                  if(identical(vec.na,block.array[-(nrow(matblock) +
+                                                    couples[i, j + 2] + 1:nrow(matblock)), l, couples[i,
+                                                                                                      2]]) == FALSE){info.na[1,4] <- 2}
+
+
+                }
+                  flag.block <- 1
+              }
+              }
+              }
 
 
           }
@@ -309,11 +365,22 @@ covablocks <- function(stblocks, stpairs, typetest = "sym") {
         }
       }
       if (jj == 0) {
-        stop("Error: no temporal lags have been specified.")
+        message("Start error message. No temporal lags have been specified.")
+        stop("End error message. Stop running.")
       }
 
     }
     #= End check on columns and rows with non-zero values =#
+
+
+      if(is.na(info.na[1,1]) == FALSE){
+        message("There are no enough data for computing the covariance: spatial couples, #point in the couple non-valid, #point in the couple non-valid, temporal lag non-valid.")
+        for (i in 1:length(info.na)){
+          print(info.na[i,])
+        }
+        message("Start error message. Please exclude/change the non-valid spatial couples/points/temporal lag from the selection.")
+        stop("End error message. Stop running.")
+      }
 
     #==========================================================================#
     #= Start if on type of test (1=separability, 2=type of non separability,  =#

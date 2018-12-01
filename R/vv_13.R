@@ -1,6 +1,7 @@
-#' Precomputed variogram for PM10 in data set rr_13
+#' Precomputed variogram for PM10 in data set air
 #'
-#' Precomputed variogram for PM10 in data set rr_13.
+#' Precomputed variogram for PM10 in a subset of the air quality data set
+#' \code{\link[spacetime]{air}}
 #'
 #' @docType data
 #'
