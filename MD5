@@ -1,4 +1,4 @@
-31a42cf39e8efd9c98342e9b343cad2a *DESCRIPTION
+3ce81ec4be9f4064f7c314f37cb8cf69 *DESCRIPTION
 9df44625d5e0865a57fa170d45c6d4b0 *NAMESPACE
 6ee78d2da776debecc4cb0c3accc4612 *R/blocks.R
 2eb7a9ede42bf007703ba3a88bed423d *R/couples.R
@@ -6,7 +6,7 @@ a311917ce0091eba4a6a490fe38705a1 *R/covablocks.R
 dbc9dff568c0e3ba14f347fad1345a16 *R/covaprop.R
 7fcb875118a3bddd956845306f7fd756 *R/covastat.R
 dcb651869e3d267049c72520db098ce6 *R/covastatM.R
-8ac4610339c9c5a5199ff592049e7db5 *R/read.STdata.R
+272e3efad2c11c8efa0737bf0add057c *R/read.STdata.R
 610302b69860a4c76e4f19aae0d2fc4d *R/sepindex.R
 6cf7a4ca26196c481ead92e55c035c7d *R/vv_13.R
 c3bb4c85e41a017cdf151489b469057b *data/vv_13.RData

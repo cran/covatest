@@ -185,14 +185,12 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
       is.scalar(iclvr) == FALSE || is.scalar(iclsp) == FALSE) {
     message("Start error message. Some of the arguments iclsp, iclx, icly, iclt, iclvr are not numeric.")
     stop("End error message. Stop running.")}
-  print("icldate")
   if(is.vector(icldate) == FALSE || is.vector(icltime) == FALSE){
     message("Start error message. The arguments icldate or icltime are not vector.")
     stop("End error message. Stop running.")}
-  print(icldate)
   if(iclx != as.integer(iclx) || icly != as.integer(icly) || iclt != as.integer(iclt)
      || iclvr != as.integer(iclvr) || icldate[1] != as.integer(icldate[1]) ||
-     icltime[1] != as.integer(icltime[1]) || iclsp != as.integer(iclsp) 
+     icltime[1] != as.integer(icltime[1]) || iclsp != as.integer(iclsp)
      || icldate[2] != as.integer(icldate[2]) || icltime[2] != as.integer(icltime[2])
      || icldate[3] != as.integer(icldate[3]) || icltime[3] != as.integer(icltime[3])
      || icldate[4] != as.integer(icldate[4]) || icltime[4] != as.integer(icltime[4])){
@@ -492,8 +490,6 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
   #=       IMPORT DATA FILE                =#
   #=========================================#
   importFl1 <- importFl[order(importFl[, iclx], importFl[, icly], importFl[, iclt]), ]
-  print("importFl1")
-  print(importFl1)
     code.time <- unique(importFl1[, iclt])
     tpar1 <- min(code.time)
     tpar2 <- max(code.time)
@@ -679,8 +675,6 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
       stop("End error message. Stop running.")
     }
     for(i in 1:n.stat){
-      print("i")
-      print(i)
       if(date_format != 0){
       if(sum(match(duplicated(importFl1[(importFl1[iclx] == sp[i,1] &
                               importFl1[icly] == sp[i,2]),iclt]), TRUE, nomatch = 0)) >= 1){
@@ -858,11 +852,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
     }
     i <- 2
     ndata <- dim(importFl1)[1]
-    print("ndata")
-    print(ndata)
     while (i<= ndata) {
-      print("i second cicle")
-      print(i)
      if((importFl1[i-1,iclx] == importFl1[i,iclx]) && (importFl1[i-1,icly] == importFl1[i,icly])){
        t1 <- importFl1[i-1,iclt]
        t2 <- importFl1[i,iclt]
@@ -1440,7 +1430,6 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
       }
     }
     ### END CHECK ON MISSING DATES ###
-    print("Begin final conversion")
     if(date_format != 0){
       if(date.format[1] == "Date" || date.format[1] == "POSIX"){
         if(bytime == "%d"){
@@ -1454,7 +1443,6 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
         if(date.format[1] == "yearqtr"){
           importFlfull[[iclt]] <- as.yearqtr(importFlfull[[iclt]], format = date_format)}
         }}else{importFlfull[[iclt]] <- as.numeric(importFlfull[[iclt]])}
-    print("End final conversion")
     n.time <- length(unique(importFlfull[, iclt]))
     if (iclsp == 0) {
       ID_points <- c(rep(1:n.stat, each = n.time))
@@ -1462,7 +1450,6 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
       importFlfull[,"iclsp"] <- ID_points
     }
     if (save.as == "data.frame") {
-      print("begin new temporal index")
       if (date_format != 0 || iflagt == 1) {
         ID_times <- c(rep(1:n.time, times = n.stat))
         importFlfull[,"timeIndex"] <- ID_times
@@ -1470,7 +1457,6 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
         colnames(importFlfull) <- c("spatialIndex","x","y","timeIndex","date","variable")
       }else{
         colnames(importFlfull) <- c("spatialIndex","x","y","timeIndex","variable")}
-      print("end new temporal index")
     return(importFlfull)
     }
 
