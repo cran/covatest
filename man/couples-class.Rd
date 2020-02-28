@@ -5,12 +5,21 @@
 \alias{couples-class}
 \alias{couples}
 \alias{show,couples-method}
+\alias{couples-method}
+\alias{show}
 \alias{[,couples-method}
+\alias{select}
 \alias{summary,couples-method}
+\alias{summary}
 \title{Class "couples"}
 \usage{
-couples(sel.staz, sp.couples.in, t.couples.in, typetest = "sym",
-  typecode = numeric())
+couples(
+  sel.staz,
+  sp.couples.in,
+  t.couples.in,
+  typetest = "sym",
+  typecode = numeric()
+)
 
 \S4method{show}{couples}(object)
 

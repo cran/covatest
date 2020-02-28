@@ -936,9 +936,7 @@ covastat <- function(matdata, pardata1, pardata2, stpairs, typetest = "sym") {
 NULL
 #' @param object object of class \code{covastat} for method \code{show}
 #' @rdname covastat-class
-#' @aliases covastat-class
 #' @aliases covastat-method
-#' @aliases show
 #' @export
 setMethod(f="show", signature="covastat", definition=function(object) {
   cat("An object of class covastat", "\n")

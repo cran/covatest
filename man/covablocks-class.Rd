@@ -5,6 +5,7 @@
 \alias{covablocks-class}
 \alias{covablocks}
 \alias{show,covablocks-method}
+\alias{covablocks-method}
 \title{Class "covablocks"}
 \usage{
 covablocks(stblocks, stpairs, typetest = "sym")

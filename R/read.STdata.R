@@ -67,7 +67,7 @@
 #' month, \code{"\%d"} if values are taken by day, \code{"\%q"} if values
 #' are taken by quarter, \code{"\%H"} if values are taken by hour, \code{"\%M"}
 #' if values are taken by minute and \code{"\%S"} if values are taken by seconds
-#' @param tlag numeric; time increment\/lag between two temporal observations
+#' @param tlag numeric; time increment/lag between two temporal observations
 #' @param time.zone character; time zone for dates with time component
 #'
 #' @return object of the \code{STFDF}-class or \code{data.frame}, which contains
@@ -164,13 +164,13 @@
 #' @rdname read.STdata
 #' @export
 read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, iclt,
-                     icldate = c(icl.date = 0, iclty = 0, icltm = 0, icltd = 0),
-                     icltime = c(icl.time = 0, icltH = 0, icltM = 0, icltS = 0),
-                     iclvr, iclsp = 0, missing.v = NA,
-                     save.as = "data.frame", date.format = c("code",format = NA),
-                     bytime = NA, tlag, time.zone = ""){
+                        icldate = c(icl.date = 0, iclty = 0, icltm = 0, icltd = 0),
+                        icltime = c(icl.time = 0, icltH = 0, icltM = 0, icltS = 0),
+                        iclvr, iclsp = 0, missing.v = NA,
+                        save.as = "data.frame", date.format = c("code",format = NA),
+                        bytime = NA, tlag, time.zone = ""){
 
-    ### SOME CHECKS ON THE ARGUMENTS ###
+  ### SOME CHECKS ON THE ARGUMENTS ###
   is.scalar <- function (x){length(x) == 1L && is.vector(x, mode = "numeric")}
   if(time.zone == ""){
     if(is.na(Sys.timezone())){
@@ -261,30 +261,30 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
     stop("End error message. Stop running.")}
   if(date.format[1] != "year" && date.format[1] != "yearmon" &&
      date.format[1] != "yearqtr"){
-  if(date_format != 0 && icldate[1] == 0 && length(setdiff(icldate[2:4], 0)) < 3){
-    message("Start error message. The arguments icldate and date.format are not consistent: no information about columns for year or month or day.")
-    stop("End error message. Stop running.")}}else{
-    if(date.format[1] == "yearmon" || date.format[1] == "yearqtr"){
-      if(icldate[1] == 0 && length(setdiff(icldate[2:3], 0)) < 2){
-        message("Start error message. The arguments icldate and date.format are not consistent: no information about columns for year or month/quarter.")
-        stop("End error message. Stop running.")}}
-      if(date.format[1] == "year"){
-        if(icldate[1] == 0 && icldate[2] == 0){
-          message("Start error message. The arguments icldate and date.format are not consistent: no information about column for year.")
-          stop("End error message. Stop running.")}
-        if(date.format[2] != "%Y" && date.format[2] != "%y"){
-          message("Start error message. The arguments date.format[1] and date.format[2] are not consistent.")
-          stop("End error message. Stop running.")}
-        if(is.na(bytime) == FALSE){
-          message("Start error message. The arguments bytime is not consistent. Please use the default choice NA.")
-          stop("End error message. Stop running.")}
-        date.format[1] <- "code"
-        if(icldate[1] != 0){
-        iclt <- icldate[1]
-        }else{iclt <- icldate[2]
-        icldate[2] <- 0}
-    }
-  }
+    if(date_format != 0 && icldate[1] == 0 && length(setdiff(icldate[2:4], 0)) < 3){
+      message("Start error message. The arguments icldate and date.format are not consistent: no information about columns for year or month or day.")
+      stop("End error message. Stop running.")}}else{
+        if(date.format[1] == "yearmon" || date.format[1] == "yearqtr"){
+          if(icldate[1] == 0 && length(setdiff(icldate[2:3], 0)) < 2){
+            message("Start error message. The arguments icldate and date.format are not consistent: no information about columns for year or month/quarter.")
+            stop("End error message. Stop running.")}}
+        if(date.format[1] == "year"){
+          if(icldate[1] == 0 && icldate[2] == 0){
+            message("Start error message. The arguments icldate and date.format are not consistent: no information about column for year.")
+            stop("End error message. Stop running.")}
+          if(date.format[2] != "%Y" && date.format[2] != "%y"){
+            message("Start error message. The arguments date.format[1] and date.format[2] are not consistent.")
+            stop("End error message. Stop running.")}
+          if(is.na(bytime) == FALSE){
+            message("Start error message. The arguments bytime is not consistent. Please use the default choice NA.")
+            stop("End error message. Stop running.")}
+          date.format[1] <- "code"
+          if(icldate[1] != 0){
+            iclt <- icldate[1]
+          }else{iclt <- icldate[2]
+          icldate[2] <- 0}
+        }
+      }
   if(date.format[1] == "yearmon" || date.format[1] == "yearqtr"){
     if(icldate[1] == 0 && length(setdiff(icldate[2:4], 0)) == 3){
       icldate[4] <- 0
@@ -293,21 +293,21 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
       icltime <- 0
       message("Warning message: the arguments in icltime are forced to be zero for classes yearmon or yearqtr.")}
   }else{
-  if(date_format != 0 && icltime[1] != 0 && length(setdiff(icltime[2:4], 0)) > 0){
-    message("Start error message. The arguments icltime and date.format are not consistent: too many columns have been indicated for hours.")
-    stop("End error message. Stop running.")}
-  if(regexpr('%H', date_format)[1] > 0  && icltime[1] == 0 && icltime[2] == 0){
-    message("Start error message. The argument date.format includes hours but no column in icltime provides information about hour.")
-    stop("End error message. Stop running.")}
-  if(regexpr('%H', date_format)[1] > 0 && regexpr('%M', date_format)[1] > 0 &&
-     icltime[1] == 0 && (icltime[2] == 0 || icltime[3] == 0)){
-    message("Start error message. The argument date.format includes hours and minutes but some information about hours or minutes are missing in icltime.")
-    stop("End error message. Stop running.")}
-  if((regexpr('%H', date_format)[1] > 0 && regexpr('%M', date_format)[1] > 0 &&
-     regexpr('%S', date_format)[1] > 0) &&
-     icltime[1] == 0 && (icltime[2] == 0 || icltime[3] == 0 || icltime[4] == 0)){
-    message("Start error message. The argument date.format includes hours, minutes and seconds but some information are missing in icltime.")
-    stop("End error message. Stop running.")}}
+    if(date_format != 0 && icltime[1] != 0 && length(setdiff(icltime[2:4], 0)) > 0){
+      message("Start error message. The arguments icltime and date.format are not consistent: too many columns have been indicated for hours.")
+      stop("End error message. Stop running.")}
+    if(regexpr('%H', date_format)[1] > 0  && icltime[1] == 0 && icltime[2] == 0){
+      message("Start error message. The argument date.format includes hours but no column in icltime provides information about hour.")
+      stop("End error message. Stop running.")}
+    if(regexpr('%H', date_format)[1] > 0 && regexpr('%M', date_format)[1] > 0 &&
+       icltime[1] == 0 && (icltime[2] == 0 || icltime[3] == 0)){
+      message("Start error message. The argument date.format includes hours and minutes but some information about hours or minutes are missing in icltime.")
+      stop("End error message. Stop running.")}
+    if((regexpr('%H', date_format)[1] > 0 && regexpr('%M', date_format)[1] > 0 &&
+        regexpr('%S', date_format)[1] > 0) &&
+       icltime[1] == 0 && (icltime[2] == 0 || icltime[3] == 0 || icltime[4] == 0)){
+      message("Start error message. The argument date.format includes hours, minutes and seconds but some information are missing in icltime.")
+      stop("End error message. Stop running.")}}
   if(is.scalar(tlag) == FALSE || tlag <= 0){
     message("Start error message. The argument tlag has to be integer and greater than zero.")
     stop("End error message. Stop running.")}
@@ -319,122 +319,122 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
     message("Start error message. The columns (iclx, icly, ...) indicated have to be different.")
     stop("End error message. Stop running.")
   }
-    if(is.scalar(tlag) == FALSE){
+  if(is.scalar(tlag) == FALSE){
     tlag <- as.integer(tlag)
     message("Warning message: the argument tlag is forced to be integer.")
-    }
+  }
   if(is.na(bytime) == FALSE){
-  if(bytime == "%S"){
-    if(regexpr('%S', date_format)[1] < 0){
-      message("Start error message. The arguments bytime = %S and date.format are not consistent.")
-      stop("End error message. Stop running.")}
-  }else{
-    if(bytime == "%M"){
-      if(regexpr('%M', date_format)[1] < 0){
-        message("Start error message. The arguments bytime = %M and date.format are not consistent.")
-        stop("End error message. Stop running.")
-      }}else{
-      if(bytime == "%H"){
-        if(regexpr('%H', date_format)[1] < 0){
-          message("Start error message. The arguments bytime = %H and date.format are not consistent.")
+    if(bytime == "%S"){
+      if(regexpr('%S', date_format)[1] < 0){
+        message("Start error message. The arguments bytime = %S and date.format are not consistent.")
+        stop("End error message. Stop running.")}
+    }else{
+      if(bytime == "%M"){
+        if(regexpr('%M', date_format)[1] < 0){
+          message("Start error message. The arguments bytime = %M and date.format are not consistent.")
           stop("End error message. Stop running.")
         }}else{
-        if(bytime == "%d"){
-          if(regexpr('%d', date_format)[1] < 0){
-            message("Start error message. The arguments bytime = %d and date.format are not consistent.")
-            stop("End error message. Stop running.")
-          }}else{
-          if(bytime == "%m"){
-            if((regexpr('%m', date_format)[1] < 0)){
-              message("Start error message. The arguments bytime = %m and date.format are not consistent.")
+          if(bytime == "%H"){
+            if(regexpr('%H', date_format)[1] < 0){
+              message("Start error message. The arguments bytime = %H and date.format are not consistent.")
               stop("End error message. Stop running.")
             }}else{
-            if(bytime == "%q"){
-              if((regexpr('%q', date_format)[1] < 0)){
-                message("Start error message. The arguments bytime = %q and date.format are not consistent.")
-                stop("End error message. Stop running.")
-              }}else{
-              if(bytime == "%Y" || bytime == "%y"){
-                if((regexpr('%Y', date_format)[1] < 0) && (regexpr('%y', date_format)[1] < 0)){
-                  message("Start error message. The arguments bytime = %q and date.format are not consistent.")
+              if(bytime == "%d"){
+                if(regexpr('%d', date_format)[1] < 0){
+                  message("Start error message. The arguments bytime = %d and date.format are not consistent.")
                   stop("End error message. Stop running.")
                 }}else{
-                message("Start error message. The argument bytime is not admissible.")
-                stop("End error message. Stop running.")
-              }}}}}}}}
-   nskip <- 0
-   if(header == TRUE){
-       nskip <- 1
-   }
+                  if(bytime == "%m"){
+                    if((regexpr('%m', date_format)[1] < 0)){
+                      message("Start error message. The arguments bytime = %m and date.format are not consistent.")
+                      stop("End error message. Stop running.")
+                    }}else{
+                      if(bytime == "%q"){
+                        if((regexpr('%q', date_format)[1] < 0)){
+                          message("Start error message. The arguments bytime = %q and date.format are not consistent.")
+                          stop("End error message. Stop running.")
+                        }}else{
+                          if(bytime == "%Y" || bytime == "%y"){
+                            if((regexpr('%Y', date_format)[1] < 0) && (regexpr('%y', date_format)[1] < 0)){
+                              message("Start error message. The arguments bytime = %q and date.format are not consistent.")
+                              stop("End error message. Stop running.")
+                            }}else{
+                              message("Start error message. The argument bytime is not admissible.")
+                              stop("End error message. Stop running.")
+                            }}}}}}}}
+  nskip <- 0
+  if(header == TRUE){
+    nskip <- 1
+  }
   importFl <- utils::read.table(file, dec = dec, sep = sep, skip = nskip, na.strings = missing.v)
   importFl[importFl == missing.v] <- NA
   ndata <- dim(importFl)[1]
   if(date_format != 0){
     i <- 1
     while(i <= ndata){
-     if(icldate[1] == 0){
+      if(icldate[1] == 0){
         if(icldate[2] != 0){
           i.date <-  importFl[i,icldate[2]]
           if(icldate[3] != 0){
-           i.date <- paste(i.date,importFl[i,icldate[3]], sep=" ")
-           if(icldate[4] != 0){
-             i.date <- paste(i.date,importFl[i,icldate[4]], sep=" ")
-           }
-           }else{
+            i.date <- paste(i.date,importFl[i,icldate[3]], sep=" ")
+            if(icldate[4] != 0){
+              i.date <- paste(i.date,importFl[i,icldate[4]], sep=" ")
+            }
+          }else{
             if(icldate[4] != 0){
               message("Start error message. The date cannot be defined: it is specified the column for the day but not the column for the month.")
               stop("End error message. Stop running.")}}}else{
-          message("Start error message. The date cannot be defined: the column for the year is not specified.")
-          stop("End error message. Stop running.")}
-     }else{i.date <- importFl[i,icldate[1]]}
+                message("Start error message. The date cannot be defined: the column for the year is not specified.")
+                stop("End error message. Stop running.")}
+      }else{i.date <- importFl[i,icldate[1]]}
       if(length(setdiff(icltime, 0)) != 0){ # not all zeros
         if(icltime[1] == 0){
-        if(icltime[2] != 0){
-          i.time <-  importFl[i,icltime[2]]
-          if(icltime[3] != 0){
-            i.time <- paste(i.time,importFl[i,icltime[3]], sep=" ")
-            if(icltime[4] != 0){
-              i.time <- paste(i.time,importFl[i,icltime[4]], sep=" ")
-            }
+          if(icltime[2] != 0){
+            i.time <-  importFl[i,icltime[2]]
+            if(icltime[3] != 0){
+              i.time <- paste(i.time,importFl[i,icltime[3]], sep=" ")
+              if(icltime[4] != 0){
+                i.time <- paste(i.time,importFl[i,icltime[4]], sep=" ")
+              }
+            }else{
+              if(icltime[4] != 0){
+                message("Start error message. The time cannot be defined: it is specified the column for the second but not the column for the minute.")
+                stop("End error message. Stop running.")}}
           }else{
-            if(icltime[4] != 0){
-              message("Start error message. The time cannot be defined: it is specified the column for the second but not the column for the minute.")
-              stop("End error message. Stop running.")}}
-        }else{
-          message("Start error message. The time cannot be defined: the column for the hour is not specified.")
-          stop("End error message. Stop running.")}
-          }else{i.time <-  importFl[i,icltime[1]]}
+            message("Start error message. The time cannot be defined: the column for the hour is not specified.")
+            stop("End error message. Stop running.")}
+        }else{i.time <-  importFl[i,icltime[1]]}
         importFl[i, "icldate"] <- paste(i.date, i.time)
       }else{importFl[i, "icldate"] <- i.date}
       if(date.format[1] != "yearmon" && date.format[1] != "yearqtr"){
-      if(is.na(as.POSIXlt((importFl[i,"icldate"]), date_format, tz = time.zone)) == TRUE){
-        message("Start error message. One of the possible causes is that:")
-        message("- the dates in the file are not in the format specified in date.format or")
-        message("- the data format is not valid or")
-        message("- the dates in the file are not consistent with the given timezone (check for errors in dates involved in daylight saving time).")
-        stop("End error message. Stop running.")}
-        }else{
+        if(is.na(as.POSIXlt((importFl[i,"icldate"]), date_format, tz = time.zone)) == TRUE){
+          message("Start error message. One of the possible causes is that:")
+          message("- the dates in the file are not in the format specified in date.format or")
+          message("- the data format is not valid or")
+          message("- the dates in the file are not consistent with the given timezone (check for errors in dates involved in daylight saving time).")
+          stop("End error message. Stop running.")}
+      }else{
         if(date.format[1] == "yearmon"){
           if(is.na(as.yearmon(as.character(importFl[i,"icldate"]), date_format)) == TRUE){
-          message("Start error message. The dates in the file are not in the format specified in date.format or the data format is not valid.")
-          message("It might be hepful to provide dates with numeric elements.")
-          stop("End error message. Stop running.")}}
+            message("Start error message. The dates in the file are not in the format specified in date.format or the data format is not valid.")
+            message("It might be hepful to provide dates with numeric elements.")
+            stop("End error message. Stop running.")}}
         if(date.format[1] == "yearqtr"){
           if(is.na(as.yearqtr(as.character(importFl[i,"icldate"]), date_format)) == TRUE){
             message("Start error message. The dates in the file are not in the format specified in date.format or the data format is not valid.")
             message("It might be hepful to provide dates with numeric elements.")
             stop("End error message. Stop running.")}}
-        }
+      }
       i <- i+1
     }
     if(date.format[1] != "yearmon" && date.format[1] != "yearqtr"){
-          i.date <- as.POSIXlt((importFl[,"icldate"]), format = date_format, tz = time.zone)
-          if(regexpr('%Y', date_format)[1] < 0){
-            date_format <- "%y-%m-%d %H:%M:%S"}else{
-              date_format <- "%Y-%m-%d %H:%M:%S"}
+      i.date <- as.POSIXlt((importFl[,"icldate"]), format = date_format, tz = time.zone)
+      if(regexpr('%Y', date_format)[1] < 0){
+        date_format <- "%y-%m-%d %H:%M:%S"}else{
+          date_format <- "%Y-%m-%d %H:%M:%S"}
     }else{
       if(date.format[1] == "yearmon"){
-      i.date <- as.POSIXlt(as.yearmon(as.character(importFl[,"icldate"]), format = date_format))
+        i.date <- as.POSIXlt(as.yearmon(as.character(importFl[,"icldate"]), format = date_format))
       }else{i.date <- as.POSIXlt(as.yearqtr(as.character(importFl[,"icldate"]), format = date_format))}
     }
     if(bytime == "%m"){
@@ -475,10 +475,10 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
       iclt <-  ncol(importFl)
       iflagt <- 1
     }
-          importFl <- importFl[,-c(ncol(importFl))]
-          importFl <- cbind(importFl,i.date)
-          names(importFl)[names(importFl) == "i.date"] <- "iclt"
-          iclt <- ncol(importFl)
+    importFl <- importFl[,-c(ncol(importFl))]
+    importFl <- cbind(importFl,i.date)
+    names(importFl)[names(importFl) == "i.date"] <- "iclt"
+    iclt <- ncol(importFl)
   }else{
     if(is.numeric(importFl[1,iclt]) == FALSE){
       message("Start error message. The temporal codes in the file are not numeric.")
@@ -490,156 +490,156 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
   #=       IMPORT DATA FILE                =#
   #=========================================#
   importFl1 <- importFl[order(importFl[, iclx], importFl[, icly], importFl[, iclt]), ]
-    code.time <- unique(importFl1[, iclt])
-    tpar1 <- min(code.time)
-    tpar2 <- max(code.time)
-    vec.date <- c(tpar1)
-    if(date.format[1] == "Date" || date.format[1] == "POSIX"){
-      if(bytime == "%d"){
+  code.time <- unique(importFl1[, iclt])
+  tpar1 <- min(code.time)
+  tpar2 <- max(code.time)
+  vec.date <- c(tpar1)
+  if(date.format[1] == "Date" || date.format[1] == "POSIX"){
+    if(bytime == "%d"){
       tpar1 <- as.POSIXlt(as.Date(tpar1))
       tpar2 <- as.POSIXlt(as.Date(tpar2))
       vec.date.w <- as.POSIXlt(as.Date(tpar1))
       vec.date <- as.character(vec.date)
-      }else{
-        tpar1 <- as.POSIXlt(tpar1)
-        tpar2 <- as.POSIXlt(tpar2)
-        vec.date.w <- as.POSIXlt(tpar1)
-        vec.date <- format(round(as.POSIXlt(vec.date, format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
-        }
     }else{
-      vec.date <- as.character(vec.date)
-      if(date.format[1] == "yearmon"){
-        tpar1 <- as.POSIXlt(as.yearmon(tpar1))
-        tpar2 <- as.POSIXlt(as.yearmon(tpar2))
-        vec.date.w <- as.POSIXlt(as.yearmon(tpar1))
-      }
-      if(date.format[1] == "yearqtr"){
-        tpar1 <- as.POSIXlt(as.yearqtr(tpar1))
-        tpar2 <- as.POSIXlt(as.yearqtr(tpar2))
-        vec.date.w <- as.POSIXlt(as.yearqtr(tpar1))
-      }
-      if(date.format[1] == "code"){
-        vec.date.w <- tpar1
-      }
+      tpar1 <- as.POSIXlt(tpar1)
+      tpar2 <- as.POSIXlt(tpar2)
+      vec.date.w <- as.POSIXlt(tpar1)
+      vec.date <- format(round(as.POSIXlt(vec.date, format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
     }
-    if(length(unique(c(tpar1,tpar2))) ==1){
-      message("Start error message. The initial observed date or temporal point is coincident with the final one, thus the data structure is not spatio-temporal.")
-      stop("End error message. Stop running.")
+  }else{
+    vec.date <- as.character(vec.date)
+    if(date.format[1] == "yearmon"){
+      tpar1 <- as.POSIXlt(as.yearmon(tpar1))
+      tpar2 <- as.POSIXlt(as.yearmon(tpar2))
+      vec.date.w <- as.POSIXlt(as.yearmon(tpar1))
     }
+    if(date.format[1] == "yearqtr"){
+      tpar1 <- as.POSIXlt(as.yearqtr(tpar1))
+      tpar2 <- as.POSIXlt(as.yearqtr(tpar2))
+      vec.date.w <- as.POSIXlt(as.yearqtr(tpar1))
+    }
+    if(date.format[1] == "code"){
+      vec.date.w <- tpar1
+    }
+  }
+  if(length(unique(c(tpar1,tpar2))) ==1){
+    message("Start error message. The initial observed date or temporal point is coincident with the final one, thus the data structure is not spatio-temporal.")
+    stop("End error message. Stop running.")
+  }
+  if(date_format != 0){
+    if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
+      if(bytime == "%d"){delta.time <- difftime(tpar2, tpar1, units = "days")}
+      if(bytime == "%H"){delta.time <- difftime(tpar2, tpar1, units = "hours")}
+      if(bytime == "%M"){delta.time <- difftime(tpar2, tpar1, units = "mins")}
+      if(bytime == "%S"){delta.time <- difftime(tpar2, tpar1, units = "secs")}
+    }else{
+      if(bytime == "%m"){
+        delta.time <- length(seq(from=as.Date(tpar1), to=as.Date(tpar2), by='month')) - 1
+      }else{
+        if(bytime == "%q"){
+          delta.time <- length(seq(from=as.Date(tpar1), to=as.Date(tpar2), by='quarter')) - 1
+        }}}}else{delta.time <- tpar2-tpar1}
+  if(tlag>(delta.time)){
+    message("Start error message. The argument tlag is not consistent: it has to be less than the temporal observed interval.")
+    stop("End error message. Stop running.")}
+
+  i <- 1
+  #     vec.date.w <- vec.date[1]
+  #     vec.date <- as.character(vec.date)
+  while(delta.time >= tlag){
+    i <- i + 1
     if(date_format != 0){
+      if(bytime == "%Y" || bytime == "%y"){
+        year(vec.date.w) <- year(vec.date.w) + tlag
+      }
+      if(bytime == "%d"){
+        day(vec.date.w) <- day(vec.date.w) + tlag
+      }
+      if(bytime == "%m"){
+        month(vec.date.w) <- month(vec.date.w) + tlag
+      }
+      if(bytime == "%q"){
+        month(vec.date.w) <- month(vec.date.w) + tlag*3
+      }
+      if(bytime == "%H"){
+        delta.w <- vec.date.w
+        hour(delta.w) <- hour(vec.date.w) + tlag
+        if(is.na(delta.w) == TRUE){
+          vec.date.w1 <-vec.date.w
+          hour(vec.date.w1) <- hour(vec.date.w1) + tlag + 1
+          if(difftime(vec.date.w1, vec.date.w, units = "hours") < tlag){
+            hour(vec.date.w1) <- hour(vec.date.w1) + 1
+          }
+          hour(vec.date.w) <- hour(vec.date.w1)
+        }else{
+          hour(vec.date.w) <- hour(vec.date.w) + tlag}
+      }
+      if(bytime == "%M"){
+        delta.w <- vec.date.w
+        minute(delta.w) <- minute(vec.date.w) + tlag
+        if(is.na(delta.w) == TRUE){
+          vec.date.w1 <-vec.date.w
+          minute(vec.date.w1) <- minute(vec.date.w1) + tlag + 60
+          if(difftime(vec.date.w1, vec.date.w, units = "mins") < tlag){
+            minute(vec.date.w1) <- minute(vec.date.w1) + 60
+          }
+          minute(vec.date.w) <- minute(vec.date.w1)
+        }else{
+          minute(vec.date.w) <- minute(vec.date.w) + tlag}
+      }
+      if(bytime == "%S"){
+        delta.w <- vec.date.w
+        second(delta.w) <- second(vec.date.w) + tlag
+        if(is.na(delta.w) == TRUE){
+          vec.date.w1 <-vec.date.w
+          second(vec.date.w1) <- second(vec.date.w1) + tlag + 3600
+          if(difftime(vec.date.w1, vec.date.w, units = "secs") < tlag){
+            second(vec.date.w1) <- second(vec.date.w1) + 3600
+          }
+          second(vec.date.w) <- second(vec.date.w1)
+        }else{
+          second(vec.date.w) <- second(vec.date.w) + tlag}
+      }
       if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-        if(bytime == "%d"){delta.time <- difftime(tpar2, tpar1, units = "days")}
-        if(bytime == "%H"){delta.time <- difftime(tpar2, tpar1, units = "hours")}
-        if(bytime == "%M"){delta.time <- difftime(tpar2, tpar1, units = "mins")}
-        if(bytime == "%S"){delta.time <- difftime(tpar2, tpar1, units = "secs")}
+        if(bytime == "%d"){delta.time <- difftime(tpar2, vec.date.w, units = "days")}
+        if(bytime == "%H"){delta.time <- difftime(tpar2, vec.date.w, units = "hours")}
+        if(bytime == "%M"){delta.time <- difftime(tpar2, vec.date.w, units = "mins")}
+        if(bytime == "%S"){delta.time <- difftime(tpar2, vec.date.w, units = "secs")}
       }else{
         if(bytime == "%m"){
-          delta.time <- length(seq(from=as.Date(tpar1), to=as.Date(tpar2), by='month')) - 1
+          delta.time <- length(seq(from=as.Date(vec.date.w), to=as.Date(tpar2), by='month')) - 1
         }else{
           if(bytime == "%q"){
-            delta.time <- length(seq(from=as.Date(tpar1), to=as.Date(tpar2), by='quarter')) - 1
-          }}}}else{delta.time <- tpar2-tpar1}
-    if(tlag>(delta.time)){
-      message("Start error message. The argument tlag is not consistent: it has to be less than the temporal observed interval.")
-      stop("End error message. Stop running.")}
-
-    i <- 1
-#     vec.date.w <- vec.date[1]
-#     vec.date <- as.character(vec.date)
-    while(delta.time >= tlag){
-      i <- i + 1
-      if(date_format != 0){
-        if(bytime == "%Y" || bytime == "%y"){
-          year(vec.date.w) <- year(vec.date.w) + tlag
-        }
-        if(bytime == "%d"){
-          day(vec.date.w) <- day(vec.date.w) + tlag
-        }
-        if(bytime == "%m"){
-          month(vec.date.w) <- month(vec.date.w) + tlag
-        }
-        if(bytime == "%q"){
-          month(vec.date.w) <- month(vec.date.w) + tlag*3
-        }
-        if(bytime == "%H"){
-          delta.w <- vec.date.w
-          hour(delta.w) <- hour(vec.date.w) + tlag
-          if(is.na(delta.w) == TRUE){
-            vec.date.w1 <-vec.date.w
-            hour(vec.date.w1) <- hour(vec.date.w1) + tlag + 1
-            if(difftime(vec.date.w1, vec.date.w, units = "hours") < tlag){
-              hour(vec.date.w1) <- hour(vec.date.w1) + 1
-            }
-            hour(vec.date.w) <- hour(vec.date.w1)
-          }else{
-            hour(vec.date.w) <- hour(vec.date.w) + tlag}
-        }
-        if(bytime == "%M"){
-          delta.w <- vec.date.w
-          minute(delta.w) <- minute(vec.date.w) + tlag
-          if(is.na(delta.w) == TRUE){
-            vec.date.w1 <-vec.date.w
-            minute(vec.date.w1) <- minute(vec.date.w1) + tlag + 60
-            if(difftime(vec.date.w1, vec.date.w, units = "mins") < tlag){
-              minute(vec.date.w1) <- minute(vec.date.w1) + 60
-            }
-            minute(vec.date.w) <- minute(vec.date.w1)
-            }else{
-            minute(vec.date.w) <- minute(vec.date.w) + tlag}
-        }
-        if(bytime == "%S"){
-          delta.w <- vec.date.w
-          second(delta.w) <- second(vec.date.w) + tlag
-          if(is.na(delta.w) == TRUE){
-            vec.date.w1 <-vec.date.w
-            second(vec.date.w1) <- second(vec.date.w1) + tlag + 3600
-            if(difftime(vec.date.w1, vec.date.w, units = "secs") < tlag){
-              second(vec.date.w1) <- second(vec.date.w1) + 3600
-            }
-            second(vec.date.w) <- second(vec.date.w1)
-            }else{
-            second(vec.date.w) <- second(vec.date.w) + tlag}
-        }
-        if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-          if(bytime == "%d"){delta.time <- difftime(tpar2, vec.date.w, units = "days")}
-          if(bytime == "%H"){delta.time <- difftime(tpar2, vec.date.w, units = "hours")}
-          if(bytime == "%M"){delta.time <- difftime(tpar2, vec.date.w, units = "mins")}
-          if(bytime == "%S"){delta.time <- difftime(tpar2, vec.date.w, units = "secs")}
-        }else{
-          if(bytime == "%m"){
-            delta.time <- length(seq(from=as.Date(vec.date.w), to=as.Date(tpar2), by='month')) - 1
-          }else{
-            if(bytime == "%q"){
-              delta.time <- length(seq(from=as.Date(vec.date.w), to=as.Date(tpar2), by='quarter')) - 1
-            }}}
-      }else{
-        vec.date.w <- vec.date.w + tlag
-        delta.time <- tpar2-vec.date.w
-      }
-      vec_date <- vec.date.w
-      if(date.format[1] == "POSIX" && bytime != "%d"){
-        if(hour(vec_date) == 0 && minute(vec_date) == 0 && second(vec_date) == 0){
-      vec_date <- format(round(as.POSIXlt(vec.date.w, format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
-        }}
-      vec.date <- rbind(vec.date,as.character(vec_date))
+            delta.time <- length(seq(from=as.Date(vec.date.w), to=as.Date(tpar2), by='quarter')) - 1
+          }}}
+    }else{
+      vec.date.w <- vec.date.w + tlag
+      delta.time <- tpar2-vec.date.w
     }
-    n.time <- length(unique(importFl1[, iclt]))
-    for(i in 1:n.time){
-      if(date.format[1] == "POSIX" && bytime != "%d"){
-        if(hour(importFl1[i, iclt]) == 0 && minute(importFl1[i, iclt]) == 0 && second(importFl1[i, iclt]) == 0){
-          importFl1[i, iclt] <- format(round(as.POSIXlt(importFl1[i, iclt], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
-        }}
+    vec_date <- vec.date.w
+    if(date.format[1] == "POSIX" && bytime != "%d"){
+      if(hour(vec_date) == 0 && minute(vec_date) == 0 && second(vec_date) == 0){
+        vec_date <- format(round(as.POSIXlt(vec.date.w, format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
+      }}
+    vec.date <- rbind(vec.date,as.character(vec_date))
+  }
+  n.time <- length(unique(importFl1[, iclt]))
+  for(i in 1:n.time){
+    if(date.format[1] == "POSIX" && bytime != "%d"){
+      if(hour(importFl1[i, iclt]) == 0 && minute(importFl1[i, iclt]) == 0 && second(importFl1[i, iclt]) == 0){
+        importFl1[i, iclt] <- format(round(as.POSIXlt(importFl1[i, iclt], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
+      }}
 
-    }
-    importFl1[[iclt]] <- as.character(importFl1[,iclt])
-    importFl1 <- subset(importFl1, iclt %in% vec.date)
-    if(date_format != 0){
+  }
+  importFl1[[iclt]] <- as.character(importFl1[,iclt])
+  importFl1 <- subset(importFl1, iclt %in% vec.date)
+  if(date_format != 0){
     if(date.format[1] == "Date" || date.format[1] == "POSIX"){
       if(bytime == "%d"){
         importFl1[[iclt]] <- as.POSIXlt(as.Date(importFl1[,iclt], format = date_format))
       }else{
         importFl1[[iclt]] <- (as.POSIXlt(importFl1[,iclt], format = date_format, tz = time.zone))
-        }
+      }
     }else{
       if(date.format[1] == "yearmon"){
         importFl1[[iclt]] <- as.POSIXlt(as.yearmon((importFl1[,iclt]), format = date_format))
@@ -648,14 +648,14 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
         importFl1[[iclt]] <- as.POSIXlt(as.yearqtr((importFl1[,iclt]), format = date_format))
       }
     }
-    }else{importFl1[[iclt]]<-as.numeric(importFl1[,iclt])}
-    sp <- cbind(importFl1[, iclx], importFl1[, icly])
-    sp <- unique(sp)
-    n.stat <- nrow(sp)
-    n.time <- length(unique(importFl1[, iclt]))
-    code.time <- unique(importFl1[, iclt])
-    tpar2 <- max(code.time)
-    if(date_format != 0){
+  }else{importFl1[[iclt]]<-as.numeric(importFl1[,iclt])}
+  sp <- cbind(importFl1[, iclx], importFl1[, icly])
+  sp <- unique(sp)
+  n.stat <- nrow(sp)
+  n.time <- length(unique(importFl1[, iclt]))
+  code.time <- unique(importFl1[, iclt])
+  tpar2 <- max(code.time)
+  if(date_format != 0){
     if(date.format[1] == "Date" || date.format[1] == "POSIX"){
       if(bytime == "%d"){
         tpar2 <- as.POSIXlt(as.Date(tpar2))
@@ -669,53 +669,53 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
         tpar2 <- as.POSIXlt(as.yearqtr(tpar2))
       }
     }}else{tpar2 <- as.numeric(tpar2)}
-    if(length(unique(c(tpar1,tpar2))) == 1){
-      message("Start error message. There is no temporal point for the selected tlag increment.")
-      message("Thus the data structure is not spatio-temporal.")
-      stop("End error message. Stop running.")
-    }
-    for(i in 1:n.stat){
-      if(date_format != 0){
+  if(length(unique(c(tpar1,tpar2))) == 1){
+    message("Start error message. There is no temporal point for the selected tlag increment.")
+    message("Thus the data structure is not spatio-temporal.")
+    stop("End error message. Stop running.")
+  }
+  for(i in 1:n.stat){
+    if(date_format != 0){
       if(sum(match(duplicated(importFl1[(importFl1[iclx] == sp[i,1] &
-                              importFl1[icly] == sp[i,2]),iclt]), TRUE, nomatch = 0)) >= 1){
+                                         importFl1[icly] == sp[i,2]),iclt]), TRUE, nomatch = 0)) >= 1){
         message("Start error message. According to the argument 'bytime = '", bytime,", there are more than one observation for a fixed spatial point and a fixed time point.")
         stop("End error message. Stop running.")}
-      }else{
-        if(sum(match(duplicated(importFl1[(importFl1[iclx] == sp[i,1] &
-                                           importFl1[icly] == sp[i,2]),iclt]), TRUE, nomatch = 0)) >= 1){
-          message("Start error message. There are more than one observation for a fixed spatial point and a fixed time point.")
-          stop("End error message. Stop running.")}}}
-    if(iclsp == 0){
-      importFl1 <- importFl1[,c(iclx,icly,iclt,iclvr)]
-      colnames(importFl1) <- c("iclx","icly","iclt","iclvr")
-      importFlw <- data.frame(iclx=NA,icly=NA,iclt=NA,iclvr=NA)
-      importFlfull <- importFl1[1,]
-      colnames(importFlfull) <- c("iclx","icly","iclt", "iclvr")
     }else{
-      importFl1 <- importFl1[,c(iclsp,iclx,icly,iclt,iclvr)]
-      colnames(importFl1) <- c("iclsp","iclx","icly","iclt","iclvr")
-      importFlw <- data.frame(iclsp=NA,iclx=NA,icly=NA,iclt=NA,iclvr=NA)
-      importFlfull <- importFl1[1,]
-      colnames(importFlfull) <- c("iclsp","iclx","icly","iclt", "iclvr")
-      iclsp <- "iclsp"
-    }
-    iclx <- "iclx"
-    icly <- "icly"
-    iclvr <- "iclvr"
-    iclt <- "iclt"
-    if(date.format[1] == "POSIX" && bytime != "%d"){
-      if(hour(importFlfull[[iclt]]) == 0 && minute(importFlfull[[iclt]]) == 0 && second(importFlfull[[iclt]]) == 0){
-        importFlfull[[iclt]] <- format(round(as.POSIXlt(importFlfull[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
-      }}
-    importFlfull[[iclt]] <- as.character(importFlfull[[iclt]])
-    ### CHECK ON MISSING DATES ###
-    t1 <- importFl1[1,iclt]
-    if(date_format != 0){
+      if(sum(match(duplicated(importFl1[(importFl1[iclx] == sp[i,1] &
+                                         importFl1[icly] == sp[i,2]),iclt]), TRUE, nomatch = 0)) >= 1){
+        message("Start error message. There are more than one observation for a fixed spatial point and a fixed time point.")
+        stop("End error message. Stop running.")}}}
+  if(iclsp == 0){
+    importFl1 <- importFl1[,c(iclx,icly,iclt,iclvr)]
+    colnames(importFl1) <- c("iclx","icly","iclt","iclvr")
+    importFlw <- data.frame(iclx=NA,icly=NA,iclt=NA,iclvr=NA)
+    importFlfull <- importFl1[1,]
+    colnames(importFlfull) <- c("iclx","icly","iclt", "iclvr")
+  }else{
+    importFl1 <- importFl1[,c(iclsp,iclx,icly,iclt,iclvr)]
+    colnames(importFl1) <- c("iclsp","iclx","icly","iclt","iclvr")
+    importFlw <- data.frame(iclsp=NA,iclx=NA,icly=NA,iclt=NA,iclvr=NA)
+    importFlfull <- importFl1[1,]
+    colnames(importFlfull) <- c("iclsp","iclx","icly","iclt", "iclvr")
+    iclsp <- "iclsp"
+  }
+  iclx <- "iclx"
+  icly <- "icly"
+  iclvr <- "iclvr"
+  iclt <- "iclt"
+  if(date.format[1] == "POSIX" && bytime != "%d"){
+    if(hour(importFlfull[[iclt]]) == 0 && minute(importFlfull[[iclt]]) == 0 && second(importFlfull[[iclt]]) == 0){
+      importFlfull[[iclt]] <- format(round(as.POSIXlt(importFlfull[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
+    }}
+  importFlfull[[iclt]] <- as.character(importFlfull[[iclt]])
+  ### CHECK ON MISSING DATES ###
+  t1 <- importFl1[1,iclt]
+  if(date_format != 0){
     if(date.format[1] == "Date" || date.format[1] == "POSIX"){
       if(bytime == "%d"){
         t1 <- as.POSIXlt(as.Date(t1))
       }else{
-      t1 <- as.POSIXlt(t1)}
+        t1 <- as.POSIXlt(t1)}
     }else{
       if(date.format[1] == "yearmon"){
         t1 <- as.POSIXlt(as.yearmon(t1))
@@ -723,24 +723,122 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
       if(date.format[1] == "yearqtr"){
         t1 <- as.POSIXlt(as.yearqtr(t1))
       }
+    }
+  }else{t1 <- as.numeric(t1)}
+  importFlw <- importFl1[1,]
+  j <- 1
+  if(date_format != 0){
+    if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
+      if(bytime == "%d"){
+        delta.time <- difftime(t1,tpar1, units = "days")
       }
-    }else{t1 <- as.numeric(t1)}
-    importFlw <- importFl1[1,]
-    j <- 1
+      if(bytime == "%H"){
+        delta.time <- difftime(t1,tpar1, units = "hours")
+      }
+      if(bytime == "%M"){
+        delta.time <- difftime(t1,tpar1, units = "mins")
+      }
+      if(bytime == "%S"){
+        delta.time <- difftime(t1,tpar1, units = "secs")
+      }
+    }else{
+      if(bytime == "%m"){
+        delta.time <- length(seq(from=as.Date(tpar1), to=as.Date(t1), by='month')) - 1
+      }else{
+        if(bytime == "%q"){
+          delta.time <- length(seq(from=as.Date(tpar1), to=as.Date(t1), by='quarter')) - 1
+        }
+      }
+    }
+  }else{
+    delta.time <- t1-tpar1}
+  while(delta.time >= tlag){
+    j <- j + 1
+    if(as.integer(j/500) == (j/500) ){
+      message("The first ", j, " values have been included in the data file.")
+    }
+    if(date_format != 0){
+      if(bytime == "%Y" || bytime == "%y"){
+        year(t1) <- year(t1) - tlag
+      }
+      if(bytime == "%d"){
+        day(t1) <- day(t1) - tlag
+      }
+      if(bytime == "%m"){
+        month(t1) <- month(t1) - tlag
+      }
+      if(bytime == "%q"){
+        month(t1) <- month(t1) - tlag*3
+      }
+      if(bytime == "%H"){
+        delta.w <- t1
+        hour(delta.w) <- hour(t1) - tlag
+        if(is.na(delta.w) == TRUE){
+          t11 <- t1
+          hour(t11) <- hour(t11) - tlag - 1
+          if(difftime(t1, t11, units = "hours") < tlag){
+            hour(t11) <- hour(t11) - 1
+          }
+          hour(t1) <- hour(t11)
+        }else{
+          hour(t1) <- hour(t1) - tlag}
+      }
+      if(bytime == "%M"){
+        delta.w <- t1
+        minute(delta.w) <- minute(t1) - tlag
+        if(is.na(delta.w) == TRUE){
+          t11 <- t1
+          minute(t11) <- minute(t11) - tlag - 60
+          if(difftime(t1, t11, units = "mins") < tlag){
+            minute(t11) <- minute(t11) - 60
+          }
+          minute(t1) <- minute(t11)
+        }else{
+          minute(t1) <- minute(t1) - tlag}
+      }
+      if(bytime == "%S"){
+        delta.w <- t1
+        second(delta.w) <- second(t1) - tlag
+        if(is.na(delta.w) == TRUE){
+          t11 <- t1
+          second(t11) <- second(t11) - tlag - 3600
+          if(difftime(t1, t11, units = "secs") < tlag){
+            second(t11) <- second(t11) - 3600
+          }
+          second(t1) <- second(t11)
+        }else{
+          second(t1) <- second(t1) - tlag}
+      }
+      if(date.format[1] == "Date" || date.format[1] == "POSIX"){
+        if(bytime == "%d"){
+          importFlw[[iclt]]<- as.POSIXlt(as.Date(t1))
+        }else{
+          importFlw[[iclt]]<- (as.POSIXlt(t1))}
+      }else{
+        if(date.format[1] == "yearmon"){
+          importFlw[[iclt]]<- as.POSIXlt(as.yearmon(t1))
+        }
+        if(date.format[1] == "yearqtr"){
+          importFlw[[iclt]]<- as.POSIXlt(as.yearqtr(t1))
+        }
+      }
+    }else{
+      t1 <- t1 - tlag
+      importFlw[[iclt]]<- importFlw[1,iclt] - tlag
+    }
+    importFlw[[iclvr]]<- NA
+    if(date.format[1] == "POSIX" && bytime != "%d"){
+      if(hour(importFlw[[iclt]]) == 0 && minute(importFlw[[iclt]]) == 0 && second(importFlw[[iclt]]) == 0){
+        importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
+      }}
+    importFlw[[iclt]] <- as.character(importFlw[[iclt]])
+    importFlfull <- rbind(importFlw,importFlfull)
     if(date_format != 0){
       if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-        if(bytime == "%d"){
-          delta.time <- difftime(t1,tpar1, units = "days")
-        }
-        if(bytime == "%H"){
-          delta.time <- difftime(t1,tpar1, units = "hours")
-        }
-        if(bytime == "%M"){
-          delta.time <- difftime(t1,tpar1, units = "mins")
-        }
-        if(bytime == "%S"){
-          delta.time <- difftime(t1,tpar1, units = "secs")
-        }
+        if(bytime == "%d"){delta.time <- difftime(t1,tpar1, units = "days")}
+        if(bytime == "%H"){delta.time <- difftime(t1,tpar1, units = "hours")}
+        if(bytime == "%M"){delta.time <- difftime(t1,tpar1, units = "mins")}
+        if(bytime == "%S"){delta.time <- difftime(t1,tpar1, units = "secs")}
       }else{
         if(bytime == "%m"){
           delta.time <- length(seq(from=as.Date(tpar1), to=as.Date(t1), by='month')) - 1
@@ -750,667 +848,186 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
           }
         }
       }
-    }else{
-      delta.time <- t1-tpar1}
-    while(delta.time >= tlag){
-      j <- j + 1
-      if(as.integer(j/500) == (j/500) ){
-        message("The first ", j, " values have been included in the data file.")
-      }
+    }else{delta.time <- t1-tpar1}
+  }
+  i <- 2
+  ndata <- dim(importFl1)[1]
+  while (i<= ndata) {
+    if((importFl1[i-1,iclx] == importFl1[i,iclx]) && (importFl1[i-1,icly] == importFl1[i,icly])){
+      t1 <- importFl1[i-1,iclt]
+      t2 <- importFl1[i,iclt]
       if(date_format != 0){
-        if(bytime == "%Y" || bytime == "%y"){
-          year(t1) <- year(t1) - tlag
-        }
-        if(bytime == "%d"){
-          day(t1) <- day(t1) - tlag
-        }
-        if(bytime == "%m"){
-          month(t1) <- month(t1) - tlag
-        }
-        if(bytime == "%q"){
-          month(t1) <- month(t1) - tlag*3
-        }
-        if(bytime == "%H"){
-          delta.w <- t1
-          hour(delta.w) <- hour(t1) - tlag
-          if(is.na(delta.w) == TRUE){
-            t11 <- t1
-            hour(t11) <- hour(t11) - tlag - 1
-            if(difftime(t1, t11, units = "hours") < tlag){
-              hour(t11) <- hour(t11) - 1
-            }
-            hour(t1) <- hour(t11)
-          }else{
-          hour(t1) <- hour(t1) - tlag}
-        }
-        if(bytime == "%M"){
-          delta.w <- t1
-          minute(delta.w) <- minute(t1) - tlag
-          if(is.na(delta.w) == TRUE){
-            t11 <- t1
-            minute(t11) <- minute(t11) - tlag - 60
-            if(difftime(t1, t11, units = "mins") < tlag){
-              minute(t11) <- minute(t11) - 60
-            }
-            minute(t1) <- minute(t11)
-          }else{
-            minute(t1) <- minute(t1) - tlag}
-        }
-        if(bytime == "%S"){
-          delta.w <- t1
-          second(delta.w) <- second(t1) - tlag
-          if(is.na(delta.w) == TRUE){
-            t11 <- t1
-            second(t11) <- second(t11) - tlag - 3600
-            if(difftime(t1, t11, units = "secs") < tlag){
-              second(t11) <- second(t11) - 3600
-            }
-            second(t1) <- second(t11)
-          }else{
-            second(t1) <- second(t1) - tlag}
-        }
         if(date.format[1] == "Date" || date.format[1] == "POSIX"){
           if(bytime == "%d"){
-            importFlw[[iclt]]<- as.POSIXlt(as.Date(t1))
+            t1 <- as.POSIXlt(as.Date(t1))
+            t2 <- as.POSIXlt(as.Date(t2))
           }else{
-            importFlw[[iclt]]<- (as.POSIXlt(t1))}
+            t1 <- as.POSIXlt(t1)
+            t2 <- as.POSIXlt(t2)
+          }
         }else{
           if(date.format[1] == "yearmon"){
-            importFlw[[iclt]]<- as.POSIXlt(as.yearmon(t1))
+            t1 <- as.POSIXlt(as.yearmon(t1))
+            t2 <- as.POSIXlt(as.yearmon(t2))
           }
           if(date.format[1] == "yearqtr"){
-            importFlw[[iclt]]<- as.POSIXlt(as.yearqtr(t1))
+            t1 <- as.POSIXlt(as.yearqtr(t1))
+            t2 <- as.POSIXlt(as.yearqtr(t2))
           }
         }
       }else{
-        t1 <- t1 - tlag
-       importFlw[[iclt]]<- importFlw[1,iclt] - tlag
-      }
-      importFlw[[iclvr]]<- NA
-      if(date.format[1] == "POSIX" && bytime != "%d"){
-        if(hour(importFlw[[iclt]]) == 0 && minute(importFlw[[iclt]]) == 0 && second(importFlw[[iclt]]) == 0){
-          importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
-        }}
-      importFlw[[iclt]] <- as.character(importFlw[[iclt]])
-      importFlfull <- rbind(importFlw,importFlfull)
+        t1 <- as.numeric(t1)
+        t2 <- as.numeric(t2)}
       if(date_format != 0){
         if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-          if(bytime == "%d"){delta.time <- difftime(t1,tpar1, units = "days")}
-          if(bytime == "%H"){delta.time <- difftime(t1,tpar1, units = "hours")}
-          if(bytime == "%M"){delta.time <- difftime(t1,tpar1, units = "mins")}
-          if(bytime == "%S"){delta.time <- difftime(t1,tpar1, units = "secs")}
+          if(bytime == "%d"){
+            delta.time <- difftime(t2, t1, units = "days")
+          }
+          if(bytime == "%H"){
+            delta.time <- difftime(t2, t1, units = "hours")
+          }
+          if(bytime == "%M"){
+            delta.time <- difftime(t2, t1, units = "mins")
+          }
+          if(bytime == "%S"){
+            delta.time <- difftime(t2, t1, units = "secs")
+          }
         }else{
           if(bytime == "%m"){
-            delta.time <- length(seq(from=as.Date(tpar1), to=as.Date(t1), by='month')) - 1
+            delta.time <- length(seq(from=as.Date(t1), to=as.Date(t2), by='month')) - 1
           }else{
             if(bytime == "%q"){
-              delta.time <- length(seq(from=as.Date(tpar1), to=as.Date(t1), by='quarter')) - 1
+              delta.time <- length(seq(from=as.Date(t1), to=as.Date(t2), by='quarter')) - 1
             }
           }
         }
-      }else{delta.time <- t1-tpar1}
-    }
-    i <- 2
-    ndata <- dim(importFl1)[1]
-    while (i<= ndata) {
-     if((importFl1[i-1,iclx] == importFl1[i,iclx]) && (importFl1[i-1,icly] == importFl1[i,icly])){
-       t1 <- importFl1[i-1,iclt]
-       t2 <- importFl1[i,iclt]
-       if(date_format != 0){
-         if(date.format[1] == "Date" || date.format[1] == "POSIX"){
-           if(bytime == "%d"){
-             t1 <- as.POSIXlt(as.Date(t1))
-             t2 <- as.POSIXlt(as.Date(t2))
-           }else{
-           t1 <- as.POSIXlt(t1)
-           t2 <- as.POSIXlt(t2)
-         }
-         }else{
-           if(date.format[1] == "yearmon"){
-             t1 <- as.POSIXlt(as.yearmon(t1))
-             t2 <- as.POSIXlt(as.yearmon(t2))
-           }
-           if(date.format[1] == "yearqtr"){
-             t1 <- as.POSIXlt(as.yearqtr(t1))
-             t2 <- as.POSIXlt(as.yearqtr(t2))
-           }
-         }
-       }else{
-         t1 <- as.numeric(t1)
-         t2 <- as.numeric(t2)}
-       if(date_format != 0){
-         if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-           if(bytime == "%d"){
-             delta.time <- difftime(t2, t1, units = "days")
-           }
-           if(bytime == "%H"){
-             delta.time <- difftime(t2, t1, units = "hours")
-           }
-           if(bytime == "%M"){
-             delta.time <- difftime(t2, t1, units = "mins")
-           }
-           if(bytime == "%S"){
-             delta.time <- difftime(t2, t1, units = "secs")
-           }
-         }else{
-           if(bytime == "%m"){
-             delta.time <- length(seq(from=as.Date(t1), to=as.Date(t2), by='month')) - 1
-           }else{
-             if(bytime == "%q"){
-               delta.time <- length(seq(from=as.Date(t1), to=as.Date(t2), by='quarter')) - 1
-             }
-           }
-         }
-       }else{delta.time <- t2-t1}
-       while(delta.time > tlag){
-         j <- j + 1
-         if(as.integer(j/500) == (j/500) ){
-           message("The first ", j, " values have been included in the data file.")
-         }
-         importFlw<-importFl1[i-1,]
-         if(date_format != 0){
-            if(bytime == "%Y" || bytime == "%y"){
-              year(t1) <- year(t1) + tlag
-            }
-           if(bytime == "%d"){
-             day(t1) <- day(t1) + tlag
-           }
-           if(bytime == "%m"){
-             month(t1) <- month(t1) + tlag
-           }
-           if(bytime == "%q"){
-             month(t1) <- month(t1) + tlag*3
-           }
-           if(bytime == "%H"){
-             delta.w <- t1
-             hour(delta.w) <- hour(t1) + tlag
-             if(is.na(delta.w) == TRUE){
-               t11 <- t1
-               hour(t11) <- hour(t11) + tlag + 1
-               if(difftime(t11, t1, units = "hours") < tlag){
-                 hour(t11) <- hour(t11) + 1
-               }
-               hour(t1) <- hour(t11)
-             }else{
-               hour(t1) <- hour(t1) + tlag}
-           }
-           if(bytime == "%M"){
-             delta.w <- t1
-             minute(delta.w) <- minute(t1) + tlag
-             if(is.na(delta.w) == TRUE){
-               t11 <- t1
-               minute(t11) <- minute(t11) + tlag + 60
-               if(difftime(t11, t1, units = "mins") < tlag){
-                 minute(t11) <- minute(t11) + 60
-               }
-               minute(t1) <- minute(t11)
-             }else{
-               minute(t1) <- minute(t1) + tlag}
-           }
-           if(bytime == "%S"){
-             delta.w <- t1
-             second(delta.w) <- second(t1) + tlag
-             if(is.na(delta.w) == TRUE){
-               t11 <- t1
-               second(t11) <- second(t11) + tlag + 3600
-               if(difftime(t11, t1, units = "secs") < tlag){
-                 second(t11) <- second(t11) + 3600
-               }
-               second(t1) <- second(t11)
-             }else{
-               second(t1) <- second(t1) + tlag}
-           }
-           if(date.format[1] == "Date" || date.format[1] == "POSIX"){
-             if(bytime == "%d"){
-               importFlw[[iclt]]<- as.POSIXlt(as.Date(t1))
-             }else{
-               importFlw[[iclt]]<- as.POSIXlt(t1)}
-           }else{
-             if(date.format[1] == "yearmon"){
-               importFlw[[iclt]]<- as.POSIXlt(as.yearmon(t1))
-             }
-             if(date.format[1] == "yearqtr"){
-               importFlw[[iclt]]<- as.POSIXlt(as.yearqtr(t1))
-             }
-           }
-         }else{
-           t1 <- t1 + tlag
-          importFlw[[iclt]]<- t1
-         }
-         importFlw[[iclvr]]<- NA
-         if(date.format[1] == "POSIX" && bytime != "%d"){
-           if(hour(importFlw[[iclt]]) == 0 && minute(importFlw[[iclt]]) == 0 && second(importFlw[[iclt]]) == 0){
-             importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
-           }}
-         importFlw[[iclt]] <- as.character(importFlw[[iclt]])
-         importFlfull <- rbind(importFlfull, importFlw)
-         if(date_format != 0){
-           if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-             if(bytime == "%d"){delta.time <- difftime(t2, t1, units = "days")}
-             if(bytime == "%H"){delta.time <- difftime(t2, t1, units = "hours")}
-             if(bytime == "%M"){delta.time <- difftime(t2, t1, units = "mins")}
-             if(bytime == "%S"){delta.time <- difftime(t2, t1, units = "secs")}
-           }else{
-             if(bytime == "%m"){
-               delta.time <- length(seq(from=as.Date(t1), to=as.Date(t2), by='month')) - 1
-             }else{
-               if(bytime == "%q"){
-                 delta.time <- length(seq(from=as.Date(t1), to=as.Date(t2), by='quarter')) - 1
-               }
-             }
-           }
-         }else{delta.time <- t2 - t1}
-       }
-       importFlw <- importFl1[i,]
-       if(date.format[1] == "POSIX" && bytime != "%d"){
-         if(hour(importFlw[[iclt]]) == 0 && minute(importFlw[[iclt]]) == 0 && second(importFlw[[iclt]]) == 0){
-           importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
-         }}
-       importFlw[[iclt]] <- as.character(importFlw[1, iclt])
-       importFlfull <- rbind(importFlfull, importFlw)
-         i <- i + 1
-         j <- j +1
-     }else{
-       if(importFl1[i-1,iclt] != tpar2){
-         t2 <- importFl1[i-1,iclt]
-         if(date_format != 0){
-           if(date.format[1] == "Date" || date.format[1] == "POSIX"){
-             if(bytime == "%d"){
-               t2 <- as.POSIXlt(as.Date(t2))
-             }else{
-           t2 <- as.POSIXlt(t2)}
-           }else{
-             if(date.format[1] == "yearmon"){
-               t2 <- as.POSIXlt(as.yearmon(t2))
-             }
-             if(date.format[1] == "yearqtr"){
-               t2 <- as.POSIXlt(as.yearqtr(t2))
-             }
-           }
-         }else{t2 <- as.numeric(t2)}
-         if(date_format != 0){
-           if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-             if(bytime == "%d"){delta.time <- difftime(tpar2, t2, units = "days")}
-             if(bytime == "%H"){delta.time <- difftime(tpar2, t2, units = "hours")}
-             if(bytime == "%M"){delta.time <- difftime(tpar2, t2, units = "mins")}
-             if(bytime == "%S"){delta.time <- difftime(tpar2, t2, units = "secs")}
-           }else{
-             if(bytime == "%m"){
-               delta.time <- length(seq(from=as.Date(t2), to=as.Date(tpar2), by='month')) - 1
-             }else{
-               if(bytime == "%q"){
-                 delta.time <- length(seq(from=as.Date(t2), to=as.Date(tpar2), by='quarter')) - 1
-               }
-             }
-           }
-         }else{delta.time <- tpar2-t2}
-         while(delta.time >= tlag){
-           j <- j +1
-           if(as.integer(j/500) == (j/500) ){
-             message("The first ", j, " values have been included in the data file.")
-           }
-           importFlw <- importFl1[i - 1,]
-           if(date_format != 0){
-             if(bytime == "%Y" || bytime == "%y"){
-               year(t2) <- year(t2) + tlag
-             }
-             if(bytime == "%d"){
-               day(t2) <- day(t2) + tlag
-             }
-             if(bytime == "%m"){
-               month(t2) <- month(t2) + tlag
-             }
-             if(bytime == "%q"){
-               month(t2) <- month(t2) + tlag*3
-             }
-             if(bytime == "%H"){
-               delta.w <- t2
-               hour(delta.w) <- hour(t2) + tlag
-               if(is.na(delta.w) == TRUE){
-                 t11 <- t2
-                 hour(t11) <- hour(t11) + tlag + 1
-                 if(difftime(t11, t2, units = "hours") < tlag){
-                   hour(t11) <- hour(t11) + 1
-                 }
-                 hour(t2) <- hour(t11)
-               }else{
-                 hour(t2) <- hour(t2) + tlag}
-             }
-             if(bytime == "%M"){
-               delta.w <- t2
-               minute(delta.w) <- minute(t2) + tlag
-               if(is.na(delta.w) == TRUE){
-                 t11 <- t2
-                 minute(t11) <- minute(t11) + tlag + 60
-                 if(difftime(t11, t2, units = "mins") < tlag){
-                   minute(t11) <- minute(t11) + 60
-                 }
-                 minute(t2) <- minute(t11)
-               }else{
-                   minute(t2) <- minute(t2) + tlag}
-             }
-             if(bytime == "%S"){
-               delta.w <- t2
-               second(delta.w) <- second(t2) + tlag
-               if(is.na(delta.w) == TRUE){
-                 t11 <- t2
-                 second(t11) <- second(t11) + tlag + 3600
-                 if(difftime(t11, t2, units = "secs") < tlag){
-                   second(t11) <- second(t11) + 3600
-                 }
-                 second(t2) <- second(t11)
-               }else{
-                   second(t2) <- second(t2) + tlag}
-             }
-             if(date.format[1] == "Date" || date.format[1] == "POSIX"){
-               if(bytime == "%d"){
-                 t2 <- as.POSIXlt(as.Date(t2))
-                 importFlw[[iclt]]<- as.POSIXlt(as.Date(t2))
-               }else{
-                 importFlw[[iclt]]<- (as.POSIXlt(t2))
-              }
-             }else{
-               if(date.format[1] == "yearmon"){
-                 importFlw[[iclt]]<- as.POSIXlt(as.yearmon(t2))
-               }
-               if(date.format[1] == "yearqtr"){
-                 importFlw[[iclt]]<- as.POSIXlt(as.yearqtr(t2))
-               }
-             }
-           }else{
-             t2 <- t2 + tlag
-            importFlw[[iclt]] <- t2
-           }
-           importFlw[[iclvr]] <- NA
-           if(date.format[1] == "POSIX" && bytime != "%d"){
-             if(hour(importFlw[[iclt]]) == 0 && minute(importFlw[[iclt]]) == 0 && second(importFlw[[iclt]]) == 0){
-               importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
-             }}
-           importFlw[[iclt]] <- as.character(importFlw[[iclt]])
-           importFlfull <- rbind(importFlfull, importFlw)
-           if(date_format != 0){
-             if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-               if(bytime == "%d"){delta.time <- difftime(tpar2, t2, units = "days")}
-               if(bytime == "%H"){delta.time <- difftime(tpar2, t2, units = "hours")}
-               if(bytime == "%M"){delta.time <- difftime(tpar2, t2, units = "mins")}
-               if(bytime == "%S"){delta.time <- difftime(tpar2, t2, units = "secs")}
-             }else{
-               if(bytime == "%m"){
-                 delta.time <- length(seq(from=as.Date(t2), to=as.Date(tpar2), by='month')) - 1
-               }else{
-                 if(bytime == "%q"){
-                   delta.time <- length(seq(from=as.Date(t2), to=as.Date(tpar2), by='quarter')) - 1
-                 }
-               }
-             }}else{delta.time <- tpar2-t2}
-         }
-       }
-       t1 <- importFl1[i,iclt]
-       t0 <- tpar1
-       if(date_format != 0){
-         if(date.format[1] == "Date" || date.format[1] == "POSIX"){
-           if(bytime == "%d"){
-             t1 <- as.POSIXlt(as.Date(t1))
-             t0 <- as.POSIXlt(as.Date(t0))
-           }else{
-           t0 <- as.POSIXlt(t0)
-           t1 <- as.POSIXlt(t1)}
-         }else{
-           if(date.format[1] == "yearmon"){
-             t1 <- as.POSIXlt(as.yearmon(t1))
-             t0 <- as.POSIXlt(as.yearmon(t0))
-           }
-           if(date.format[1] == "yearqtr"){
-             t1 <- as.POSIXlt(as.yearqtr(t1))
-             t0 <- as.POSIXlt(as.yearqtr(t0))
-           }
-         }
-       }else{
-         t0 <- as.numeric(t0)
-         t1 <- as.numeric(t1)}
-       importFlw <-importFl1[i,]
-       if(date_format != 0){
-         if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-           if(bytime == "%d"){delta.time <- difftime(t1, t0, units = "days")}
-           if(bytime == "%H"){delta.time <- difftime(t1, t0, units = "hours")}
-           if(bytime == "%M"){delta.time <- difftime(t1, t0, units = "mins")}
-           if(bytime == "%S"){delta.time <- difftime(t1, t0, units = "secs")}
-         }else{
-           if(bytime == "%m"){
-             delta.time <- length(seq(from=as.Date(t0), to=as.Date(t1), by='month')) - 1
-           }else{
-             if(bytime == "%q"){
-               delta.time <- length(seq(from=as.Date(t0), to=as.Date(t1), by='quarter')) - 1
-             }
-           }
-         }
-       }else{
-         delta.time <- t1-t0
-       }
-       while(delta.time >= tlag){
-         j <- j +1
-         if(as.integer(j/500) == (j/500) ){
-           message("The first ", j, " values have been included in the data file.")
-         }
-         if(date_format != 0){
-           if(date.format[1] == "Date" || date.format[1] == "POSIX"){
-             if(bytime == "%d"){
-               importFlw[[iclt]]<- as.POSIXlt(as.Date(t0))
-             }else{
-               importFlw[[iclt]]<- (as.POSIXlt(t0))}
-           }else{
-             if(date.format[1] == "yearmon"){
-               importFlw[[iclt]]<- as.POSIXlt(as.yearmon(t0))
-             }
-             if(date.format[1] == "yearqtr"){
-               importFlw[[iclt]]<- as.POSIXlt(as.yearqtr(t0))
-               }
-           }
-           if(bytime == "%Y" || bytime == "%y"){
-             year(t0) <-  year(t0) + tlag
-           }
-           if(bytime == "%d"){
-             day(t0) <-  day(t0) + tlag
-           }
-           if(bytime == "%m"){
-             month(t0) <-  month(t0) + tlag
-           }
-          if(bytime == "%q"){
-            month(t0) <- month(t0) + tlag*3
-          }
-           if(bytime == "%H"){
-             delta.w <- t0
-             hour(delta.w) <- hour(t0) + tlag
-             if(is.na(delta.w) == TRUE){
-               t11 <- t0
-               hour(t11) <- hour(t11) + tlag + 1
-               if(difftime(t11, t0, units = "hours") < tlag){
-                 hour(t11) <- hour(t11) + 1
-               }
-               hour(t0) <- hour(t11)
-             }else{
-               hour(t0) <- hour(t0) + tlag}
-           }
-           if(bytime == "%M"){
-             delta.w <- t0
-             minute(delta.w) <- minute(t0) + tlag
-             if(is.na(delta.w) == TRUE){
-               t11 <- t0
-               minute(t11) <- minute(t11) + tlag + 60
-               if(difftime(t11, t0, units = "mins") < tlag){
-                 minute(t11) <- minute(t11) + 60
-               }
-               minute(t0) <- minute(t11)
-             }else{
-               minute(t0) <- minute(t0) + tlag}
-           }
-           if(bytime == "%S"){
-             delta.w <- t0
-             second(delta.w) <- second(t0) + tlag
-             if(is.na(delta.w) == TRUE){
-               t11 <- t0
-               second(t11) <- second(t11) + tlag + 3600
-               if(difftime(t11, t0, units = "secs") < tlag){
-                 second(t11) <- second(t11) + 3600
-               }
-               second(t0) <- second(t11)
-             }else{
-               second(t0) <- second(t0) + tlag}
-           }
-         }else{
-         importFlw[[iclt]] <-  t0
-           t0 <- t0 + tlag
-         }
-         importFlw[[iclvr]]<- NA
-         if(date.format[1] == "POSIX" && bytime != "%d"){
-           if(hour(importFlw[[iclt]]) == 0 && minute(importFlw[[iclt]]) == 0 && second(importFlw[[iclt]]) == 0){
-             importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
-           }}
-         importFlw[[iclt]] <- as.character(importFlw[[iclt]])
-         importFlfull <- rbind(importFlfull,importFlw)
-         if(date_format != 0){
-           if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-             if(bytime == "%d"){delta.time <- difftime(t1, t0, units = "days")}
-             if(bytime == "%H"){delta.time <- difftime(t1, t0, units = "hours")}
-             if(bytime == "%M"){delta.time <- difftime(t1, t0, units = "mins")}
-             if(bytime == "%S"){delta.time <- difftime(t1, t0, units = "secs")}
-           }else{
-             if(bytime == "%m"){
-               delta.time <- length(seq(from=as.Date(t0), to=as.Date(t1), by='month')) - 1
-             }else{
-               if(bytime == "%q"){
-                 delta.time <- length(seq(from=as.Date(t0), to=as.Date(t1), by='quarter')) - 1
-               }
-             }
-           }
-         }else{
-           delta.time <- t1-t0
-         }
-       }
-       importFlw <- importFl1[i,]
-       if(date.format[1] == "POSIX" && bytime != "%d"){
-         if(hour(importFlw[[iclt]]) == 0 && minute(importFlw[[iclt]]) == 0 && second(importFlw[[iclt]]) == 0){
-           importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
-         }}
-       importFlw[[iclt]] <- as.character(importFlw[1, iclt])
-       importFlfull <- rbind(importFlfull, importFlw)
-       i <- i +1
-       j <- j+1
-     }
-    }# END CICLE OVER THE DATA
-    if(importFl1[ndata,iclt] != tpar2){
-       t2 <- importFl1[ndata,iclt]
-       if(date_format != 0){
-       if(date.format[1] == "Date" || date.format[1] == "POSIX"){
-         if(bytime == "%d"){
-           t2 <- as.POSIXlt(as.Date(t2))
-         }else{t2 <- as.POSIXlt(t2)}
-       }else{
-         if(date.format[1] == "yearmon"){
-           t2 <- as.POSIXlt(as.yearmon(t2))
-         }
-         if(date.format[1] == "yearqtr"){t2 <- as.POSIXlt(as.yearqtr(t2))}
-       }}else{t2 <- as.numeric(t2)}
-       importFlw <-importFl1[ndata,]
-       if(date_format != 0){
-         if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-           if(bytime == "%d"){delta.time <- difftime(tpar2, t2, units = "days")}
-           if(bytime == "%H"){delta.time <- difftime(tpar2, t2, units = "hours")}
-           if(bytime == "%M"){delta.time <- difftime(tpar2, t2, units = "mins")}
-           if(bytime == "%S"){delta.time <- difftime(tpar2, t2, units = "secs")}
-         }else{
-           if(bytime == "%m"){
-             delta.time <- length(seq(from=as.Date(t2), to=as.Date(tpar2), by='month')) - 1
-           }else{
-             if(bytime == "%q"){
-               delta.time <- length(seq(from=as.Date(t2), to=as.Date(tpar2), by='quarter')) - 1
-             }
-           }
-         }
-       }else{
-         delta.time <- tpar2-t2
-       }
-       while(delta.time >= tlag){
-        j <- j +1
+      }else{delta.time <- t2-t1}
+      while(delta.time > tlag){
+        j <- j + 1
         if(as.integer(j/500) == (j/500) ){
           message("The first ", j, " values have been included in the data file.")
         }
+        importFlw<-importFl1[i-1,]
         if(date_format != 0){
           if(bytime == "%Y" || bytime == "%y"){
-            year(t2) <- year(t2) + tlag
+            year(t1) <- year(t1) + tlag
           }
           if(bytime == "%d"){
-            day(t2) <- day(t2) + tlag
+            day(t1) <- day(t1) + tlag
           }
           if(bytime == "%m"){
-            month(t2) <- month(t2) + tlag
+            month(t1) <- month(t1) + tlag
           }
           if(bytime == "%q"){
-            month(t2) <- month(t2) + tlag*3
+            month(t1) <- month(t1) + tlag*3
           }
           if(bytime == "%H"){
-            delta.w <- t2
-            hour(delta.w) <- hour(t2) + tlag
+            delta.w <- t1
+            hour(delta.w) <- hour(t1) + tlag
             if(is.na(delta.w) == TRUE){
-              t11 <- t2
+              t11 <- t1
               hour(t11) <- hour(t11) + tlag + 1
-              if(difftime(t11, t2, units = "hours") < tlag){
+              if(difftime(t11, t1, units = "hours") < tlag){
                 hour(t11) <- hour(t11) + 1
               }
-              hour(t2) <- hour(t11)
+              hour(t1) <- hour(t11)
             }else{
-              hour(t2) <- hour(t2) + tlag}
+              hour(t1) <- hour(t1) + tlag}
           }
           if(bytime == "%M"){
-            delta.w <- t2
-            minute(delta.w) <- minute(t2) + tlag
+            delta.w <- t1
+            minute(delta.w) <- minute(t1) + tlag
             if(is.na(delta.w) == TRUE){
-              t11 <- t2
+              t11 <- t1
               minute(t11) <- minute(t11) + tlag + 60
-              if(difftime(t11, t2, units = "mins") < tlag){
+              if(difftime(t11, t1, units = "mins") < tlag){
                 minute(t11) <- minute(t11) + 60
               }
-              minute(t2) <- minute(t11)
+              minute(t1) <- minute(t11)
             }else{
-              minute(t2) <- minute(t2) + tlag}
+              minute(t1) <- minute(t1) + tlag}
           }
           if(bytime == "%S"){
-            delta.w <- t2
-            second(delta.w) <- second(t2) + tlag
+            delta.w <- t1
+            second(delta.w) <- second(t1) + tlag
             if(is.na(delta.w) == TRUE){
-              t11 <- t2
+              t11 <- t1
               second(t11) <- second(t11) + tlag + 3600
-              if(difftime(t11, t2, units = "secs") < tlag){
+              if(difftime(t11, t1, units = "secs") < tlag){
                 second(t11) <- second(t11) + 3600
               }
-              second(t2) <- second(t11)
+              second(t1) <- second(t11)
             }else{
-              second(t2) <- second(t2) + tlag}
+              second(t1) <- second(t1) + tlag}
           }
           if(date.format[1] == "Date" || date.format[1] == "POSIX"){
             if(bytime == "%d"){
-              importFlw[[iclt]] <- as.POSIXlt(as.Date(t2))
+              importFlw[[iclt]]<- as.POSIXlt(as.Date(t1))
             }else{
-              importFlw[[iclt]] <- as.POSIXlt(t2)}
+              importFlw[[iclt]]<- as.POSIXlt(t1)}
           }else{
             if(date.format[1] == "yearmon"){
-              importFlw[[iclt]] <- as.POSIXlt(as.yearmon(t2))
+              importFlw[[iclt]]<- as.POSIXlt(as.yearmon(t1))
             }
             if(date.format[1] == "yearqtr"){
-              importFlw[[iclt]] <- as.POSIXlt(as.yearqtr(t2))
+              importFlw[[iclt]]<- as.POSIXlt(as.yearqtr(t1))
             }
           }
         }else{
-          t2 <- t2 + tlag
-         importFlw[[iclt]] <- t2
+          t1 <- t1 + tlag
+          importFlw[[iclt]]<- t1
         }
-        importFlw[[iclvr]] <- NA
+        importFlw[[iclvr]]<- NA
         if(date.format[1] == "POSIX" && bytime != "%d"){
           if(hour(importFlw[[iclt]]) == 0 && minute(importFlw[[iclt]]) == 0 && second(importFlw[[iclt]]) == 0){
             importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
           }}
         importFlw[[iclt]] <- as.character(importFlw[[iclt]])
         importFlfull <- rbind(importFlfull, importFlw)
+        if(date_format != 0){
+          if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
+            if(bytime == "%d"){delta.time <- difftime(t2, t1, units = "days")}
+            if(bytime == "%H"){delta.time <- difftime(t2, t1, units = "hours")}
+            if(bytime == "%M"){delta.time <- difftime(t2, t1, units = "mins")}
+            if(bytime == "%S"){delta.time <- difftime(t2, t1, units = "secs")}
+          }else{
+            if(bytime == "%m"){
+              delta.time <- length(seq(from=as.Date(t1), to=as.Date(t2), by='month')) - 1
+            }else{
+              if(bytime == "%q"){
+                delta.time <- length(seq(from=as.Date(t1), to=as.Date(t2), by='quarter')) - 1
+              }
+            }
+          }
+        }else{delta.time <- t2 - t1}
+      }
+      importFlw <- importFl1[i,]
+      if(date.format[1] == "POSIX" && bytime != "%d"){
+        if(hour(importFlw[[iclt]]) == 0 && minute(importFlw[[iclt]]) == 0 && second(importFlw[[iclt]]) == 0){
+          importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
+        }}
+      importFlw[[iclt]] <- as.character(importFlw[1, iclt])
+      importFlfull <- rbind(importFlfull, importFlw)
+      i <- i + 1
+      j <- j +1
+    }else{
+      if(importFl1[i-1,iclt] != tpar2){
+        t2 <- importFl1[i-1,iclt]
+        if(date_format != 0){
+          if(date.format[1] == "Date" || date.format[1] == "POSIX"){
+            if(bytime == "%d"){
+              t2 <- as.POSIXlt(as.Date(t2))
+            }else{
+              t2 <- as.POSIXlt(t2)}
+          }else{
+            if(date.format[1] == "yearmon"){
+              t2 <- as.POSIXlt(as.yearmon(t2))
+            }
+            if(date.format[1] == "yearqtr"){
+              t2 <- as.POSIXlt(as.yearqtr(t2))
+            }
+          }
+        }else{t2 <- as.numeric(t2)}
         if(date_format != 0){
           if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
             if(bytime == "%d"){delta.time <- difftime(tpar2, t2, units = "days")}
@@ -1427,38 +1044,422 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
             }
           }
         }else{delta.time <- tpar2-t2}
+        while(delta.time >= tlag){
+          j <- j +1
+          if(as.integer(j/500) == (j/500) ){
+            message("The first ", j, " values have been included in the data file.")
+          }
+          importFlw <- importFl1[i - 1,]
+          if(date_format != 0){
+            if(bytime == "%Y" || bytime == "%y"){
+              year(t2) <- year(t2) + tlag
+            }
+            if(bytime == "%d"){
+              day(t2) <- day(t2) + tlag
+            }
+            if(bytime == "%m"){
+              month(t2) <- month(t2) + tlag
+            }
+            if(bytime == "%q"){
+              month(t2) <- month(t2) + tlag*3
+            }
+            if(bytime == "%H"){
+              delta.w <- t2
+              hour(delta.w) <- hour(t2) + tlag
+              if(is.na(delta.w) == TRUE){
+                t11 <- t2
+                hour(t11) <- hour(t11) + tlag + 1
+                if(difftime(t11, t2, units = "hours") < tlag){
+                  hour(t11) <- hour(t11) + 1
+                }
+                hour(t2) <- hour(t11)
+              }else{
+                hour(t2) <- hour(t2) + tlag}
+            }
+            if(bytime == "%M"){
+              delta.w <- t2
+              minute(delta.w) <- minute(t2) + tlag
+              if(is.na(delta.w) == TRUE){
+                t11 <- t2
+                minute(t11) <- minute(t11) + tlag + 60
+                if(difftime(t11, t2, units = "mins") < tlag){
+                  minute(t11) <- minute(t11) + 60
+                }
+                minute(t2) <- minute(t11)
+              }else{
+                minute(t2) <- minute(t2) + tlag}
+            }
+            if(bytime == "%S"){
+              delta.w <- t2
+              second(delta.w) <- second(t2) + tlag
+              if(is.na(delta.w) == TRUE){
+                t11 <- t2
+                second(t11) <- second(t11) + tlag + 3600
+                if(difftime(t11, t2, units = "secs") < tlag){
+                  second(t11) <- second(t11) + 3600
+                }
+                second(t2) <- second(t11)
+              }else{
+                second(t2) <- second(t2) + tlag}
+            }
+            if(date.format[1] == "Date" || date.format[1] == "POSIX"){
+              if(bytime == "%d"){
+                t2 <- as.POSIXlt(as.Date(t2))
+                importFlw[[iclt]]<- as.POSIXlt(as.Date(t2))
+              }else{
+                importFlw[[iclt]]<- (as.POSIXlt(t2))
+              }
+            }else{
+              if(date.format[1] == "yearmon"){
+                importFlw[[iclt]]<- as.POSIXlt(as.yearmon(t2))
+              }
+              if(date.format[1] == "yearqtr"){
+                importFlw[[iclt]]<- as.POSIXlt(as.yearqtr(t2))
+              }
+            }
+          }else{
+            t2 <- t2 + tlag
+            importFlw[[iclt]] <- t2
+          }
+          importFlw[[iclvr]] <- NA
+          if(date.format[1] == "POSIX" && bytime != "%d"){
+            if(hour(importFlw[[iclt]]) == 0 && minute(importFlw[[iclt]]) == 0 && second(importFlw[[iclt]]) == 0){
+              importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
+            }}
+          importFlw[[iclt]] <- as.character(importFlw[[iclt]])
+          importFlfull <- rbind(importFlfull, importFlw)
+          if(date_format != 0){
+            if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
+              if(bytime == "%d"){delta.time <- difftime(tpar2, t2, units = "days")}
+              if(bytime == "%H"){delta.time <- difftime(tpar2, t2, units = "hours")}
+              if(bytime == "%M"){delta.time <- difftime(tpar2, t2, units = "mins")}
+              if(bytime == "%S"){delta.time <- difftime(tpar2, t2, units = "secs")}
+            }else{
+              if(bytime == "%m"){
+                delta.time <- length(seq(from=as.Date(t2), to=as.Date(tpar2), by='month')) - 1
+              }else{
+                if(bytime == "%q"){
+                  delta.time <- length(seq(from=as.Date(t2), to=as.Date(tpar2), by='quarter')) - 1
+                }
+              }
+            }}else{delta.time <- tpar2-t2}
+        }
       }
+      t1 <- importFl1[i,iclt]
+      t0 <- tpar1
+      if(date_format != 0){
+        if(date.format[1] == "Date" || date.format[1] == "POSIX"){
+          if(bytime == "%d"){
+            t1 <- as.POSIXlt(as.Date(t1))
+            t0 <- as.POSIXlt(as.Date(t0))
+          }else{
+            t0 <- as.POSIXlt(t0)
+            t1 <- as.POSIXlt(t1)}
+        }else{
+          if(date.format[1] == "yearmon"){
+            t1 <- as.POSIXlt(as.yearmon(t1))
+            t0 <- as.POSIXlt(as.yearmon(t0))
+          }
+          if(date.format[1] == "yearqtr"){
+            t1 <- as.POSIXlt(as.yearqtr(t1))
+            t0 <- as.POSIXlt(as.yearqtr(t0))
+          }
+        }
+      }else{
+        t0 <- as.numeric(t0)
+        t1 <- as.numeric(t1)}
+      importFlw <-importFl1[i,]
+      if(date_format != 0){
+        if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
+          if(bytime == "%d"){delta.time <- difftime(t1, t0, units = "days")}
+          if(bytime == "%H"){delta.time <- difftime(t1, t0, units = "hours")}
+          if(bytime == "%M"){delta.time <- difftime(t1, t0, units = "mins")}
+          if(bytime == "%S"){delta.time <- difftime(t1, t0, units = "secs")}
+        }else{
+          if(bytime == "%m"){
+            delta.time <- length(seq(from=as.Date(t0), to=as.Date(t1), by='month')) - 1
+          }else{
+            if(bytime == "%q"){
+              delta.time <- length(seq(from=as.Date(t0), to=as.Date(t1), by='quarter')) - 1
+            }
+          }
+        }
+      }else{
+        delta.time <- t1-t0
+      }
+      while(delta.time >= tlag){
+        j <- j +1
+        if(as.integer(j/500) == (j/500) ){
+          message("The first ", j, " values have been included in the data file.")
+        }
+        if(date_format != 0){
+          if(date.format[1] == "Date" || date.format[1] == "POSIX"){
+            if(bytime == "%d"){
+              importFlw[[iclt]]<- as.POSIXlt(as.Date(t0))
+            }else{
+              importFlw[[iclt]]<- (as.POSIXlt(t0))}
+          }else{
+            if(date.format[1] == "yearmon"){
+              importFlw[[iclt]]<- as.POSIXlt(as.yearmon(t0))
+            }
+            if(date.format[1] == "yearqtr"){
+              importFlw[[iclt]]<- as.POSIXlt(as.yearqtr(t0))
+            }
+          }
+          if(bytime == "%Y" || bytime == "%y"){
+            year(t0) <-  year(t0) + tlag
+          }
+          if(bytime == "%d"){
+            day(t0) <-  day(t0) + tlag
+          }
+          if(bytime == "%m"){
+            month(t0) <-  month(t0) + tlag
+          }
+          if(bytime == "%q"){
+            month(t0) <- month(t0) + tlag*3
+          }
+          if(bytime == "%H"){
+            delta.w <- t0
+            hour(delta.w) <- hour(t0) + tlag
+            if(is.na(delta.w) == TRUE){
+              t11 <- t0
+              hour(t11) <- hour(t11) + tlag + 1
+              if(difftime(t11, t0, units = "hours") < tlag){
+                hour(t11) <- hour(t11) + 1
+              }
+              hour(t0) <- hour(t11)
+            }else{
+              hour(t0) <- hour(t0) + tlag}
+          }
+          if(bytime == "%M"){
+            delta.w <- t0
+            minute(delta.w) <- minute(t0) + tlag
+            if(is.na(delta.w) == TRUE){
+              t11 <- t0
+              minute(t11) <- minute(t11) + tlag + 60
+              if(difftime(t11, t0, units = "mins") < tlag){
+                minute(t11) <- minute(t11) + 60
+              }
+              minute(t0) <- minute(t11)
+            }else{
+              minute(t0) <- minute(t0) + tlag}
+          }
+          if(bytime == "%S"){
+            delta.w <- t0
+            second(delta.w) <- second(t0) + tlag
+            if(is.na(delta.w) == TRUE){
+              t11 <- t0
+              second(t11) <- second(t11) + tlag + 3600
+              if(difftime(t11, t0, units = "secs") < tlag){
+                second(t11) <- second(t11) + 3600
+              }
+              second(t0) <- second(t11)
+            }else{
+              second(t0) <- second(t0) + tlag}
+          }
+        }else{
+          importFlw[[iclt]] <-  t0
+          t0 <- t0 + tlag
+        }
+        importFlw[[iclvr]]<- NA
+        if(date.format[1] == "POSIX" && bytime != "%d"){
+          if(hour(importFlw[[iclt]]) == 0 && minute(importFlw[[iclt]]) == 0 && second(importFlw[[iclt]]) == 0){
+            importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
+          }}
+        importFlw[[iclt]] <- as.character(importFlw[[iclt]])
+        importFlfull <- rbind(importFlfull,importFlw)
+        if(date_format != 0){
+          if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
+            if(bytime == "%d"){delta.time <- difftime(t1, t0, units = "days")}
+            if(bytime == "%H"){delta.time <- difftime(t1, t0, units = "hours")}
+            if(bytime == "%M"){delta.time <- difftime(t1, t0, units = "mins")}
+            if(bytime == "%S"){delta.time <- difftime(t1, t0, units = "secs")}
+          }else{
+            if(bytime == "%m"){
+              delta.time <- length(seq(from=as.Date(t0), to=as.Date(t1), by='month')) - 1
+            }else{
+              if(bytime == "%q"){
+                delta.time <- length(seq(from=as.Date(t0), to=as.Date(t1), by='quarter')) - 1
+              }
+            }
+          }
+        }else{
+          delta.time <- t1-t0
+        }
+      }
+      importFlw <- importFl1[i,]
+      if(date.format[1] == "POSIX" && bytime != "%d"){
+        if(hour(importFlw[[iclt]]) == 0 && minute(importFlw[[iclt]]) == 0 && second(importFlw[[iclt]]) == 0){
+          importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
+        }}
+      importFlw[[iclt]] <- as.character(importFlw[1, iclt])
+      importFlfull <- rbind(importFlfull, importFlw)
+      i <- i +1
+      j <- j+1
     }
-    ### END CHECK ON MISSING DATES ###
+  }# END CICLE OVER THE DATA
+  if(importFl1[ndata,iclt] != tpar2){
+    t2 <- importFl1[ndata,iclt]
     if(date_format != 0){
       if(date.format[1] == "Date" || date.format[1] == "POSIX"){
         if(bytime == "%d"){
-          importFlfull[[iclt]] <- as.Date(as.character(importFlfull[[iclt]]), format = date_format)
+          t2 <- as.POSIXlt(as.Date(t2))
+        }else{t2 <- as.POSIXlt(t2)}
+      }else{
+        if(date.format[1] == "yearmon"){
+          t2 <- as.POSIXlt(as.yearmon(t2))
+        }
+        if(date.format[1] == "yearqtr"){t2 <- as.POSIXlt(as.yearqtr(t2))}
+      }}else{t2 <- as.numeric(t2)}
+    importFlw <-importFl1[ndata,]
+    if(date_format != 0){
+      if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
+        if(bytime == "%d"){delta.time <- difftime(tpar2, t2, units = "days")}
+        if(bytime == "%H"){delta.time <- difftime(tpar2, t2, units = "hours")}
+        if(bytime == "%M"){delta.time <- difftime(tpar2, t2, units = "mins")}
+        if(bytime == "%S"){delta.time <- difftime(tpar2, t2, units = "secs")}
+      }else{
+        if(bytime == "%m"){
+          delta.time <- length(seq(from=as.Date(t2), to=as.Date(tpar2), by='month')) - 1
         }else{
-          importFlfull[[iclt]] <- as.POSIXlt(importFlfull[[iclt]], format = date_format, tz = time.zone)
-        }}else{
+          if(bytime == "%q"){
+            delta.time <- length(seq(from=as.Date(t2), to=as.Date(tpar2), by='quarter')) - 1
+          }
+        }
+      }
+    }else{
+      delta.time <- tpar2-t2
+    }
+    while(delta.time >= tlag){
+      j <- j +1
+      if(as.integer(j/500) == (j/500) ){
+        message("The first ", j, " values have been included in the data file.")
+      }
+      if(date_format != 0){
+        if(bytime == "%Y" || bytime == "%y"){
+          year(t2) <- year(t2) + tlag
+        }
+        if(bytime == "%d"){
+          day(t2) <- day(t2) + tlag
+        }
+        if(bytime == "%m"){
+          month(t2) <- month(t2) + tlag
+        }
+        if(bytime == "%q"){
+          month(t2) <- month(t2) + tlag*3
+        }
+        if(bytime == "%H"){
+          delta.w <- t2
+          hour(delta.w) <- hour(t2) + tlag
+          if(is.na(delta.w) == TRUE){
+            t11 <- t2
+            hour(t11) <- hour(t11) + tlag + 1
+            if(difftime(t11, t2, units = "hours") < tlag){
+              hour(t11) <- hour(t11) + 1
+            }
+            hour(t2) <- hour(t11)
+          }else{
+            hour(t2) <- hour(t2) + tlag}
+        }
+        if(bytime == "%M"){
+          delta.w <- t2
+          minute(delta.w) <- minute(t2) + tlag
+          if(is.na(delta.w) == TRUE){
+            t11 <- t2
+            minute(t11) <- minute(t11) + tlag + 60
+            if(difftime(t11, t2, units = "mins") < tlag){
+              minute(t11) <- minute(t11) + 60
+            }
+            minute(t2) <- minute(t11)
+          }else{
+            minute(t2) <- minute(t2) + tlag}
+        }
+        if(bytime == "%S"){
+          delta.w <- t2
+          second(delta.w) <- second(t2) + tlag
+          if(is.na(delta.w) == TRUE){
+            t11 <- t2
+            second(t11) <- second(t11) + tlag + 3600
+            if(difftime(t11, t2, units = "secs") < tlag){
+              second(t11) <- second(t11) + 3600
+            }
+            second(t2) <- second(t11)
+          }else{
+            second(t2) <- second(t2) + tlag}
+        }
+        if(date.format[1] == "Date" || date.format[1] == "POSIX"){
+          if(bytime == "%d"){
+            importFlw[[iclt]] <- as.POSIXlt(as.Date(t2))
+          }else{
+            importFlw[[iclt]] <- as.POSIXlt(t2)}
+        }else{
+          if(date.format[1] == "yearmon"){
+            importFlw[[iclt]] <- as.POSIXlt(as.yearmon(t2))
+          }
+          if(date.format[1] == "yearqtr"){
+            importFlw[[iclt]] <- as.POSIXlt(as.yearqtr(t2))
+          }
+        }
+      }else{
+        t2 <- t2 + tlag
+        importFlw[[iclt]] <- t2
+      }
+      importFlw[[iclvr]] <- NA
+      if(date.format[1] == "POSIX" && bytime != "%d"){
+        if(hour(importFlw[[iclt]]) == 0 && minute(importFlw[[iclt]]) == 0 && second(importFlw[[iclt]]) == 0){
+          importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
+        }}
+      importFlw[[iclt]] <- as.character(importFlw[[iclt]])
+      importFlfull <- rbind(importFlfull, importFlw)
+      if(date_format != 0){
+        if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
+          if(bytime == "%d"){delta.time <- difftime(tpar2, t2, units = "days")}
+          if(bytime == "%H"){delta.time <- difftime(tpar2, t2, units = "hours")}
+          if(bytime == "%M"){delta.time <- difftime(tpar2, t2, units = "mins")}
+          if(bytime == "%S"){delta.time <- difftime(tpar2, t2, units = "secs")}
+        }else{
+          if(bytime == "%m"){
+            delta.time <- length(seq(from=as.Date(t2), to=as.Date(tpar2), by='month')) - 1
+          }else{
+            if(bytime == "%q"){
+              delta.time <- length(seq(from=as.Date(t2), to=as.Date(tpar2), by='quarter')) - 1
+            }
+          }
+        }
+      }else{delta.time <- tpar2-t2}
+    }
+  }
+  ### END CHECK ON MISSING DATES ###
+  if(date_format != 0){
+    if(date.format[1] == "Date" || date.format[1] == "POSIX"){
+      if(bytime == "%d"){
+        importFlfull[[iclt]] <- as.Date(as.character(importFlfull[[iclt]]), format = date_format)
+      }else{
+        importFlfull[[iclt]] <- as.POSIXlt(importFlfull[[iclt]], format = date_format, tz = time.zone)
+      }}else{
         if(date.format[1] == "yearmon"){
           importFlfull[[iclt]] <- as.yearmon(importFlfull[[iclt]], format = date_format)
         }
         if(date.format[1] == "yearqtr"){
           importFlfull[[iclt]] <- as.yearqtr(importFlfull[[iclt]], format = date_format)}
-        }}else{importFlfull[[iclt]] <- as.numeric(importFlfull[[iclt]])}
-    n.time <- length(unique(importFlfull[, iclt]))
-    if (iclsp == 0) {
-      ID_points <- c(rep(1:n.stat, each = n.time))
-      ID_points <- paste("id_", ID_points , sep = "")
-      importFlfull[,"iclsp"] <- ID_points
-    }
-    if (save.as == "data.frame") {
-      if (date_format != 0 || iflagt == 1) {
-        ID_times <- c(rep(1:n.time, times = n.stat))
-        importFlfull[,"timeIndex"] <- ID_times
-        importFlfull <- importFlfull[,c("iclsp", "iclx","icly","timeIndex","iclt","iclvr")]
-        colnames(importFlfull) <- c("spatialIndex","x","y","timeIndex","date","variable")
-      }else{
-        colnames(importFlfull) <- c("spatialIndex","x","y","timeIndex","variable")}
+      }}else{importFlfull[[iclt]] <- as.numeric(importFlfull[[iclt]])}
+  n.time <- length(unique(importFlfull[, iclt]))
+  if (iclsp == 0) {
+    ID_points <- c(rep(1:n.stat, each = n.time))
+    ID_points <- paste("id_", ID_points , sep = "")
+    importFlfull[,"iclsp"] <- ID_points
+  }
+  if (save.as == "data.frame") {
+    if (date_format != 0 || iflagt == 1) {
+      ID_times <- c(rep(1:n.time, times = n.stat))
+      importFlfull[,"timeIndex"] <- ID_times
+      importFlfull <- importFlfull[,c("iclsp", "iclx","icly","timeIndex","iclt","iclvr")]
+      colnames(importFlfull) <- c("spatialIndex","x","y","timeIndex","date","variable")
+    }else{
+      importFlfull <- importFlfull[,c("iclsp", "iclx","icly","iclt","iclvr")]
+      colnames(importFlfull) <- c("spatialIndex","x","y","timeIndex","variable")}
     return(importFlfull)
-    }
+  }
 
   #=========================================#
   #=       CREATE STFDF (gstat package)    =#
@@ -1479,10 +1480,10 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
     n.time <- length(unique(importFl[, iclt]))
     #== TEMPORAL DB ==#
     if(iflagt == 1){
-     importFl[[iclt]]<-as.character(importFl[,iclt])
-     data.time <- (as.Date(unique(importFl[,iclt]), format = date.format[2]))
-     month(data.time) <- 1
-     day(data.time) <- 1
+      importFl[[iclt]]<-as.character(importFl[,iclt])
+      data.time <- (as.Date(unique(importFl[,iclt]), format = date.format[2]))
+      month(data.time) <- 1
+      day(data.time) <- 1
     }else{data.time <- unique(importFl[,iclt])}
     #== ST DATA  ==#
     mydata <- importFl[, iclvr]

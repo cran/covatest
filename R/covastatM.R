@@ -1542,9 +1542,7 @@ covastatM <- function(matdata, pardata1, pardata2, stpairs, typetest = "productS
 NULL
 #' @param object object of class \code{covastatM} for method \code{show}
 #' @rdname covastatM-class
-#' @aliases covastatM-class
 #' @aliases covastatM-method
-#' @aliases show
 #' @export
 setMethod(f="show", signature="covastatM", definition=function(object) {
   cat("An object of class covastatM", "\n")

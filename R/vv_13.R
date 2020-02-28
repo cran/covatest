@@ -9,7 +9,7 @@
 #'
 #' @format Object of class StVariogram
 #'
-#' @keywords dataset, StVariogram
+#' @keywords dataset StVariogram
 #'
 #' @examples
 #' # --start define the STFDF rr_13-- #

@@ -5,10 +5,17 @@
 \alias{covastatM-class}
 \alias{covastatM}
 \alias{show,covastatM-method}
+\alias{covastatM-method}
 \title{Class "covastatM"}
 \usage{
-covastatM(matdata, pardata1, pardata2, stpairs, typetest = "productSum",
-  beta.data = NULL)
+covastatM(
+  matdata,
+  pardata1,
+  pardata2,
+  stpairs,
+  typetest = "productSum",
+  beta.data = NULL
+)
 
 \S4method{show}{covastatM}(object)
 }

@@ -169,7 +169,6 @@ sepindex <- function(vario_st, nt, ns, globalSill) {
 #' @param ... any arguments that will be passed to the panel plotting functions
 #' @rdname sepindex-class
 #' @aliases sepindex-method
-#' @aliases boxplot
 #' @export
 setMethod("boxplot", signature = c(x = "sepindex"),
           function(x, ...) {
@@ -184,9 +183,7 @@ setMethod("boxplot", signature = c(x = "sepindex"),
 )
 #' @param object object of class \code{sepindex} for methods \code{show} and \code{summary}
 #' @rdname sepindex-class
-#' @aliases sepindex-class
 #' @aliases sepindex-method
-#' @aliases show
 #' @export
 setMethod(f="show", signature="sepindex", definition=function(object) {
   cat("An object of class sepindex, with", "\n")
@@ -218,9 +215,7 @@ setMethod(f="show", signature="sepindex", definition=function(object) {
 #' \code{2} for temporal lags (ht) and \code{3} for the non-separability index
 #' (SepIndex)
 #' @rdname sepindex-class
-#' @aliases sepindex-class
 #' @aliases sepindex-method
-#' @aliases select
 #' @export
 setMethod(f="[", signature="sepindex", definition=function(x, i, j) {
   x@sep.index.ratio[i,j]
@@ -228,9 +223,7 @@ setMethod(f="[", signature="sepindex", definition=function(x, i, j) {
 )
 
 #' @rdname sepindex-class
-#' @aliases sepindex-class
 #' @aliases sepindex-method
-#' @aliases summary
 #' @export
 setMethod(f = "summary", signature = "sepindex",
           definition = function(object) {

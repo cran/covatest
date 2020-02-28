@@ -5,6 +5,8 @@
 \alias{blocks-class}
 \alias{blocks}
 \alias{boxplot,blocks-method}
+\alias{blocks-method}
+\alias{boxplot}
 \alias{show,blocks-method}
 \alias{[,blocks-method}
 \alias{summary,blocks-method}

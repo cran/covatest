@@ -523,9 +523,7 @@ NULL
 #' and \code{summary} methods)
 #' @param ... any arguments that will be passed to the panel plotting functions
 #' @rdname blocks-class
-#' @aliases blocks-class
-#' @aliases blocks-method
-#' @aliases boxplot
+#' @aliases blocks-method boxplot
 #' @export
 setMethod("boxplot", signature = c(x = "blocks"),
           function(x, i, j, ...) {
@@ -588,9 +586,7 @@ setMethod("boxplot", signature = c(x = "blocks"),
 )
 #' @param object object of class \code{blocks} for methods \code{show} and \code{summary}
 #' @rdname blocks-class
-#' @aliases blocks-class
 #' @aliases blocks-method
-#' @aliases show
 #' @export
 setMethod(f="show", signature="blocks", definition=function(object) {
   lb <- nrow(object@mat.block)
@@ -618,9 +614,7 @@ setMethod(f="show", signature="blocks", definition=function(object) {
 }
 )
 #' @rdname blocks-class
-#' @aliases blocks-class
 #' @aliases blocks-method
-#' @aliases select
 #' @export
 setMethod(f="[", signature="blocks", definition=function(x, i, j) {
 
@@ -629,9 +623,7 @@ setMethod(f="[", signature="blocks", definition=function(x, i, j) {
 }
 )
 #' @rdname blocks-class
-#' @aliases blocks-class
 #' @aliases blocks-method
-#' @aliases summary
 #' @export
 setMethod(f = "summary", signature = "blocks",
           definition = function(object, i, j) {

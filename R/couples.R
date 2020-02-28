@@ -473,7 +473,6 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
 NULL
 #' @param object object of class \code{couples} for methods \code{show} and \code{summary}
 #' @rdname couples-class
-#' @aliases couples-class
 #' @aliases couples-method
 #' @aliases show
 #' @export
@@ -512,7 +511,6 @@ cat("Spatio-temporal lags defined throught the objects of the class 'couples'", 
 #' lag (i >= 3, temporal lags are stored from the third column) are given
 #'
 #' @rdname couples-class
-#' @aliases couples-class
 #' @aliases couples-method
 #' @aliases select
 #' @export
@@ -536,7 +534,6 @@ setMethod(f="[", signature="couples", definition=function(x, i, by.row = FALSE) 
 }
 )
 #' @rdname couples-class
-#' @aliases couples-class
 #' @aliases couples-method
 #' @aliases summary
 #' @export

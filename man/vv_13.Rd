@@ -46,4 +46,4 @@ rr_13 <- r5to10[c("DEHE046","DESN049","DETH026","DENW063","DETH061","DEBY047",
 ## End (Not run)
 }
 \keyword{StVariogram}
-\keyword{dataset,}
+\keyword{dataset}

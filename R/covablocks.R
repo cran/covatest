@@ -774,9 +774,7 @@ covablocks <- function(stblocks, stpairs, typetest = "sym") {
 NULL
 #' @param object object of class \code{covablocks} for method \code{show}
 #' @rdname covablocks-class
-#' @aliases covablocks-class
 #' @aliases covablocks-method
-#' @aliases show
 #' @export
 setMethod(f="show", signature="covablocks", definition=function(object) {
   nb <- nrow(object@mat.cova)

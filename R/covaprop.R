@@ -408,9 +408,7 @@ covaprop <- function(cblock, cstat, nonseptype = NULL, sign.level = 0.05) {
 NULL
 #' @param object object of class \code{covaprop} for method \code{show}
 #' @rdname covaprop-class
-#' @aliases covaprop-class
 #' @aliases covaprop-method
-#' @aliases show
 #' @export
 setMethod(f="show", signature="covaprop", definition=function(object) {
   if(object@typetest == "sym"){

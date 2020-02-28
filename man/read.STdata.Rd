@@ -4,12 +4,25 @@
 \alias{read.STdata}
 \title{Imports a text file in R}
 \usage{
-read.STdata(file, header = FALSE, dec = ".", sep = "", iclx, icly,
-  iclt, icldate = c(icl.date = 0, iclty = 0, icltm = 0, icltd = 0),
-  icltime = c(icl.time = 0, icltH = 0, icltM = 0, icltS = 0), iclvr,
-  iclsp = 0, missing.v = NA, save.as = "data.frame",
-  date.format = c("code", format = NA), bytime = NA, tlag,
-  time.zone = "")
+read.STdata(
+  file,
+  header = FALSE,
+  dec = ".",
+  sep = "",
+  iclx,
+  icly,
+  iclt,
+  icldate = c(icl.date = 0, iclty = 0, icltm = 0, icltd = 0),
+  icltime = c(icl.time = 0, icltH = 0, icltM = 0, icltS = 0),
+  iclvr,
+  iclsp = 0,
+  missing.v = NA,
+  save.as = "data.frame",
+  date.format = c("code", format = NA),
+  bytime = NA,
+  tlag,
+  time.zone = ""
+)
 }
 \arguments{
 \item{file}{the name of the data file and its extension. The file is searched
@@ -86,7 +99,7 @@ month, \code{"\%d"} if values are taken by day, \code{"\%q"} if values
 are taken by quarter, \code{"\%H"} if values are taken by hour, \code{"\%M"}
 if values are taken by minute and \code{"\%S"} if values are taken by seconds}
 
-\item{tlag}{numeric; time increment\/lag between two temporal observations}
+\item{tlag}{numeric; time increment/lag between two temporal observations}
 
 \item{time.zone}{character; time zone for dates with time component}
 }

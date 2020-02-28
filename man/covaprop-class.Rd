@@ -5,6 +5,7 @@
 \alias{covaprop-class}
 \alias{covaprop}
 \alias{show,covaprop-method}
+\alias{covaprop-method}
 \title{Class "covaprop"}
 \usage{
 covaprop(cblock, cstat, nonseptype = NULL, sign.level = 0.05)

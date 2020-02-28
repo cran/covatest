@@ -5,6 +5,7 @@
 \alias{covastat-class}
 \alias{covastat}
 \alias{show,covastat-method}
+\alias{covastat-method}
 \title{Class "covastat"}
 \usage{
 covastat(matdata, pardata1, pardata2, stpairs, typetest = "sym")
