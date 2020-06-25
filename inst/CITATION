@@ -1,0 +1,18 @@
+bibentry(bibtype = "Article",
+  title        = "{covatest}: An {R} Package for Selecting a Class of Space-Time Covariance Functions",
+  author       = c(person(given = "Claudia",
+                          family = "Cappello"),
+                   person(given = "Sandra",
+                          family = "De Iaco"),
+                   person(given = "Donato",
+                          family = "Posa")),
+  journal      = "Journal of Statistical Software",
+  year         = "2020",
+  volume       = "94",
+  number       = "1",
+  pages        = "1--42",
+  doi          = "10.18637/jss.v094.i01",
+
+  header       = "To cite covatest in publications use:"
+)
+

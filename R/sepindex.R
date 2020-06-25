@@ -29,11 +29,19 @@ setClass("sepindex", slots = c(sep.index.ratio = "matrix",
 #' @param ns integer, the number of spatial lags in \code{vario_st}
 #' @param globalSill numeric, the value of the sample variance
 #'
-#' @references De Iaco, S., Posa, D., 2013, Positive and negative non-separability
+#' @references
+#' Cappello, C., De Iaco, S., Posa, D., 2020, {covatest}: An {R} Package for
+#' Selecting a Class of Space-Time Covariance Functions.
+#' Journal of Statistical Software, \bold{94(1)} 1--42.
+#'
+#' De Iaco, S., Posa, D., 2013, Positive and negative non-separability
 #' for space-time covariance models. Journal of Statistical Planning and
 #' Inference, \bold{143} 378--391.
 #'
-#' Pebesma, E., 2004, Multivariable geostatistics in S: the gstat
+#' {Gräler}, B., Pebesma, E.J., Heuvelink G., 2016, Spatio-Temporal
+#' Interpolation Using gstat. The {R} Journal, \bold{8(1)} 204--218.
+#'
+#' Pebesma, E.J., 2004, Multivariable geostatistics in S: the gstat
 #' package. Computers & Geosciences, \bold{30} 683--691.
 #'
 #' Rodriguez, A., Diggle, P.J., 2010, A class of convolution-based

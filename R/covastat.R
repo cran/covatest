@@ -74,18 +74,22 @@ setClass("covastat", slots = c(G = "matrix",
 #'
 #'
 #' @references
-#' Li, B., Genton, M.G., Sherman, M., 2007, A nonparametric assessment
-#' of properties of spacetime covariance functions.
-#' Journal of the American Statistical Association, \bold{102} 736--744.
+#' Cappello, C., De Iaco, S., Posa, D., 2018, Testing the type of
+#' non-separability and some classes of space-time covariance function models.
+#' Stochastic Environmental Research and Risk Assessment,
+#' \bold{32} 17--35
+#'
+#' Cappello, C., De Iaco, S., Posa, D., 2020, {covatest}: An {R} Package for
+#' Selecting a Class of Space-Time Covariance Functions.
+#' Journal of Statistical Software, \bold{94(1)} 1--42.
 #'
 #' De Iaco, S., Palma, M., Posa, D., 2016. A general procedure for selecting a
 #' class of fully symmetric space-time covariance functions.
 #' Environmentrics, \bold{27(4)} 212--224.
 #'
-#' Cappello, C., De Iaco, S., Posa, D., 2018, Testing the type of
-#' non-separability and some classes of covariance models for space-time data.
-#' Stochastic Environmental Research and Risk Assessment,
-#' \bold{32} 17--35
+#' Li, B., Genton, M.G., Sherman, M., 2007, A nonparametric assessment
+#' of properties of spacetime covariance functions.
+#' Journal of the American Statistical Association, \bold{102} 736--744.
 #'
 #' @examples
 #' # --start define the STFDF rr_13-- #

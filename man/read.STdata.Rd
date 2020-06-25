@@ -183,7 +183,7 @@ Irregular Time Series.
 Journal of Statistical Software, \bold{14(6)} 1--27.
 }
 \seealso{
-\code{\link[spacetime]{STFDF}}
+\code{\link[spacetime]{STFDF-class}}
 
 \code{\link[utils]{read.table}}
 

@@ -4,7 +4,9 @@
 \name{vv_13}
 \alias{vv_13}
 \title{Precomputed variogram for PM10 in data set air}
-\format{Object of class StVariogram}
+\format{
+Object of class StVariogram
+}
 \usage{
 data(vv_13)
 }

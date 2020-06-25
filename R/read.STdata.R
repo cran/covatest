@@ -104,7 +104,7 @@
 #' Irregular Time Series.
 #' Journal of Statistical Software, \bold{14(6)} 1--27.
 #'
-#' @seealso \code{\link[spacetime]{STFDF}}
+#' @seealso \code{\link[spacetime]{STFDF-class}}
 #' @seealso \code{\link[utils]{read.table}}
 #' @seealso \code{\link[zoo]{yearmon}}
 #' @seealso \code{\link[zoo]{yearqtr}}

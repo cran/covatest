@@ -92,6 +92,11 @@ setClass("couples", slots = c(couples.st = "matrix",
 #'
 #' @seealso \code{\link{setzero}}
 #'
+#' @references
+#' Cappello, C., De Iaco, S., Posa, D., 2020, {covatest}: An {R} Package for
+#' Selecting a Class of Space-Time Covariance Functions.
+#' Journal of Statistical Software, \bold{94(1)} 1--42.
+#'
 #' @examples
 #' sel.staz.sym <- c("DERP016", "DENW065", "DEHE051", "DETH026", "DENW063", "DENI019",
 #' "DENW068", "DEHE046", "DEUB029", "DEBY047", "DETH061", "DESN049")

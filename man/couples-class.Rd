@@ -161,6 +161,11 @@ couples.sym[3, by.row = TRUE]
 summary(couples.sym)
 
 }
+\references{
+Cappello, C., De Iaco, S., Posa, D., 2020, {covatest}: An {R} Package for
+Selecting a Class of Space-Time Covariance Functions.
+Journal of Statistical Software, \bold{94(1)} 1--42.
+}
 \seealso{
 \code{\link{setzero}}
 }
