@@ -90,15 +90,15 @@
 #' @references
 #' Bivand, R. S., Pebesma, E., Gomez-Rubio, V., 2013,
 #' \emph{Applied spatial data analysis with R}, Second edition. New York: Springer.
-#' \url{http://www.asdar-book.org/}
+#' \url{https://asdar-book.org/}
 #'
 #' Grolemund, G, Wickham, H., 2011, Dates and Times Made Easy with lubridate.
 #' Journal of Statistical Software, \bold{40(3)} 1--25.
-#' \url{http://www.jstatsoft.org/v40/i03/}
+#' \url{https://www.jstatsoft.org/v40/i03/}
 #'
 #' Pebesma, E.J., 2012, spacetime: Spatio-Temporal Data in R.
 #' Journal of Statistical Software, \bold{51(7)} 1--30.
-#' \url{http://www.jstatsoft.org/v51/i07/}
+#' \url{https://www.jstatsoft.org/v51/i07/}
 #'
 #' Zeileis, A., Grothendieck. G., 2005, zoo: S3 Infrastructure for Regular and
 #' Irregular Time Series.

@@ -1,12 +1,12 @@
-3e39213b7bad40ae68b92fe49887f9a2 *DESCRIPTION
+5d8627e3a784acbebb05572fd7efbf54 *DESCRIPTION
 9df44625d5e0865a57fa170d45c6d4b0 *NAMESPACE
 bad3cf531928f51849c9f505230711e4 *R/blocks.R
 04cb7cc45ef3cd6012af078d74b87f4a *R/couples.R
 8ac289b9bd49c254c824755a1005fc34 *R/covablocks.R
-c9d4d425bb2567f1676a7b80aaad00a3 *R/covaprop.R
+e0e174df7ade78f20550b7e3cf5d6a9b *R/covaprop.R
 b1e201d284d3da79cd8c585fff638344 *R/covastat.R
 a617aaad93592bd0951fddd6e584b656 *R/covastatM.R
-bcb53e386e7a2a50f7e8d37b0f3aa748 *R/read.STdata.R
+c52779d55ef87344a15102a24989a7f5 *R/read.STdata.R
 c6df6d4523ecec937c54db936fb63161 *R/sepindex.R
 7cc9f7a4cf46286dc77654bcd28f0769 *R/vv_13.R
 c3bb4c85e41a017cdf151489b469057b *data/vv_13.RData
@@ -25,7 +25,7 @@ acb98a6361ddedd54ec5f52403ba2679 *inst/extdata/file_date.txt
 6a734280ef7bc85b658c5391397772fb *man/covaprop-class.Rd
 f1c09d02f377ec2f7af203cad88b70f9 *man/covastat-class.Rd
 a28960b6e75500a375d65912dfb69f01 *man/covastatM-class.Rd
-0ace926272c4102eaba2e9216220078d *man/read.STdata.Rd
+4dabba7f598b6560b098912754106b93 *man/read.STdata.Rd
 74219969bcabfaee19427a20fc9b93b4 *man/sepindex-class.Rd
 c1f5c3f77e178e9ea21054df667f8d65 *man/setzero-methods.Rd
 447c83ccbbfe4c7c32d73ddfde223572 *man/vv_13.Rd

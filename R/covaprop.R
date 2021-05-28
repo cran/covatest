@@ -142,6 +142,37 @@ covaprop <- function(cblock, cstat, nonseptype = NULL, sign.level = 0.05) {
 
   is.scalar <- function (x){length(x) == 1L && is.vector(x, mode = "numeric")}
 
+  is.square.matrix <- function( x )
+  {
+    ###
+    ### determines if the given matrix is a square matrix
+    ###
+    ### arguments
+    ### x = a matrix object
+    ###
+    if ( !is.matrix( x ) )
+      stop( "argument x is not a matrix" )
+    return( nrow(x) == ncol(x) )
+  }
+
+  is.singular.matrix <- function( x, tol=1e-8 )
+  {
+    ###
+    ### this function returns TRUE if the matrix argument x
+    ### is singular and FALSE otherwise
+    ###
+    ### argument
+    ### x = a numeric square matrix
+    ### tol = tolerance level for zero
+    ###
+    if (!is.square.matrix( x ) )
+      stop( "argument x is not a square matrix" )
+    if ( !is.numeric( x ) )
+      stop( "argument x is not a numeric matrix" )
+    det.x <- det( x )
+    return( abs( det.x ) < tol )
+  }
+
   ### SOME CHECKS ON THE ARGUMENTS ###
 
 
@@ -371,8 +402,12 @@ covaprop <- function(cblock, cstat, nonseptype = NULL, sign.level = 0.05) {
       for (i in 1:nbeta) {
         y <- crossprod(matrix_cova_cova, mat_B[, , i])
         x <- crossprod(mat_B[, , i], y)
-        test.sing <- matrixcalc::is.singular.matrix((matrixA.m %*% x %*%
+        test.sing <- is.singular.matrix((matrixA.m %*% x %*%
                                           t(matrixA.m)), tol = 1e-08)
+      if (test.sing == FALSE){
+        message("Start error message. The matrix inverse in (9) [Cappello, C.et al., 2020] can not be computed, because the matrix is singular.")
+        stop("End error message. Stop running.")
+        }
 
         test.statistics[i, 1] <- (t(matrixA.m %*% f_G[, , i])) %*%
           (solve(matrixA.m %*% x %*% t(matrixA.m))) %*% (matrixA.m %*%
