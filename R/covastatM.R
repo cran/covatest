@@ -6,32 +6,27 @@
 #' Depending on the type of test, the empirical variance, the sample spatial
 #' and temporal marginal covariances are also computed
 #'
-#' @slot G matrix; containing the spatio-temporal covariances for the specified
+#' @slot G matrix, containing the spatio-temporal covariances for the specified
 #' lags. For all tests, the sample variance and the sample spatial and temporal
 #' marginal covariances are also computed and stored in \code{G}
-#' @slot cova.h matrix; containing the sample spatial marginal covariances
+#' @slot cova.h matrix, containing the sample spatial marginal covariances
 #' for the specified lags
-#' @slot cova.u matrix; containing the sample temporal marginal covariances
+#' @slot cova.u matrix, containing the sample temporal marginal covariances
 #' for the specified lags
-#' @slot f.G array; containing the computation of specific functions of the
+#' @slot f.G array, containing the computation of specific functions of the
 #' elements of \code{G}, see references
-#' @slot B matrix; containing the computation of the derivatives of each element
+#' @slot B matrix, containing the computation of the derivatives of each element
 #' of \code{f.G} with respect to each element of \code{G}
 #' @slot A contrast matrix
-#' @slot beta.data vector; containing the different values of the parameter beta,
+#' @slot beta.data vector, containing the different values of the parameter beta,
 #' available only for the test on the Gneiting class of model (\code{typetest = "gneiting"})
-#' @slot typetest character; contains the code of the test to be performed
+#' @slot typetest character, contains the code of the test to be performed
+#'
 #'
 #' @note {
-#' A stop occurs if the number of spatial points fixed in \code{stpairs}
-#' (object of class \code{couples}) is less than 2.
 #' \itemize{
-#' \item If \code{typetest = "intProduct"} (test on the integrated product class
-#' of models) \code{cova.h} and \code{cova.u} are not available
-#'
-#' \item If \code{typetest = "gneiting"} (test on the Gneiting class of models),
-#' \code{cova.h} is not available
-#'
+#' \item A stop occurs if the number of spatial points fixed in \code{stpairs}
+#' (object of class \code{couples}) is less than 2
 #' \item A stop occurs if more than 75\% of consecutive data are missing in the time
 #' series, since a large number of missing values do not guarantee the reliability
 #' of the tests
@@ -49,7 +44,7 @@ setClass("covastatM", slots = c(G = "matrix",
                                typetest = "character",
                                beta.data = "ANY"))
 
-#' @param matdata STFDF/STSDF or \code{data.frame}; which contains the
+#' @param matdata STFDF/STSDF or \code{data.frame}, which contains the
 #' coordinates of the spatial points, the identification code of the spatial
 #' points, the indentification code of the temporal points and the values of
 #' the variable, typically output from \code{read.STdata}
@@ -63,19 +58,26 @@ setClass("covastatM", slots = c(G = "matrix",
 #' argument is set, by default, equal to 1 if the number of variables is equal to 1
 #' @param stpairs object of class \code{couples}, containing the spatial
 #' points and the corresponding temporal lags to be analyzed
-#' @param typetest character; set \code{typetest = "productSum"} for the test
+#' @param typetest character, set \code{typetest = "productSum"} for the test
 #' on the product-sum class of models (default choice), \code{typetest = "intProduct"}
 #' for the test on the integrated product class of models, \code{typetest = "gneiting"}
 #' for the test on the Gneiting class of models
-#' @param beta.data vector; this argument is required only for \code{typetest = "gneiting"},
+#' @param beta.data vector, this argument is required only for \code{typetest = "gneiting"},
 #' otherwise it has to be set equal to NULL (default choice). It contains the
 #' different values of the parameter beta, which can assume values in the range 0-1
 #'
-#' @details
-#' A message appears on the user's console if the \code{G} vector
+#' @details {
+#' \itemize{
+#' \item If \code{typetest = "intProduct"} (test on the integrated product class
+#' of models) \code{cova.h} and \code{cova.u} are not available
+#' \item If \code{typetest = "gneiting"} (test on the Gneiting class of models),
+#' \code{cova.h} is not available
+#' \item A message appears on the user's console if the \code{G} vector
 #' contains spatio-temporal negative covariances. The message returns the negative
 #' value/values and it will help to identify the spatial and the temporal lags
 #' involved
+#' }
+#' }
 #'
 #' @seealso \linkS4class{couples}
 #' @seealso \code{\link{read.STdata}}
@@ -1220,8 +1222,10 @@ covastatM <- function(matdata, pardata1, pardata2, stpairs, typetest = "productS
                                                    2), nbeta))
         arrayF <- array(0, dim = c(((count_colfull + count_rowfull) *
                                       2), 1, nbeta))
+
         for (ciclebeta in 1:nbeta) {
-          beta <- round(beta.data[ciclebeta], digits = 1)
+          beta <- round(beta.data[ciclebeta], digits = 4)
+
 
           #= f(G) for type.test= 6 =#
           f.cova.sub <- matrix(0, nrow = 2, ncol = 1)
@@ -1265,18 +1269,30 @@ covastatM <- function(matdata, pardata1, pardata2, stpairs, typetest = "productS
                   zz <- zz + 1
                   if (count_nozero_row[i, zz] == 3) {
 
-
-                    f.cova.sub[1, ] <- (log(cova.u[2 + (k - 1) * 3,
-                                                   ]/(covacouple[(ii + z - 1), (kk + 4 - 2)]), base = exp(1)))^(-2/(beta)) -
-                      (log(cova.u[1 + (k - 1) * 3, ]/(covacouple[(ii +
-                                                                    z - 1), (kk + 2 - 2)]), base = exp(1)))^(-2/(beta))
-
-                    f.cova.sub[2, ] <- (log(cova.u[3 + (k - 1) * 3,
-                                                   ]/(covacouple[(ii + z - 1), (kk + 6 - 2)]), base = exp(1)))^(-2/(beta)) -
-                      (log(cova.u[2 + (k - 1) * 3, ]/(covacouple[(ii +
-                                                                    z - 1), (kk + 4 - 2)]), base = exp(1)))^(-2/(beta))
+                    f.1 <- (log(cova.u[2 + (k - 1) * 3,
+                    ]/(covacouple[(ii + z - 1), (kk + 4 - 2)]), base = exp(1)))^(-2)
+                    f.1 <- (f.1)^(1/beta)
 
 
+                    f.2 <-  (log(cova.u[1 + (k - 1) * 3, ]/(covacouple[(ii +
+                                                        z - 1), (kk + 2 - 2)]), base = exp(1)))^(-2)
+                    f.2 <- (f.2)^(1/beta)
+
+
+
+                   f.cova.sub[1, ] <- f.1 - f.2
+
+                   f.1 <- (log(cova.u[3 + (k - 1) * 3,
+                                           ]/(covacouple[(ii + z - 1), (kk + 6 - 2)]), base = exp(1)))^(-2)
+                   f.1 <- (f.1)^(1/beta)
+
+
+                   f.2 <-  (log(cova.u[2 + (k - 1) * 3, ]/(covacouple[(ii +
+                                                         z - 1), (kk + 4 - 2)]), base = exp(1)))^(-2)
+                   f.2 <- (f.2)^(1/beta)
+
+
+                    f.cova.sub[2, ] <- f.1 - f.2
 
                     if (flag2 == 1) {
                       f.cova2 <- rbind(f.cova2, f.cova.sub)
@@ -1291,7 +1307,7 @@ covastatM <- function(matdata, pardata1, pardata2, stpairs, typetest = "productS
               #= end cicle on iflag which identifies the subblock with at least one row and
               #= one column full filled
             }
-          }
+          } #= end cicle on i nrow(couple..)
           f.cova <- as.matrix(rbind(f.cova1, f.cova2), ncol = 1)
 
           #= Compute the matrix B for type.test = 6 =#
@@ -1371,59 +1387,52 @@ covastatM <- function(matdata, pardata1, pardata2, stpairs, typetest = "productS
                         if (z == 1) {
 
                           ii <- ii + 2
-                          B[jj, ii] <- -(2/beta) * ((log(cova.u[1 +
-                                                                  (k - 1) * 3, ]/covacouple[(j + (i - 1) *
-                                                                                               3), (kk + (z - 1) * 2)], base = exp(1)))^(-(2/beta) -
-                                                                                                                                           1)) * (1/covacouple[(j + (i - 1) * 3), (kk +
-                                                                                                                                                                                     (z - 1) * 2)])
+                          f.1 <- (log(cova.u[1 + (k - 1) * 3, ]/covacouple[(j + (i - 1) *
+                                                              3), (kk + (z - 1) * 2)], base = exp(1)))
+                          f.1 <- ((f.1)^(-2))^(1/beta)*(f.1^(-1))
+
+                          B[jj, ii] <- -(2/beta) * f.1 * (1/covacouple[(j + (i - 1) * 3), (kk + (z - 1) * 2)])
 
                           #= if(z==1&&jflag==0){ kkk<-kkk+1 jflag<-1 }
-                          B[nct + 1 + (k - 1) * 3, ii] <- (2/beta) *
-                            ((log(cova.u[1 + (k - 1) * 3, ]/covacouple[(j +
-                                                                          (i - 1) * 3), (kk + (z - 1) * 2)], base = exp(1)))^(-(2/beta) -
-                                                                                                                                1)) * (1/cova.u[1 + (k - 1) * 3, ])
+                          f.1 <- (log(cova.u[1 + (k - 1) * 3, ]/covacouple[(j +
+                                               (i - 1) * 3), (kk + (z - 1) * 2)], base = exp(1)))
+                          f.1 <- ((f.1)^(-2))^(1/beta)*(f.1^(-1))
+                          B[nct + 1 + (k - 1) * 3, ii] <- (2/beta) * f.1 * (1/cova.u[1 + (k - 1) * 3, ])
 
-                          B[nct + 2 + (k - 1) * 3, ii] <- -(2/beta) *
-                            ((log(cova.u[2 + (k - 1) * 3, ]/covacouple[(j +
-                                                                          (i - 1) * 3), (kk + 2 + (z - 1) * 2)],
-                                  base = exp(1)))^(-(2/beta) - 1)) * (1/cova.u[2 +
-                                                                                 (k - 1) * 3, ])
+                          f.1 <- (log(cova.u[2 + (k - 1) * 3, ]/covacouple[(j +
+                                             (i - 1) * 3), (kk + 2 + (z - 1) * 2)], base = exp(1)))
+                          f.1 <- ((f.1)^(-2))^(1/beta)*(f.1^(-1))
+                          B[nct + 2 + (k - 1) * 3, ii] <- -(2/beta) * f.1 * (1/cova.u[2 + (k - 1) * 3, ])
 
+                          f.1 <- (log(cova.u[2 + (k - 1) * 3, ]/covacouple[(j +
+                                             (i - 1) * 3), (kk + 2 + (z - 1) * 2)], base = exp(1)))
+                          f.1 <- ((f.1)^(-2))^(1/beta)*(f.1^(-1))
+                          B[nct + 2 + (k - 1) * 3, ii + 1] <- (2/beta) *  f.1  * (1/cova.u[2 + (k - 1) * 3, ])
 
-                          B[nct + 2 + (k - 1) * 3, ii + 1] <- (2/beta) *
-                            ((log(cova.u[2 + (k - 1) * 3, ]/covacouple[(j +
-                                                                          (i - 1) * 3), (kk + 2 + (z - 1) * 2)],
-                                  base = exp(1)))^(-(2/beta) - 1)) * (1/cova.u[2 +
-                                                                                 (k - 1) * 3, ])
-
-                          B[nct + 3 + (k - 1) * 3, ii + 1] <- -(2/beta) *
-                            ((log(cova.u[3 + (k - 1) * 3, ]/covacouple[(j +
-                                                                          (i - 1) * 3), (kk + 4 + (z - 1) * 2)],
-                                  base = exp(1)))^(-(2/beta) - 1)) * (1/cova.u[3 +
-                                                                                 (k - 1) * 3, ])
+                          f.1 <- (log(cova.u[3 + (k - 1) * 3, ]/covacouple[(j +
+                                            (i - 1) * 3), (kk + 4 + (z - 1) * 2)], base = exp(1)))
+                          f.1 <- ((f.1)^(-2))^(1/beta)*(f.1^(-1))
+                          B[nct + 3 + (k - 1) * 3, ii + 1] <- -(2/beta) * f.1 * (1/cova.u[3 + (k - 1) * 3, ])
                         }
 
                         if (z == 2) {
 
-                          B[jj, ii] <- (2/beta) * ((log(cova.u[2 + (k -
-                                                                      1) * 3, ]/covacouple[(j + (i - 1) * 3),
-                                                                                           (kk + (z - 1) * 2)], base = exp(1)))^(-(2/beta) -
-                                                                                                                                   1)) * (1/covacouple[(j + (i - 1) * 3), (kk +
-                                                                                                                                                                             (z - 1) * 2)])
-                          B[jj, ii + 1] <- -(2/beta) * ((log(cova.u[2 +
-                                                                      (k - 1) * 3, ]/covacouple[(j + (i - 1) *
-                                                                                                   3), (kk + (z - 1) * 2)], base = exp(1)))^(-(2/beta) -
-                                                                                                                                               1)) * (1/covacouple[(j + (i - 1) * 3), (kk +
-                                                                                                                                                                                         (z - 1) * 2)])
+                          f.1 <- (log(cova.u[2 + (k - 1) * 3, ]/covacouple[(j + (i - 1) * 3),
+                                                           (kk + (z - 1) * 2)], base = exp(1)))
+                          f.1 <- ((f.1)^(-2))^(1/beta)*(f.1^(-1))
+                          B[jj, ii] <- (2/beta) * f.1 * (1/covacouple[(j + (i - 1) * 3), (kk + (z - 1) * 2)])
+
+                          f.1 <- (log(cova.u[2 + (k - 1) * 3, ]/covacouple[(j + (i - 1) * 3),
+                                                            (kk + (z - 1) * 2)], base = exp(1)))
+                          f.1 <- ((f.1)^(-2))^(1/beta)*(f.1^(-1))
+                          B[jj, ii + 1] <- -(2/beta) * f.1 * (1/covacouple[(j + (i - 1) * 3), (kk +  (z - 1) * 2)])
                         }
 
                         if (z == 3) {
-
-                          B[jj, ii + 1] <- (2/beta) * ((log(cova.u[3 +
-                                                                     (k - 1) * 3, ]/covacouple[(j + (i - 1) *
-                                                                                                  3), (kk + (z - 1) * 2)], base = exp(1)))^(-(2/beta) -
-                                                                                                                                              1)) * (1/covacouple[(j + (i - 1) * 3), (kk +
-                                                                                                                                                                                        (z - 1) * 2)])
+                          f.1 <- (log(cova.u[3 + (k - 1) * 3, ]/covacouple[(j + (i - 1) * 3),
+                                                            (kk + (z - 1) * 2)], base = exp(1)))
+                          f.1 <- ((f.1)^(-2))^(1/beta)*(f.1^(-1))
+                          B[jj, ii + 1] <- (2/beta) * f.1  * (1/covacouple[(j + (i - 1) * 3), (kk + (z - 1) * 2)])
                         }
                       }
                     }
@@ -1438,7 +1447,7 @@ covastatM <- function(matdata, pardata1, pardata2, stpairs, typetest = "productS
           }
           arrayB[, , ciclebeta] <- B[, ]
           arrayF[, , ciclebeta] <- f.cova[, ]
-       }
+       } # End cicle on ciclebeta
       }
       #========================================================================#
       #= End computing f(G) and matrix B for type.test=6                       =#

@@ -18,7 +18,7 @@ covablocks(stblocks, stpairs, typetest = "sym")
 \item{stpairs}{object of class \code{couples}, containing the spatial
 points and the corresponding temporal lags to be analyzed}
 
-\item{typetest}{character; set \code{typetest ="sym"} for symmetry test
+\item{typetest}{character, set \code{typetest ="sym"} for symmetry test
 (default choice), \code{typetest ="sep"} for separability test, \code{typetest ="tnSep"}
 for type of non separability test,\code{typetest ="productSum"} for the test
 on the product-sum class of models, \code{typetest ="intProduct"} for the test
@@ -36,27 +36,7 @@ covariances for each block of data are also computed. Moreover, the sample
 covariances between the spatio-temporal covariances at the specified spatial
 and temporal lags are determined.
 }
-\section{Slots}{
-
-\describe{
-\item{\code{mat.cova}}{matrix of sample spatio-temporal covariances for each block,
-computed for the spatial and temporal lags given in \code{stpairs}
-(object of class \code{couples})}
-
-\item{\code{mat.cova.h}}{matrix of sample spatial marginal covariances
-for the specified lags}
-
-\item{\code{mat.cova.u}}{matrix of sample temporal marginal covariances
-for the specified lags}
-
-\item{\code{mat.cova.cova}}{matrix of sample covariances between space-time
-covariances for each block, computed for the spatial and temporal lags given
-in \code{stpairs} (object of class \code{couples})}
-
-\item{\code{typetest}}{character; contains the code of the test to be performed}
-}}
-
-\note{
+\details{
 {
 \itemize{
 \item If \code{typetest} is equal to \code{"sym"} (symmetry test) or \code{"intProduct"}
@@ -75,6 +55,26 @@ message will be returned since the covariance estimation might not be reliable
 }
 }
 }
+\section{Slots}{
+
+\describe{
+\item{\code{mat.cova}}{matrix of sample spatio-temporal covariances for each block,
+computed for the spatial and temporal lags given in \code{stpairs}
+(object of class \code{couples})}
+
+\item{\code{mat.cova.h}}{matrix of sample spatial marginal covariances
+for the specified lags}
+
+\item{\code{mat.cova.u}}{matrix of sample temporal marginal covariances
+for the specified lags}
+
+\item{\code{mat.cova.cova}}{matrix of sample covariances between space-time
+covariances for each block, computed for the spatial and temporal lags given
+in \code{stpairs} (object of class \code{couples})}
+
+\item{\code{typetest}}{character, contains the code of the test to be performed}
+}}
+
 \examples{
 # --start define the STFDF rr_13-- #
 library(sp)

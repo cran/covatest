@@ -23,7 +23,8 @@ setClass("sepindex", slots = c(sep.index.ratio = "matrix",
                                cov.tm = "matrix",
                                cov.sp = "matrix"))
 
-#' @param vario_st spatio-temporal sample variogram, output from
+#' @param vario_st object of class \code{StVariogram}, containing the
+#' spatio-temporal sample variogram, output from
 #' \code{\link[gstat]{variogramST}}
 #' @param nt integer, the number of temporal lags in \code{vario_st}
 #' @param ns integer, the number of spatial lags in \code{vario_st}

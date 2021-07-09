@@ -28,7 +28,7 @@ couples(
 \S4method{summary}{couples}(object)
 }
 \arguments{
-\item{sel.staz}{vector; the sequence of ID codes which denote the spatial
+\item{sel.staz}{vector, the sequence of ID codes which denote the spatial
 points to be analyzed}
 
 \item{sp.couples.in}{two-column matrix: rows corresponding to the couples
@@ -42,7 +42,7 @@ lags, corresponding to some couples of spatial points, are not required for
 the specific test, they can be set equal to zero, through the specific
 \code{\link{setzero}} method}
 
-\item{typetest}{character; set \code{typetest = "sym"} for symmetry test
+\item{typetest}{character, set \code{typetest = "sym"} for symmetry test
 (default choice), \code{typetest = "sep"} for separability test,
 \code{typetest = "tnSep"} for type of non separability test,
 \code{typetest = "productSum"} for the test on the product-sum class of models,
@@ -50,8 +50,9 @@ the specific test, they can be set equal to zero, through the specific
 of models, \code{typetest = "gneiting"} for the test on the Gneiting class
 of models}
 
-\item{typecode}{numeric or character; specifies the codification of the
-spatial points in the \code{data frame} or in the STFDF/STSDF}
+\item{typecode}{type of object, i.e. numeric() or character(), specifies the
+type of codification of the spatial points in the \code{data frame} or in the
+STFDF/STSDF}
 
 \item{object}{object of class \code{couples} for methods \code{show} and \code{summary}}
 
@@ -60,7 +61,7 @@ spatial points in the \code{data frame} or in the STFDF/STSDF}
 \item{i}{index specifing rows or columns of the slot \code{@couples.st}.
 Rows or columns depending on the logical parameter \code{by.row} to be set}
 
-\item{by.row}{logical; if \code{TRUE} rows of the slot \code{@couples.st} are
+\item{by.row}{logical, if \code{TRUE} rows of the slot \code{@couples.st} are
 selected (the temporal lags associated to the i-th spatial couple are given).
 If \code{FALSE} (the default) columns of the slot \code{@couples.st} are
 selected. In particular, the spatial couples associated to the i-th temporal
@@ -71,27 +72,7 @@ A class for spatial points and the corresponding temporal lags to be
 analyzed in order to test some covariance properties and some well known
 classes of space-time covariance functions models
 }
-\section{Slots}{
-
-\describe{
-\item{\code{couples.st}}{matrix; in which the first two columns contain the
-couples of spatial points (denoted with order numbers) to be analyzed
-and the other columns the temporal lags associated with each spatial couples}
-
-\item{\code{sel.staz}}{numeric or character; contains the ID codes of the
-selected spatial points}
-
-\item{\code{sp.couples}}{data.frame; contains the couples of order numbers
-associated with the spatial points to be analyzed and the couples of the
-ID codes}
-
-\item{\code{tl.couples}}{numeric; contains the temporal lags associated to the
-couples of the selected spatial points}
-
-\item{\code{typetest}}{character; contains the code of the test to be performed}
-}}
-
-\note{
+\details{
 It is important to point out that:
 \itemize{
 \item both positive and negative temporal lags are automatically considered in
@@ -110,19 +91,46 @@ classified for temporal lags (see \linkS4class{sepindex} for more details)
 \item for model tests (\code{typetest} equal to \code{"productSum"},
 \code{"intProduct"} and \code{"gneiting"}), the number of analyzed spatial
 points must be used to create at least 3 spatial couples or multiple of 3,
-such that each triplet satisfies the condition h1-h2=h2-h3 (only for
-\code{typetest = "intProduct"} and \code{"gneiting"}).
+such that each triplet satisfies the condition
+\eqn{$||\mathbf{h}_{1}||^{2\gamma}- ||\mathbf{h}_{2}||^{2\gamma} = ||\mathbf{h}_{2}||^{2\gamma}-||\mathbf{h}_{3}||^{2\gamma}$}{||h_1||^{2\gamma} - ||h_2||^{2\gamma} = ||h_2||^{2\gamma} - ||h_3||^{2\gamma}}
+where \eqn{\gamma \in ]0,1]} only for \code{typetest = "intProduct"}
+and \code{"gneiting"}.
 The number of positive temporal lags must be at least 3, or multiple
-of 3, too. The condition u1-u2=u2-u3 (only for \code{typetest = "intProduct"}
-and \code{"gneiting"}) must be satisfied for each triplet.
+of 3, too. The condition \eqn{$u_{1}^{2\alpha}-u_{2}^{2\alpha}=u_{2}^{2\alpha}-u_{3}^{2\alpha}$}{u_1^{2\alpha} - u_2^{2\alpha} = u_2^{2\alpha} - u_3^{2\alpha}}
+where \eqn{\alpha \in ]0,1]} must be satisfied for each triplet
+(only for \code{typetest = "intProduct"} and \code{"gneiting"}), as clarified
+in Cappello et al., 2018. The values of \eqn{\gamma} and \eqn{\alpha} are usually fixed
+equal to 0.5 or 1 according that the behavior near the origin of the spatial
+and temporal marginal covariograms is linear or quadratic, respectively.
 Note that for each spatial triplet and each temporal triplet, 6 contrasts can
 be defined. However, for \code{typetest = "intProduct"} (test on the integrated
-model) the user has to set arbitrarily one temporal lag equal to zero in
-order to delete redundant contrasts, through the specific
+model) the user has to set arbitrarily one temporal lag equal to zero for each
+spatial triplet in order to delete redundant contrasts, through the specific
 \code{\link{setzero}} method
 }
+}
+\section{Slots}{
 
+\describe{
+\item{\code{couples.st}}{matrix, in which the first two columns contain the
+couples of spatial points (denoted with order numbers) to be analyzed
+and the other columns the temporal lags associated with each spatial couples}
 
+\item{\code{sel.staz}}{numeric or character, contains the ID codes of the
+selected spatial points}
+
+\item{\code{sp.couples}}{data.frame, contains the couples of order numbers
+associated with the spatial points to be analyzed and the couples of the
+ID codes}
+
+\item{\code{tl.couples}}{numeric, contains the temporal lags associated to the
+couples of the selected spatial points}
+
+\item{\code{typetest}}{character; contains the code of the test to be performed}
+}}
+
+\note{
+{
 Errors occur if
 \itemize{
 \item some spatial points, given in the sequence at the beginning of the
@@ -134,6 +142,10 @@ temporal lags
 \item no temporal lags have been specified
 
 \item the number of spatial points fixed in \code{sel.staz} is less than 2
+
+\item the construction of the \code{sp.couples.in} is not consistent with the
+test to be performed
+}
 }
 }
 \examples{

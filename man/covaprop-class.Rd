@@ -17,14 +17,14 @@ covaprop(cblock, cstat, nonseptype = NULL, sign.level = 0.05)
 
 \item{cstat}{object of class \code{covastat} or \code{covastatM}}
 
-\item{nonseptype}{integer; this argumet is required only for objects
+\item{nonseptype}{integer, this argumet is required only for objects
 (\code{cblock} and \code{cstat}) defined to perform the type of non
 separability test, otherwise it has to be set equal to \code{NULL} (default choice).
 Set \code{nonseptype=0} for testing the null hypothesis that the non
 separability is non positive; set \code{nonseptype=1} for testing the null
 hypothesis that the non separability is non negative}
 
-\item{sign.level}{level of significance}
+\item{sign.level}{numeric, level of significance}
 
 \item{object}{object of class \code{covaprop} for method \code{show}}
 }
@@ -33,57 +33,83 @@ A function for testing some properties (symmetry, separability, type of
 non-separability) of spatio-temporal covariance functions and some classes
 of space-time covariance models
 }
-\section{Slots}{
-
-\describe{
-\item{\code{test.statistics}}{numeric; the value of the test statistic}
-
-\item{\code{p.value}}{numeric; the lower tail p value of the test statistic}
-
-\item{\code{df}}{numeric; the degrees of freedom, if available}
-
-\item{\code{typetest}}{character; contains the code of the test to be performed}
-}}
-
-\note{
+\details{
 {
-A message helps to decide for either reject the null hypothesis in favor of
-the alternative or not reject it, at a specific level of significance
 \itemize{
-\item The test on full symmetry (the argument of the slot \code{@typetest} is
+\item A message helps to decide for either reject the null hypothesis in favor of
+the alternative or not reject it, at a specific level of significance
+
+\item The test on full symmetry (when the slot \code{@typetest} is
 equal to \code{"sym"}) represents the first step
 for the selection of a suitable class of spatio-temporal covariance functions.
 According to the definition of full symmetry, the null hypothesis to be
-tested is \eqn{H_0: C(h,u) - C(h,-u)=0}
+tested is \eqn{$H_0: C(h,u) - C(h,-u)=0$}{H_0: C(h,u) - C(h,-u) = 0}
 
-\item The test of separability (the argument of the slot \code{@typetest} is
+\item The test of separability (when the slot \code{@typetest} is
 equal to \code{"sep"}) represents the second
 step of the testing procedure. According to the definition of separability,
 the null hypothesis to be tested is
-\eqn{H_0: C(h, u)/C(h, 0) - C(0, u)/C(0,0)=0}
+\eqn{$H_0: C(h, u)/C(h, 0) - C(0, u)/C(0,0)=0$}{H_0: C(h, u)/C(h, 0) - C(0, u)/C(0,0) = 0}
 
-\item The test on the type of non separability (the argument of the slot
+\item The test on the type of non separability (when the slot
 \code{@typetest} is equal to \code{"tnSep"})
 represents the third step for the selection of a suitable class of space-time
 covariance functions.
 According to the definition of type of non separability, the null hypothesis
 to be tested is that the non separability is non negative
-\eqn{H_0: C(h,u)/C(h,0) - C(0,u)/C(0,0) > 0}
+\eqn{$H_0: C(h,u)/C(h,0) - C(0,u)/C(0,0) > 0$}{H_0: C(h,u)/C(h,0) - C(0,u)/C(0,0) > 0}
 or
-\eqn{H_0: C(h,u)/C(h,0) - C(0,u)/C(0,0) < 0}
+\eqn{$H_0: C(h,u)/C(h,0) - C(0,u)/C(0,0) < 0$}{H_0: C(h,u)/C(h,0) - C(0,u)/C(0,0) < 0}
 if the null hypothesis to test is that the non separability is non positive
 
-\item If the argument of the slot \code{@typetest} is equal to \code{"productSum"}
+\item If the slot \code{@typetest} is equal to \code{"productSum"}
 \code{"intProduct"} or \code{"gneiting"}, the goodness of a specific class of
 space-time covariance function will be tested. For this testing procedure
-the generic null hypothesis is: \eqn{H_0: Af(G)=0}
+the generic null hypothesis is: \eqn{$H_0: Af(G)=0$}{H_0: Af(G) = 0}
 }
 For the analytic expression of each test statistic and its probability
 distribution see Cappello et al. (2018). In the same contribution the
 different \code{f(G)} are given for each test to be computed.
+}
+}
+\section{Slots}{
 
-A stop occurs if the type of test set in \code{cblock} is not consistent with
-the type of test set in \code{cstat}.
+\describe{
+\item{\code{test.statistics}}{numeric, the value of the test statistic}
+
+\item{\code{p.value}}{numeric, the lower tail p value of the test statistic}
+
+\item{\code{df}}{numeric, the degrees of freedom, if available}
+
+\item{\code{typetest}}{character, contains the code of the test to be performed}
+}}
+
+\note{
+{
+\itemize{
+\item A stop occurs if the type of test set in \code{cblock} is not consistent
+with the type of test set in \code{cstat}.
+\item If the message \code{Error in solve.default(): system is computationally singular:...}
+appears, the inverse of the matrix involved in the test statistic
+in (9) of Cappello et al. (2020) is computationally singular.
+In order to overcome this numerical problem often related to the tests on the
+models, the object \code{stpairs} (of class
+\code{couples}) has to be modified. In particular, by considering that for each spatial
+triplet and each temporal triplet 6 contrasts can be defined, it is advisable
+to adopt one of the following options: 1) set equal to zero one of the
+highest temporal lags, for each spatial and each temporal triplet, through the
+specific \code{\link{setzero}} method, 2) substitute triplets associated with long spatial
+or temporal distances with others characterized by lower distances.
+Then, the user has to run again \code{\link{blocks}}, \code{\link{covablocks}},
+\code{\link{covastatM}} and \code{\link{covaprop}}.
+The above error message also occurs if there are at least two spatial triplets, where:
+\itemize{
+\item two couples are replicated;
+\item one couple is replicated.
+}
+In such cases it is enough to set equal to zero one temporal lag for each temporal
+triplet associated to the couples involved in the replications.
+}
 }
 }
 \examples{
@@ -102,6 +128,8 @@ rr_13 <- r5to10[c("DEHE046","DESN049","DETH026","DENW063","DETH061","DEBY047",
 "DENW065","DEUB029","DENW068","DENI019","DEHE051","DERP016","DENI051"),
 "2005::2006"]
 # --end define the STFDF rr_13-- #
+
+#--Example 1: test on symmetry--#
 
 sel.staz.sym <- c("DERP016", "DENW065", "DEHE051", "DETH026", "DENW063", "DENI019",
 "DENW068", "DEHE046", "DEUB029", "DEBY047", "DETH061", "DESN049")
@@ -124,6 +152,39 @@ covast.sym <- covastat(matdata = rr_13, pardata1 = 1, pardata2 = 1,
 stpairs = couples.sym, typetest = "sym")
 
 test.sym <- covaprop(cblock = covabl.sym, cstat = covast.sym, nonseptype = NULL,
+sign.level = 0.05)
+
+#--Example 2: test on the Gneiting model--#
+sel.staz.mod <- c("DETH061", "DEBY047", "DEHE051", "DEUB029", "DENI019",
+"DENI051", "DETH026", "DESN049")
+
+sp.couples.in.mod <- matrix(data = c("DETH061", "DEBY047",
+                                    "DEHE051", "DEUB029",
+                                    "DENI019", "DENI051",
+                                    "DEHE051", "DETH026",
+                                    "DEBY047", "DESN049",
+                                    "DETH026", "DETH061"),
+                           ncol = 2, byrow = TRUE)
+                           t.couples.in.mod <- c(1, 2, 3)
+
+couples.mod <- couples(sel.staz = sel.staz.mod,
+sp.couples.in = sp.couples.in.mod, t.couples.in = t.couples.in.mod,
+typetest = "gneiting", typecode = character())
+
+zero.index <- matrix(data = c(3, 7, 6, 7), ncol = 2, byrow = TRUE)
+
+couples.mod <- setzero(x = couples.mod, zero = FALSE, index = zero.index, value = 0)
+
+block.mod <- blocks(lb = 60, ls = 10, matdata = rr_13, pardata1 = 1,
+pardata2 = 1, stpairs = couples.mod)
+
+covabl.gn <- covablocks(stblocks = block.mod, stpairs = couples.mod,
+typetest = "gneiting")
+
+covast.gn <- covastatM(matdata = rr_13, pardata1 = 1, pardata2 = 1,
+stpairs = couples.mod, typetest = "gneiting", beta.data = seq(0.5, 1, by=0.1))
+
+test.gn <- covaprop(cblock = covabl.gn, cstat = covast.gn, nonseptype = NULL,
 sign.level = 0.05)
 
 ### method for covaprop

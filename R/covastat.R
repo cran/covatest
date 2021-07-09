@@ -6,20 +6,20 @@
 #' Depending on the type of test, the empirical variance, the sample spatial
 #' and temporal marginal covariances are also computed
 #'
-#' @slot G matrix; containing the spatio-temporal covariances for the specified
+#' @slot G matrix, containing the spatio-temporal covariances for the specified
 #' lags. For all tests, except for the symmetry test (\code{typetest = "sym"}), the
 #' sample variance and the sample spatial and temporal marginal covariances are
 #' also computed and stored in \code{G}
-#' @slot cova.h matrix; containing the sample spatial marginal covariances
+#' @slot cova.h matrix, containing the sample spatial marginal covariances
 #' for the specified lags
-#' @slot cova.u matrix; containing the sample temporal marginal covariances
+#' @slot cova.u matrix, containing the sample temporal marginal covariances
 #' for the specified lags
-#' @slot f.G array; containing the computation of specific functions of the
+#' @slot f.G array, containing the computation of specific functions of the
 #' elements of \code{G}, see references
-#' @slot B matrix; containing the computation of the derivatives of each element
+#' @slot B matrix, containing the computation of the derivatives of each element
 #' of \code{f.G} with respect to each element of \code{G}
 #' @slot A contrast matrix
-#' @slot typetest character; contains the code of the test to be performed
+#' @slot typetest character, contains the code of the test to be performed
 #'
 #'
 #' @rdname covastat-class
@@ -32,7 +32,7 @@ setClass("covastat", slots = c(G = "matrix",
                                A = "matrix",
                                typetest = "character"))
 
-#' @param matdata STFDF/STSDF or \code{data.frame}; which contains the
+#' @param matdata STFDF/STSDF or \code{data.frame}, which contains the
 #' coordinates of the spatial points, the identification code of the spatial
 #' points, the indentification code of the temporal points and the values of
 #' the variable, typically output from \code{read.STdata}
@@ -46,24 +46,26 @@ setClass("covastat", slots = c(G = "matrix",
 #' argument is set, by default, equal to 1 if the number of variables is equal to 1
 #' @param stpairs object of class \code{couples}, containing the spatial
 #' points and the corresponding temporal lags to be analyzed
-#' @param typetest character; set \code{typetest = "sym"} for symmetry test
+#' @param typetest character, set \code{typetest = "sym"} for symmetry test
 #' (default choice), \code{typetest = "sep"} for separability test, \code{typetest = "tnSep"}
 #' for type of non separability test
 #'
 #'
-#' @details
-#' A message appears on the user's console if the \code{G} vector
+#' @details{
+#' \itemize{
+#' \item A message appears on the user's console if the \code{G} vector
 #' contains spatio-temporal negative covariances. The message returns the negative
 #' value/values and it will help to identify the spatial and the temporal lags
 #' involved
-#'
+#' \item If \code{typetest = "sym"} (symmetry test) \code{cova.h}, \code{cova.u},
+#' \code{f.G} and \code{B} are not available
+#' }
+#'}
 #'
 #' @note
 #' \itemize{
 #' \item A stop occurs if the number of spatial points fixed in \code{stpairs}
 #' (object of class \code{couples}) is less than 2
-#' \item If \code{typetest = "sym"} (symmetry test) \code{cova.h}, \code{cova.u},
-#' \code{f.G} and \code{B} are not available
 #' \item A stop occurs if more than 75\% of consecutive data are missing in the time
 #' series, since a large number of missing values do not guarantee the reliability
 #' of the tests

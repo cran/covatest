@@ -22,7 +22,8 @@ sepindex(vario_st, nt, ns, globalSill)
 \S4method{summary}{sepindex}(object)
 }
 \arguments{
-\item{vario_st}{spatio-temporal sample variogram, output from
+\item{vario_st}{object of class \code{StVariogram}, containing the
+spatio-temporal sample variogram, output from
 \code{\link[gstat]{variogramST}}}
 
 \item{nt}{integer, the number of temporal lags in \code{vario_st}}

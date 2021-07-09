@@ -20,7 +20,7 @@ covastatM(
 \S4method{show}{covastatM}(object)
 }
 \arguments{
-\item{matdata}{STFDF/STSDF or \code{data.frame}; which contains the
+\item{matdata}{STFDF/STSDF or \code{data.frame}, which contains the
 coordinates of the spatial points, the identification code of the spatial
 points, the indentification code of the temporal points and the values of
 the variable, typically output from \code{read.STdata}}
@@ -38,12 +38,12 @@ argument is set, by default, equal to 1 if the number of variables is equal to 1
 \item{stpairs}{object of class \code{couples}, containing the spatial
 points and the corresponding temporal lags to be analyzed}
 
-\item{typetest}{character; set \code{typetest = "productSum"} for the test
+\item{typetest}{character, set \code{typetest = "productSum"} for the test
 on the product-sum class of models (default choice), \code{typetest = "intProduct"}
 for the test on the integrated product class of models, \code{typetest = "gneiting"}
 for the test on the Gneiting class of models}
 
-\item{beta.data}{vector; this argument is required only for \code{typetest = "gneiting"},
+\item{beta.data}{vector, this argument is required only for \code{typetest = "gneiting"},
 otherwise it has to be set equal to NULL (default choice). It contains the
 different values of the parameter beta, which can assume values in the range 0-1}
 
@@ -57,49 +57,51 @@ Depending on the type of test, the empirical variance, the sample spatial
 and temporal marginal covariances are also computed
 }
 \details{
-A message appears on the user's console if the \code{G} vector
+{
+\itemize{
+\item If \code{typetest = "intProduct"} (test on the integrated product class
+of models) \code{cova.h} and \code{cova.u} are not available
+\item If \code{typetest = "gneiting"} (test on the Gneiting class of models),
+\code{cova.h} is not available
+\item A message appears on the user's console if the \code{G} vector
 contains spatio-temporal negative covariances. The message returns the negative
 value/values and it will help to identify the spatial and the temporal lags
 involved
 }
+}
+}
 \section{Slots}{
 
 \describe{
-\item{\code{G}}{matrix; containing the spatio-temporal covariances for the specified
+\item{\code{G}}{matrix, containing the spatio-temporal covariances for the specified
 lags. For all tests, the sample variance and the sample spatial and temporal
 marginal covariances are also computed and stored in \code{G}}
 
-\item{\code{cova.h}}{matrix; containing the sample spatial marginal covariances
+\item{\code{cova.h}}{matrix, containing the sample spatial marginal covariances
 for the specified lags}
 
-\item{\code{cova.u}}{matrix; containing the sample temporal marginal covariances
+\item{\code{cova.u}}{matrix, containing the sample temporal marginal covariances
 for the specified lags}
 
-\item{\code{f.G}}{array; containing the computation of specific functions of the
+\item{\code{f.G}}{array, containing the computation of specific functions of the
 elements of \code{G}, see references}
 
-\item{\code{B}}{matrix; containing the computation of the derivatives of each element
+\item{\code{B}}{matrix, containing the computation of the derivatives of each element
 of \code{f.G} with respect to each element of \code{G}}
 
 \item{\code{A}}{contrast matrix}
 
-\item{\code{beta.data}}{vector; containing the different values of the parameter beta,
+\item{\code{beta.data}}{vector, containing the different values of the parameter beta,
 available only for the test on the Gneiting class of model (\code{typetest = "gneiting"})}
 
-\item{\code{typetest}}{character; contains the code of the test to be performed}
+\item{\code{typetest}}{character, contains the code of the test to be performed}
 }}
 
 \note{
 {
-A stop occurs if the number of spatial points fixed in \code{stpairs}
-(object of class \code{couples}) is less than 2.
 \itemize{
-\item If \code{typetest = "intProduct"} (test on the integrated product class
-of models) \code{cova.h} and \code{cova.u} are not available
-
-\item If \code{typetest = "gneiting"} (test on the Gneiting class of models),
-\code{cova.h} is not available
-
+\item A stop occurs if the number of spatial points fixed in \code{stpairs}
+(object of class \code{couples}) is less than 2
 \item A stop occurs if more than 75\% of consecutive data are missing in the time
 series, since a large number of missing values do not guarantee the reliability
 of the tests

@@ -4,15 +4,15 @@
 #' analyzed in order to test some covariance properties and some well known
 #' classes of space-time covariance functions models
 #'
-#' @slot couples.st matrix; in which the first two columns contain the
+#' @slot couples.st matrix, in which the first two columns contain the
 #' couples of spatial points (denoted with order numbers) to be analyzed
 #' and the other columns the temporal lags associated with each spatial couples
-#' @slot sel.staz numeric or character; contains the ID codes of the
+#' @slot sel.staz numeric or character, contains the ID codes of the
 #' selected spatial points
-#' @slot sp.couples data.frame; contains the couples of order numbers
+#' @slot sp.couples data.frame, contains the couples of order numbers
 #' associated with the spatial points to be analyzed and the couples of the
 #' ID codes
-#' @slot tl.couples numeric; contains the temporal lags associated to the
+#' @slot tl.couples numeric, contains the temporal lags associated to the
 #' couples of the selected spatial points
 #' @slot typetest character; contains the code of the test to be performed
 #'
@@ -25,7 +25,7 @@ setClass("couples", slots = c(couples.st = "matrix",
                                          tl.couples = "numeric",
                                          typetest = "character"))
 
-#' @param sel.staz vector; the sequence of ID codes which denote the spatial
+#' @param sel.staz vector, the sequence of ID codes which denote the spatial
 #' points to be analyzed
 #' @param sp.couples.in two-column matrix: rows corresponding to the couples
 #' of different spatial points, chosen among the ones fixed in \code{sel.staz}
@@ -36,17 +36,19 @@ setClass("couples", slots = c(couples.st = "matrix",
 #' lags, corresponding to some couples of spatial points, are not required for
 #' the specific test, they can be set equal to zero, through the specific
 #' \code{\link{setzero}} method
-#' @param typetest character; set \code{typetest = "sym"} for symmetry test
+#' @param typetest character, set \code{typetest = "sym"} for symmetry test
 #' (default choice), \code{typetest = "sep"} for separability test,
 #' \code{typetest = "tnSep"} for type of non separability test,
 #' \code{typetest = "productSum"} for the test on the product-sum class of models,
 #' \code{typetest = "intProduct"} for the test on the integrated product class
 #' of models, \code{typetest = "gneiting"} for the test on the Gneiting class
 #' of models
-#' @param typecode numeric or character; specifies the codification of the
-#' spatial points in the \code{data frame} or in the STFDF/STSDF
+#' @param typecode type of object, i.e. numeric() or character(), specifies the
+#' type of codification of the spatial points in the \code{data frame} or in the
+#' STFDF/STSDF
 #'
-#' @note It is important to point out that:
+#' @details
+#' It is important to point out that:
 #' \itemize{
 #' \item both positive and negative temporal lags are automatically considered in
 #' the slot \code{@couples.st} and \code{@tl.couples} for symmetry test (\code{typetest = "sym"}),
@@ -64,19 +66,25 @@ setClass("couples", slots = c(couples.st = "matrix",
 #' \item for model tests (\code{typetest} equal to \code{"productSum"},
 #' \code{"intProduct"} and \code{"gneiting"}), the number of analyzed spatial
 #' points must be used to create at least 3 spatial couples or multiple of 3,
-#' such that each triplet satisfies the condition h1-h2=h2-h3 (only for
-#' \code{typetest = "intProduct"} and \code{"gneiting"}).
+#' such that each triplet satisfies the condition
+#' \eqn{$||\mathbf{h}_{1}||^{2\gamma}- ||\mathbf{h}_{2}||^{2\gamma} = ||\mathbf{h}_{2}||^{2\gamma}-||\mathbf{h}_{3}||^{2\gamma}$}{||h_1||^{2\gamma} - ||h_2||^{2\gamma} = ||h_2||^{2\gamma} - ||h_3||^{2\gamma}}
+#' where \eqn{\gamma \in ]0,1]} only for \code{typetest = "intProduct"}
+#' and \code{"gneiting"}.
 #' The number of positive temporal lags must be at least 3, or multiple
-#' of 3, too. The condition u1-u2=u2-u3 (only for \code{typetest = "intProduct"}
-#' and \code{"gneiting"}) must be satisfied for each triplet.
+#' of 3, too. The condition \eqn{$u_{1}^{2\alpha}-u_{2}^{2\alpha}=u_{2}^{2\alpha}-u_{3}^{2\alpha}$}{u_1^{2\alpha} - u_2^{2\alpha} = u_2^{2\alpha} - u_3^{2\alpha}}
+#' where \eqn{\alpha \in ]0,1]} must be satisfied for each triplet
+#' (only for \code{typetest = "intProduct"} and \code{"gneiting"}), as clarified
+#' in Cappello et al., 2018. The values of \eqn{\gamma} and \eqn{\alpha} are usually fixed
+#' equal to 0.5 or 1 according that the behavior near the origin of the spatial
+#' and temporal marginal covariograms is linear or quadratic, respectively.
 #' Note that for each spatial triplet and each temporal triplet, 6 contrasts can
 #' be defined. However, for \code{typetest = "intProduct"} (test on the integrated
-#' model) the user has to set arbitrarily one temporal lag equal to zero in
-#' order to delete redundant contrasts, through the specific
+#' model) the user has to set arbitrarily one temporal lag equal to zero for each
+#' spatial triplet in order to delete redundant contrasts, through the specific
 #' \code{\link{setzero}} method
 #' }
 #'
-#'
+#' @note{
 #' Errors occur if
 #' \itemize{
 #' \item some spatial points, given in the sequence at the beginning of the
@@ -88,6 +96,10 @@ setClass("couples", slots = c(couples.st = "matrix",
 #' \item no temporal lags have been specified
 #'
 #' \item the number of spatial points fixed in \code{sel.staz} is less than 2
+#'
+#' \item the construction of the \code{sp.couples.in} is not consistent with the
+#' test to be performed
+#' }
 #' }
 #'
 #' @seealso \code{\link{setzero}}
@@ -223,10 +235,10 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
     message("For the test on the type of class of models, note that:")
     message("- the spatial points must be used to create at least 3 spatial couples or multiple of 3 spatial couples ")
     message("- each triplet of different spatial points will be used for the spatial comparison. ")
-    message("  The condition h1-h2=h2-h3 must be satisfied for each triplet. Please check this condition ")
     message("- the number of positive temporal lags must be at least 3 or multiple of 3 ")
     message("- each triplet of different temporal lags will be used for the temporal comparison.")
-    message("  The condition u1-u2=u2-u3 must be satisfied for each triplet. Please check this condition")
+    message("A condition on the considered spatial and temporal lags must be satisfied for each triplet. Please see the ")
+    message("  manual for more details and check this condition. ")
     message("*************************************************************************************************************")
 
   }
@@ -256,9 +268,32 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
     stop("End error message. Stop running.")
     }
 
+  for (i in 1:nc) {
+    if (sp.couples.in[i,1] == sp.couples.in[i,2]){
+      message("Start error message. Some couples of points are not admissible: the points must be different and must be chosen among the selected spatial points. Please revise appropriately the argument sp.couples.in and run the function again.")
+      stop("End error message. Stop running.")
+    }
+  }
+  # check on spatial couples for symmetry, non-separability and type of nonseparability
+  if (type.test < 4) {
+    if (match(TRUE,duplicated(sp.couples.in),nomatch = 0) != 0){
+    message("Start error message. Some couples of points are duplicated. Please revise appropriately the argument sp.couples.in and run the function again.")
+      stop("End error message. Stop running.")
+    }
+    for (i in 1:(nc-1)) {
+      for (j in (i+1):nc) {
+          sp.couples.perm <- c(sp.couples.in[j,2],sp.couples.in[j,1])
+          sp.couples.perm <- rbind(sp.couples.perm,sp.couples.in[i,])
+          if (match(TRUE,duplicated(sp.couples.perm),nomatch = 0) != 0){
+            message("Start error message. Some couples are only permuted and then are considered duplicated. Please revise appropriately the argument sp.couples.in and run the function again.")
+            stop("End error message. Stop running.")
+        }
+      }
+    }
+  }
 
+  # check on spatial couples for the tests on models
   if (type.test >= 4) {
-
     ns_multiple <- as.integer(nc / 3)
     if ((ns_multiple * 3) != nc) {
       message("Start error message. The total number of spatial couples is not consistent with the number of couples required by the test. Please revise appropriately the arguments and run the function again.")
@@ -266,41 +301,172 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
     }
   }
 
-  for (i in 1:nc) {
-    s.couples <- sp.couples.in[i,]
+  # check WITHIN the triplets where three couples are replicated.
+  if (type.test >= 4) {
+    k <- 1
+    for (j in 1:ns_multiple) {
+      sp.couples.transf1 <- sp.couples.in[k,]
+      sp.couples.transf2 <- sp.couples.in[k+1,]
+      sp.couples.transf3 <- sp.couples.in[k+2,]
 
-    check.na <- match(s.couples, sel.staz)
-    while (s.couples[2] == s.couples[1] || anyNA(check.na) == TRUE) {
-      message("Start error message. Some couples of points are not admissible: the points must be different and must be chosen among the selected spatial points. Please revise appropriately the argument sp.couples.in and run the function again.")
-      stop("End error message. Stop running.")
-    }
-
-
-
-    if (i == 1) {
-      sp.couples <- matrix(s.couples, nrow = 1, ncol = 2, byrow = TRUE)
-    }
-    if (i > 1) {
-      s.couples.perm <- c(s.couples[2], s.couples[1])
-
-      sp.couples2 <- matrix(s.couples, nrow = 1, ncol = 2, byrow = TRUE)
-      sp.couples <- rbind(sp.couples, sp.couples2)
-      dupli.couple <- duplicated(sp.couples, fromLast = T)
-
-      sp.couples2.perm <- matrix(s.couples.perm, nrow = 1, ncol = 2,
-                                 byrow = TRUE)
-      sp.couples.perm <- rbind(sp.couples, sp.couples2.perm)
-      dupli.couple.perm <- duplicated(sp.couples.perm, fromLast = T)
-
-      if(dupli.couple[1] == TRUE || dupli.couple.perm[1] == TRUE){
-        message("Start error message. Some couples of points are duplicated. Please revise appropriately the argument sp.couples.in and run the function again.")
+      if (length(setdiff(sp.couples.transf1, sp.couples.transf2)) == 0 &&
+          length(setdiff(sp.couples.transf1, sp.couples.transf3)) == 0 &&
+          length(setdiff(sp.couples.transf2, sp.couples.transf1)) == 0 &&
+          length(setdiff(sp.couples.transf3, sp.couples.transf1)) == 0 ){
+        message("Start error message. Some triplets of couples are not valid. There are triplets where the three couples are replicated.")
+        message("Please revise appropriately the argument sp.couples.in and run the function again.")
         stop("End error message. Stop running.")
       }
+      k <- k + 3
+    }
+  }
 
+  # check WITHIN the triplets where two couples are replicated.
+  if (type.test >= 4) {
+    k <- 1
+    for (j in 1:ns_multiple) {
+      sp.couples.transf1 <- sp.couples.in[k:(k+1),]
+      sp.couples.transf2 <- sp.couples.in[(k+1):(k+2),]
+      sp.couples.transf3 <- rbind(sp.couples.in[k,],sp.couples.in[k+2,])
+
+      sp.couples.in.triplet1 <-matrix(sapply(1:nrow(sp.couples.transf1), function(i)(sp.couples.transf1[i])), ncol = 4, byrow = T)
+      sp.couples.in.triplet2 <-matrix(sapply(1:nrow(sp.couples.transf2), function(i)(sp.couples.transf2[i])), ncol = 4, byrow = T)
+      sp.couples.in.triplet3 <-matrix(sapply(1:nrow(sp.couples.transf3), function(i)(sp.couples.transf3[i])), ncol = 4, byrow = T)
+
+      if ((length(setdiff(sp.couples.in.triplet1, sp.couples.in.triplet2)) == 0) && (length(setdiff(sp.couples.in.triplet2, sp.couples.in.triplet1)) == 0)){
+        message("Start error message. Some triplets of couples are not valid. There are triplets where two couples are replicated.")
+        message("Please revise appropriately the argument sp.couples.in and run the function again.")
+        stop("End error message. Stop running.")
+      }
+      if ((length(setdiff(sp.couples.in.triplet1, sp.couples.in.triplet3)) == 0) && (length(setdiff(sp.couples.in.triplet3, sp.couples.in.triplet1)) == 0)){
+        message("Start error message. Some triplets of couples are not valid. There are triplets where two couples are replicated.")
+        message("Please revise appropriately the argument sp.couples.in and run the function again.")
+        stop("End error message. Stop running.")
+      }
+      if ((length(setdiff(sp.couples.in.triplet2, sp.couples.in.triplet3)) == 0) && (length(setdiff(sp.couples.in.triplet3, sp.couples.in.triplet2)) == 0)){
+        message("Start error message. Some triplets of couples are not valid. There are triplets where two couples are replicated.")
+        message("Please revise appropriately the argument sp.couples.in and run the function again.")
+        stop("End error message. Stop running.")
+      }
+      k <- k + 3
+    }
+  }
+
+  # check AMONG triplets with the same couples in the same order.
+  if (type.test >= 4) {
+    if(ns_multiple > 1){
+    sp.couples.in.triplet <-matrix(sapply(1:nrow(sp.couples.in), function(i)(sp.couples.in[i,])), ncol = 6, byrow = T)
+    if (match(TRUE,duplicated(sp.couples.in.triplet),nomatch = 0) != 0){
+      message("Start error message. Some triplets of couples are duplicated. Please revise appropriately the argument sp.couples.in and run the function again.")
+      stop("End error message. Stop running.")
+    }
+    }
     }
 
+    # check AMONG triplets with 1) exchanges the first and third couple of the triplet, or 2) permutations in the triplet or 3) both
+    # 1) exchanges the first and third couple of the triplet
+     if (type.test >= 4) {
+       if(ns_multiple > 1){
+    k <- 1
+    for (j in 2:ns_multiple) {
+          sp.couples.transf <-sp.couples.in
+          sp.couples.transf[k+2,] <- sp.couples.in[k,]
+          sp.couples.transf[k,] <- sp.couples.in[k+2,]
+          sp.couples.in.triplet <- matrix(sapply(1:nrow(sp.couples.transf), function(i)(sp.couples.transf[i,])), ncol = 6, byrow = T)
 
+          if (match(TRUE,duplicated(sp.couples.in.triplet),nomatch = 0) != 0){
+            message("Start error message. Some triplets of couples can be considered duplicated, since at least two triples differ just for the position of the first and the third couple. Please revise appropriately the argument sp.couples.in and run the function again.")
+            stop("End error message. Stop running.")
+          }
+      k <- k + 3
+    }
+    # 2) permutation in the couples of the triplet
+       k <- 1
+    for (j in 2:ns_multiple) {
+      sp.couples.transf <-sp.couples.in
+      sp.couples.transf[k,] <- c(sp.couples.in[k,2],sp.couples.in[k,1])
+      sp.couples.transf[k+1,] <- c(sp.couples.in[k+1,2],sp.couples.in[k+1,1])
+      sp.couples.transf[k+2,] <- c(sp.couples.in[k+2,2],sp.couples.in[k+2,1])
+      sp.couples.in.triplet <-matrix(sapply(1:nrow(sp.couples.transf), function(i)(sp.couples.transf[i,])), ncol = 6, byrow = T)
+
+      if (match(TRUE,duplicated(sp.couples.in.triplet),nomatch = 0) != 0){
+        message("Start error message. Some triplets of couples can be considered duplicated, since at least two triples are characterized by the same couples but taken in a different order. Please revise appropriately the argument sp.couples.in and run the function again.")
+        stop("End error message. Stop running.")
+      }
+      k <- k + 3
+    }
+       # 3) both exchange the first and third couple of the triplet and permutation in the triplet
+       k <- 1
+       for (j in 2:ns_multiple) {
+         sp.couples.transf <-sp.couples.in
+         sp.couples.transf[k,] <- c(sp.couples.in[k+2,2],sp.couples.in[k+2,1])
+         sp.couples.transf[k+1,] <- c(sp.couples.in[k+1,2],sp.couples.in[k+1,1])
+         sp.couples.transf[k+2,] <- c(sp.couples.in[k,2],sp.couples.in[k,1])
+         sp.couples.in.triplet <-matrix(sapply(1:nrow(sp.couples.transf), function(i)(sp.couples.transf[i,])), ncol = 6, byrow = T)
+
+         if (match(TRUE,duplicated(sp.couples.in.triplet),nomatch = 0) != 0){
+           message("Start error message. Some triplets of couples can be considered duplicated, since:")
+           message(" at least two triples differ just for the position of the first and the third couple;")
+           message(" or at least two triples are characterized by the same couples but taken in a different order.")
+           message(" Please revise appropriately the argument sp.couples.in and run the function again.")
+           stop("End error message. Stop running.")
+         }
+         k <- k + 3
+       }
+     }
   }
+
+  # check AMONG triplets where three couples are replicated.
+  # check on triplets that are exactly equal or are equal except for the order in which the spatial points are coupled.
+  if (type.test >= 5) {
+    if(ns_multiple > 1){
+    sp.couples.in.triplet <-matrix(sapply(1:nrow(sp.couples.in), function(i)(sp.couples.in[i,])), ncol = 6, byrow = T)
+    for (j in 1:(ns_multiple-1)) {
+      jj <- (j-1)*3 + 1
+      for (l in (j+1):ns_multiple) {
+        ll <- (l-1)*3 + 1
+        rbind(sp.couples.in[jj,],sp.couples.in[jj+1,],sp.couples.in[jj+2,],sp.couples.in[ll,])
+      if ((length(setdiff(sp.couples.in.triplet[j,], sp.couples.in.triplet[l,])) == 0) &&
+          (length(setdiff(sp.couples.in.triplet[l,], sp.couples.in.triplet[j,])) == 0) &&
+          ((length(setdiff(sp.couples.in[jj,], sp.couples.in[ll,])) == 0) ||
+           (length(setdiff(sp.couples.in[jj,], sp.couples.in[ll+1,])) == 0) ||
+           (length(setdiff(sp.couples.in[jj,], sp.couples.in[ll+2,])) == 0)) &&
+          ((length(setdiff(sp.couples.in[jj+1,], sp.couples.in[ll,])) == 0) ||
+           (length(setdiff(sp.couples.in[jj+1,], sp.couples.in[ll+1,])) == 0) ||
+           (length(setdiff(sp.couples.in[jj+1,], sp.couples.in[ll+2,])) == 0)) &&
+          ((length(setdiff(sp.couples.in[jj+2,], sp.couples.in[ll,])) == 0) ||
+           (length(setdiff(sp.couples.in[jj+2,], sp.couples.in[ll+1,])) == 0) ||
+           (length(setdiff(sp.couples.in[jj+2,], sp.couples.in[ll+2,])) == 0))
+          ){
+        message("Start error message. Some triplets of couples are not valid.")
+        message("There might be 1) at least two triplets with the same spatial couples (in different order) or ")
+        message("2) the same spatial points are coupled in such a way that the condition on the lags is not satisfied.")
+        message("Please revise appropriately the argument sp.couples.in and run the function again.")
+        stop("End error message. Stop running.")
+
+      }
+    }
+    }
+    }
+    }
+    # if (type.test == 4) {
+    #   if(ns_multiple > 1){
+    # sp.couples.in.triplet <-matrix(sapply(1:nrow(sp.couples.in), function(i)(sp.couples.in[i,])), ncol = 6, byrow = T)
+    #  for (j in 1:(ns_multiple-1)) {
+    #   for (l in (j+1):ns_multiple) {
+    #     if ((length(setdiff(sp.couples.in.triplet[j,], sp.couples.in.triplet[l,])) == 0) && (length(setdiff(sp.couples.in.triplet[l,], sp.couples.in.triplet[j,])) == 0)){
+    #       message("Start error message. Some triplets of couples are not valid.")
+    #       message("There might be 1) at least two triplets with the same spatial couples (in different order) or ")
+    #       message("2) at least two triplets that are equal except for the order in which the spatial points are coupled.")
+    #       message("Please revise appropriately the argument sp.couples.in and run the function again.")
+    #       stop("End error message. Stop running.")
+    #     }
+    #    }
+    #   }
+    #  }
+    # }
+
+  sp.couples <- sp.couples.in
   if (length(setdiff(sel.staz, sp.couples)) >= 1) {
     message("Start error message. The following spatial points have not been used to generate the couples of spatial points.")
     print(setdiff(sel.staz, sp.couples))
@@ -309,7 +475,6 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
   }
   sp.couples2 <- sp.couples
   sp.couples <- matrix(match(sp.couples, sel.staz), nrow = nc, ncol = 2)
-
 
 
   ### TEMPORAL COUPLES ###
@@ -330,13 +495,11 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
         stop("End error message. Stop running.")
       }
 
-
       if (i == 1) {
         tl.couples <- matrix(t.couples, nrow = 1, ncol = 2, byrow = TRUE)
       }
       if (i > 1) {
         t.couples.perm <- c(t.couples[2], t.couples[1])
-
         tl.couples2 <- matrix(t.couples, nrow = 1, ncol = 2, byrow = TRUE)
         tl.couples <- rbind(tl.couples, tl.couples2)
         dupli.couple <- duplicated(tl.couples, fromLast = T)
@@ -352,7 +515,6 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
         }
       }
     }
-
 
     for (i in 1:(n.temp/2)) {
       if (i == 1) {
@@ -392,8 +554,6 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
      message("Start error message. The total number of temporal lags is not consistent with the number of lags required by the test. Please revise appropriately the argument t.couples.in and run the function again.")
      stop("End error message. Stop running.")
       }
-
-
 
     for (i in 1:(n.temp/2)) {
 
@@ -442,16 +602,127 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
     message("This is a preview of the couples of the spatial points and the temporal lags to be analyzed.")
     print(cbind(sp.couples2, temp.lags))
 
+    message("********************************************************************")
+    message("*** This is the slot called @couples.st and contains the couples ***")
+    message("*** of the spatial points and the temporal lags to be analyzed.  ***")
+    message("********************************************************************")
+    message("*** Some temporal lags not used can be set equal to 0 through    ***")
+    message("*** the specific setzero method                                  ***")
+    message("********************************************************************")
+
+    # check if there are at least two spatial triplets, where two couples are replicated
+    if(ns_multiple > 1){
+      index.couples1 <- matrix(NA,ncol = 2)
+      index.couples2 <- matrix(NA,ncol = 2)
+      icheck <- 0
+      kk <- 0
+      for (j in 1:(ns_multiple-1)) {
+      jj <- ((j-1)*3)+1
+      for (j2 in 1:2) {
+        for (j3 in (j2+1):3) {
+          sp.couples.transf1.1 <- sp.couples.in[jj+j2-1,]
+          sp.couples.transf1.2 <- sp.couples.in[jj+j3-1,]
+
+          for (l in (j+1):ns_multiple) {
+            ll <- ((l-1)*3)+1
+            for (l2 in 1:2) {
+              for (l3 in (j2+1):3) {
+                sp.couples.transf2.1 <- sp.couples.in[ll+l2-1,]
+                sp.couples.transf2.2 <- sp.couples.in[ll+l3-1,]
+                if (length(setdiff(sp.couples.transf1.1, sp.couples.transf2.1)) == 0 &&
+                    length(setdiff(sp.couples.transf1.2, sp.couples.transf2.2)) == 0){
+                  icheck <- icheck +1
+                  kk <- kk+1
+                  if(kk == 1){
+                    index.couples1[1,] <- c(j,l)
+                  }else{
+                    index.couples1 <- rbind(index.couples1,c(j,l))
+                  }
+                }
+                if (length(setdiff(sp.couples.transf1.1, sp.couples.transf2.2)) == 0 &&
+                    length(setdiff(sp.couples.transf1.2, sp.couples.transf2.1)) == 0){
+                  icheck <- icheck +1
+                  kk <- kk+1
+                  if(kk == 1){
+                    index.couples1[1,] <- c(j,l)
+                  }else{
+                    index.couples1 <- rbind(index.couples1,c(j,l))
+                  }
+                }
+              } #end cicle on l3
+            } #end cicle on l2
+          } #end cicle on j3
+        } #end cicle on j2
+      } #end cicle on l
+    } #end cicle on j
+
+
+    # check if there are at least two spatial triplets, where one couple is replicated
+      icheck2 <- 0
+      icheck3 <- 0
+      kk <- 0
+      for (j in 1:(ns_multiple-1)) {
+        for (l in (j+1):ns_multiple) {
+          for(jj in (((j-1)*3)+1):(((j-1)*3)+3)){
+            for(ll in (((l-1)*3)+1):(((l-1)*3)+3)){
+              sp.couples.transf1 <- sp.couples.in[jj,]
+              sp.couples.transf2 <- sp.couples.in[ll,]
+              if (length(setdiff(sp.couples.transf1, sp.couples.transf2)) == 0 &&
+                  length(setdiff(sp.couples.transf2, sp.couples.transf1)) == 0){
+                  icheck3 <- icheck3 +1
+                  if(length(setdiff(c(j,l),index.couples1)) != 0){
+                   icheck2 <- icheck2 +1
+                   kk <- kk+1
+                   if(kk == 1){
+                     index.couples2[1,] <- c(j,l)
+                   }else{
+                     index.couples2 <- rbind(index.couples2,c(j,l))
+                   }
+                   }
+                }
+            }
+          }
+
+        }
+      }
+      # index.couples <- rbind(index.couples1,index.couples2)
+      # if (length(setdiff(c(1:ns_multiple), as.vector(index.couples))) == 0 ){
+      #    message("Start error message. In all the triplets, there are at least two spatial triplets, where two couples are replicated. Please revise appropriately the argument sp.couples.in and run the function again.")
+      #    stop("End error message. Stop running.")
+      # }
+      if(icheck == choose(ns_multiple,2)){
+        message("Start error message. There are two couples replicated in all the triplets. Please revise appropriately the argument sp.couples.in and run the function again.")
+        stop("End error message. Stop running.")
+      }
+      if(icheck3 == choose(ns_multiple,2)){
+        message("Start error message. There is  one couple replicated in all the triplets. Please revise appropriately the argument sp.couples.in and run the function again.")
+        stop("End error message. Stop running.")
+      }
+      if(icheck >= 1){
+        message("Note that there are at least two spatial triplets, where TWO couples are replicated.")
+        message("Replications have been found in the following triplets: ")
+        for(j in 1: nrow(index.couples1)){
+        message(index.couples1[j,1], " ", index.couples1[j,2])
+          }
+        message("Remember to use the method setzero in order to avoid singularity problems in performing the tests.")
+        message("See the manual for further details.")
+        message("  ")
+      }
+      if(icheck2 >= 1){
+        message("Note that there are at least two spatial triplets, where ONE couple is replicated.")
+        message("Replications have been found in the following triplets: ")
+        for(j in 1: nrow(index.couples2)){
+          message(index.couples2[j,1], " ", index.couples2[j,2])
+        }
+        message("Remember to use the method setzero in order to avoid singularity problems in performing the tests.")
+        message("See the manual for further details.")
+      }
+    }
     }
   #=================================================#
   #= End test on the type of model (type.test>=4)   =#
   #=================================================#
 
-
-  message("********************************************************************")
-  message("*** This is the slot called @couples.st and contains the couples ***")
-  message("*** of the spatial points and the temporal lags to be analyzed.  ***")
-  message("********************************************************************")
 
   tl.couples <- unique(as.vector(couples.st[, -(1 : 2)]))
   tl.couples <- tl.couples[tl.couples != 0]
@@ -463,10 +734,6 @@ couples <- function(sel.staz, sp.couples.in, t.couples.in, typetest = "sym", typ
   sp.couples.nm <- cbind(sp.couples,sp.couples.nm)
   colnames(sp.couples.nm) <- c("id.1", "id.2", "point.1", "point.2")
 
-
-  message("***************************************************************************************")
-  message("*Some temporal lags not used can be set equal to 0 through the specific setzero method*")
-  message("***************************************************************************************")
 
   new("couples", couples.st = couples.st,
       sel.staz = sel.staz,
@@ -509,7 +776,7 @@ cat("Spatio-temporal lags defined throught the objects of the class 'couples'", 
 #' @param x object of class \code{couples} for method \code{extract}
 #' @param i index specifing rows or columns of the slot \code{@couples.st}.
 #' Rows or columns depending on the logical parameter \code{by.row} to be set
-#' @param by.row logical; if \code{TRUE} rows of the slot \code{@couples.st} are
+#' @param by.row logical, if \code{TRUE} rows of the slot \code{@couples.st} are
 #' selected (the temporal lags associated to the i-th spatial couple are given).
 #' If \code{FALSE} (the default) columns of the slot \code{@couples.st} are
 #' selected. In particular, the spatial couples associated to the i-th temporal
@@ -559,14 +826,14 @@ setMethod(f = "summary", signature = "couples",
 #' \code{couples}
 #'
 #' @param x object of class \code{couples}
-#' @param zero logical. If \code{TRUE} (the default) all negative temporal
+#' @param zero logical, if \code{TRUE} (the default) all negative temporal
 #' lags are replaced with zero. If \code{x@typetest} is equal to
 #' \code{"sym"} (symmetry test) the argument \code{setzero} is ignored because
 #' both positive and negative temporal lags are required for computing the test
 #' @param index two column matrix. Each row of the matrix \code{index} contains
 #' the specific row and column, of the slot \code{@couples.st}, for which the
 #' spatio-temporal covariance is not required
-#' @param value numeric; the value to be replaced. Note that this method is reasonable
+#' @param value numeric, the value to be replaced. Note that this method is reasonable
 #' to be used only to replace a value equal to zero
 #' @seealso \code{\link{couples}}
 #'
@@ -773,7 +1040,7 @@ setMethod(f="setzero", signature(x="couples"),
                   }
                 }
                 # End check on columns and rows with non-zero values
-              }
+              }# End check on couples for models
             }
 
             x@couples.st <- couples.st2

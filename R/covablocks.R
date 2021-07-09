@@ -18,7 +18,7 @@
 #' @slot mat.cova.cova matrix of sample covariances between space-time
 #' covariances for each block, computed for the spatial and temporal lags given
 #' in \code{stpairs} (object of class \code{couples})
-#' @slot typetest character; contains the code of the test to be performed
+#' @slot typetest character, contains the code of the test to be performed
 #'
 #' @rdname covablocks-class
 #' @exportClass covablocks
@@ -33,14 +33,14 @@ setClass("covablocks", slots = c(mat.cova = "matrix",
 #' @param stpairs object of class \code{couples}, containing the spatial
 #' points and the corresponding temporal lags to be analyzed
 #'
-#' @param typetest character; set \code{typetest ="sym"} for symmetry test
+#' @param typetest character, set \code{typetest ="sym"} for symmetry test
 #' (default choice), \code{typetest ="sep"} for separability test, \code{typetest ="tnSep"}
 #' for type of non separability test,\code{typetest ="productSum"} for the test
 #' on the product-sum class of models, \code{typetest ="intProduct"} for the test
 #' on the integrated product class of models, \code{typetest ="gneiting"} for the
 #' test on the Gneiting class of models
 #'
-#' @note {
+#' @details {
 #' \itemize{
 #' \item If \code{typetest} is equal to \code{"sym"} (symmetry test) or \code{"intProduct"}
 #' (test on the integrated product class of models) \code{mat.cova.h} and \code{mat.cova.u}

@@ -1,14 +1,15 @@
 #' Class "blocks"
 #'
 #' A class for overlapped blocks of the time series associated with the given
-#' spatial points specified in \code{couples}. Thus, it is necessary to
-#' execute \linkS4class{couples} first and then \linkS4class{blocks}
+#' spatial points specified through the function \code{couples}. Thus, it is
+#' necessary to execute \linkS4class{couples} first and then \linkS4class{blocks}
 #'
 #' @slot mat.block matrix of dimension (\emph{lb} x \emph{overall
 #' number of blocks}); the columns of this matrix are associated with the
 #' different blocks, of length equal to \code{lb}, that can be extracted
 #' from the time series related to the selected spatial points
-#' defined in \code{stpairs@sel.staz}
+#' defined in the slot \code{stpairs} of \code{couples}, identified
+#' as  \code{stpairs@sel.staz}
 #' @slot array.block array of dimension (\emph{lb} x \emph{number of
 #' blocks for each selected spatial points} x \emph{number of spatial points}).
 #' In each table of this array, the overlapped blocks for each spatial location
@@ -28,7 +29,7 @@ setClass("blocks", slots = c(mat.block = "matrix",
 #' @param ls integer, number of overlapped data between two consecutive blocks.
 #' The number of overlapped terms between two consecutive blocks must in the
 #' interval [0, lb/2]
-#' @param matdata STFDF/STSDF or \code{data.frame}; which contains the
+#' @param matdata STFDF/STSDF or \code{data.frame}, which contains the
 #' coordinates of the spatial points, the identification code of the spatial
 #' points, the indentification code of the temporal points and the values of
 #' the variable, typically output from \code{read.STdata}

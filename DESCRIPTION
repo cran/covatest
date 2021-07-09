@@ -1,7 +1,7 @@
 Package: covatest
 Type: Package
 Title: Tests on Properties of Space-Time Covariance Functions
-Version: 1.1.4
+Version: 1.2.0
 Authors@R: c(person("Sandra", "De Iaco", role = c("aut", "cre"), 
     email = "sandra.deiaco@unisalento.it"),
     person("Claudia", "Cappello", role = "aut", email = "claudia.cappello@unisalento.it"),
@@ -29,10 +29,10 @@ Collate: 'sepindex.R' 'couples.R' 'blocks.R' 'covablocks.R'
         'covastat.R' 'covaprop.R' 'covastatM.R' 'read.STdata.R'
         'vv_13.R'
 NeedsCompilation: no
-Packaged: 2021-05-26 10:47:43 UTC; claudiacappello
+Packaged: 2021-07-09 18:55:19 UTC; claudiacappello
 Author: Sandra De Iaco [aut, cre],
   Claudia Cappello [aut],
   Donato Posa [aut],
   Sabrina Maggio [ctb]
 Repository: CRAN
-Date/Publication: 2021-05-28 10:00:02 UTC
+Date/Publication: 2021-07-09 19:20:02 UTC

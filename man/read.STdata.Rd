@@ -32,23 +32,23 @@ each temporal point are given by row; each row of the file contains at least
 the x and y coordinates of a spatial point, the temporal code (or date) and
 the measurement of the variable of interest.}
 
-\item{header}{logical value indicating whether the file contains the names
+\item{header}{logical, value indicating whether the file contains the names
 of the variables in the first line. If this argument is missing, header is
 set to \code{FALSE} (default choice)}
 
-\item{dec}{character used to indicate decimal points}
+\item{dec}{character, used to indicate decimal points}
 
 \item{sep}{field separator character. If sep = "" (default choice)
 columns of the file are separated by white space or tabs (see \code{\link[utils]{read.table}}
 for more details)}
 
-\item{iclx}{numeric; the column in which the x-coordinate of the spatial points are
+\item{iclx}{numeric, the column in which the x-coordinate of the spatial points are
 stored}
 
-\item{icly}{numeric; the column in which the y-coordinate of the spatial points are
+\item{icly}{numeric, the column in which the y-coordinate of the spatial points are
 stored}
 
-\item{iclt}{numeric; the column in which numeric temporal codes are stored.
+\item{iclt}{numeric, the column in which numeric temporal codes are stored.
 This argument is provided  only if the \code{icldate} argument is not available:
 \code{iclt} and \code{icldate}  are mutually exclusive. This argument is set
 equal to \code{0}, if not available}
@@ -62,17 +62,17 @@ This argument is set equal to \code{0} (default choice) if not available}
 \item{icltime}{numeric vector to set the columns in which the time component
 (hour, minute, second) of a date (if available) is stored. The user has to
 set \code{icl.time} if the time is stored in a single column, otherwise the
-user has to specify the colunn in which the hours (\code{icltH}), the minutes
+user has to specify the column in which the hours (\code{icltH}), the minutes
 (\code{icltM}) or the seconds (\code{icltS}) are stored separately.
 This argument is set equal to \code{0} (default choice) if not available}
 
-\item{iclvr}{numeric; the column in which the values of the variable are stored}
+\item{iclvr}{numeric, the column in which the values of the variable are stored}
 
-\item{iclsp}{numeric; the column in which the identification codes (IDs) for the
+\item{iclsp}{numeric, the column in which the identification codes (IDs) for the
 spatial locations are stored. This argument is set equal to \code{0} (default
 choice) if IDs for the spatial locations are not available}
 
-\item{missing.v}{the code used to indicate the presence of missing values in
+\item{missing.v}{code used to indicate the presence of missing values in
 the imported data. By default this argument is set equal to \code{NA}}
 
 \item{save.as}{character, indicating the class of the data to be returned.
@@ -99,9 +99,9 @@ month, \code{"\%d"} if values are taken by day, \code{"\%q"} if values
 are taken by quarter, \code{"\%H"} if values are taken by hour, \code{"\%M"}
 if values are taken by minute and \code{"\%S"} if values are taken by seconds}
 
-\item{tlag}{numeric; time increment/lag between two temporal observations}
+\item{tlag}{numeric, time increment/lag between two temporal observations}
 
-\item{time.zone}{character; time zone for dates with time component}
+\item{time.zone}{character, time zone for dates with time component}
 }
 \value{
 object of the \code{STFDF}-class or \code{data.frame}, which contains
@@ -117,15 +117,17 @@ within the observed time period, by filling the missing dates with ‘NA’
 (c) converts the data into a \code{STFDF}, according to the standard of the
 \code{spacetime} package, or into a data frame
 }
-\note{
+\details{
+{
 \itemize{
-\item Uncomplete time series, for each spatial point, are filled with NA.
+\item Uncomplete time series, for each spatial point, are filled with NA
 \item Some checks on the admissibility of the supported classes of dates are
-implemented.
+implemented
 \item Time indexes for temporal points are coded for data.frame output by using
-consecutive numbers starting from 1 (column 'timeIndex').
+consecutive numbers starting from 1 (column 'timeIndex')
 \item The spatial points are coded by using the string 'id' and the consecutive numbers
-starting from 1 (column 'spatialIndex').
+starting from 1 (column 'spatialIndex')
+}
 }
 }
 \examples{
@@ -181,6 +183,7 @@ Journal of Statistical Software, \bold{51(7)} 1--30.
 Zeileis, A., Grothendieck. G., 2005, zoo: S3 Infrastructure for Regular and
 Irregular Time Series.
 Journal of Statistical Software, \bold{14(6)} 1--27.
+\url{https://www.jstatsoft.org/article/view/v014i06}
 }
 \seealso{
 \code{\link[spacetime]{STFDF-class}}

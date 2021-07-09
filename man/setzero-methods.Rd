@@ -14,7 +14,7 @@ setzero(x, zero = TRUE, index = NULL, value)
 \arguments{
 \item{x}{object of class \code{couples}}
 
-\item{zero}{logical. If \code{TRUE} (the default) all negative temporal
+\item{zero}{logical, if \code{TRUE} (the default) all negative temporal
 lags are replaced with zero. If \code{x@typetest} is equal to
 \code{"sym"} (symmetry test) the argument \code{setzero} is ignored because
 both positive and negative temporal lags are required for computing the test}
@@ -23,7 +23,7 @@ both positive and negative temporal lags are required for computing the test}
 the specific row and column, of the slot \code{@couples.st}, for which the
 spatio-temporal covariance is not required}
 
-\item{value}{numeric; the value to be replaced. Note that this method is reasonable
+\item{value}{numeric, the value to be replaced. Note that this method is reasonable
 to be used only to replace a value equal to zero}
 }
 \description{
