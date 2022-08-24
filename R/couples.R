@@ -67,11 +67,11 @@ setClass("couples", slots = c(couples.st = "matrix",
 #' \code{"intProduct"} and \code{"gneiting"}), the number of analyzed spatial
 #' points must be used to create at least 3 spatial couples or multiple of 3,
 #' such that each triplet satisfies the condition
-#' \eqn{$||\mathbf{h}_{1}||^{2\gamma}- ||\mathbf{h}_{2}||^{2\gamma} = ||\mathbf{h}_{2}||^{2\gamma}-||\mathbf{h}_{3}||^{2\gamma}$}{||h_1||^{2\gamma} - ||h_2||^{2\gamma} = ||h_2||^{2\gamma} - ||h_3||^{2\gamma}}
+#' \deqn{||\mathbf{h}_{1}||^{2\gamma}- ||\mathbf{h}_{2}||^{2\gamma} = ||\mathbf{h}_{2}||^{2\gamma}-||\mathbf{h}_{3}||^{2\gamma}}{||h_1||^{2\gamma} - ||h_2||^{2\gamma} = ||h_2||^{2\gamma} - ||h_3||^{2\gamma}}
 #' where \eqn{\gamma \in ]0,1]} only for \code{typetest = "intProduct"}
 #' and \code{"gneiting"}.
 #' The number of positive temporal lags must be at least 3, or multiple
-#' of 3, too. The condition \eqn{$u_{1}^{2\alpha}-u_{2}^{2\alpha}=u_{2}^{2\alpha}-u_{3}^{2\alpha}$}{u_1^{2\alpha} - u_2^{2\alpha} = u_2^{2\alpha} - u_3^{2\alpha}}
+#' of 3, too. The condition \deqn{u_{1}^{2\alpha}-u_{2}^{2\alpha}=u_{2}^{2\alpha}-u_{3}^{2\alpha}}{u_1^{2\alpha} - u_2^{2\alpha} = u_2^{2\alpha} - u_3^{2\alpha}}
 #' where \eqn{\alpha \in ]0,1]} must be satisfied for each triplet
 #' (only for \code{typetest = "intProduct"} and \code{"gneiting"}), as clarified
 #' in Cappello et al., 2018. The values of \eqn{\gamma} and \eqn{\alpha} are usually fixed

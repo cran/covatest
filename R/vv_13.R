@@ -35,12 +35,12 @@
 #' "2005::2006"]
 #' # --end define the STFDF rr_13-- #
 #'
-#'
-#' ## To run the example, paste and copy the following lines
-#' # (without the symbol '#') in the console:
+#' ## Not run
+#' ## To estimate the spatio-temporal variogram, paste and copy the following lines
+#' ## (without the symbol '#') in the console:
 #' #
-#' # vv_13 is obtained by running the following command line:
+#' ## vv_13 is obtained by running the following command line:
 #' #
-#' # vv_13 <- variogram(PM10~1, rr_13, width=60, cutoff = 220, tlags=0:15)
+#' # vv_13 <- gstat::variogramST(PM10~1, rr_13, width=60, cutoff = 220, tlags=0:15)
 #' ## End (Not run)
 "vv_13"

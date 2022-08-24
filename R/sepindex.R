@@ -2,8 +2,8 @@
 #'
 #' A class for the non-separability index (r) for different spatial
 #' and temporal lags:
-#' \deqn{r(h, u, \Theta)= \rho(h, u;\Theta)/ [\rho(h,0;\Theta)\rho(0,u;\Theta)]}
-#' with \eqn{\rho(h, u;\Theta)>0}; \eqn{\rho(h,0;\Theta)>0} and \eqn{\rho(0,u;\Theta)>0}.
+#' \deqn{r(\mathbf{h}, u, \Theta)= \rho(\mathbf{h}, u;\Theta)/ [\rho(\mathbf{h},0;\Theta)\rho(\mathbf{0},u;\Theta)]}
+#' with \eqn{\rho(\mathbf{h}, u;\Theta)>0}; \eqn{\rho(\mathbf{h},0;\Theta)>0} and \eqn{\rho(\mathbf{0},u;\Theta)>0}.
 #' On the basis of this index, the type of non-separability of the covariance
 #' function can be analyzed.
 #'
@@ -73,11 +73,12 @@ setClass("sepindex", slots = c(sep.index.ratio = "matrix",
 #' # --end define the STFDF rr_13-- #
 #'
 #' #compute the Global Sill
-#' C00_13<-var(rr_13[,,"PM10"]@data[[1]], na.rm = TRUE)
+#' C00_13 <- var(rr_13[,,"PM10"]@data[[1]], na.rm = TRUE)
 #'
 #' #estimate the spatio-temporal variogram
+#' #for this aim see vv_13.Rd
 #' data(vv_13)
-#' nonsep.index<-sepindex(vario_st = vv_13, nt = 16, ns = 4, globalSill = C00_13)
+#' nonsep.index <- sepindex(vario_st = vv_13, nt = 16, ns = 4, globalSill = C00_13)
 #'
 #' ##methods for sepindex
 #'

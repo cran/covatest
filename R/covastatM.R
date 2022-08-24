@@ -244,7 +244,7 @@ covastatM <- function(matdata, pardata1, pardata2, stpairs, typetest = "productS
   #= Select data for the stations of interest                             =#
   #========================================================================#
 
-  if (class(matdata) == "matrix" || class(matdata) == "data.frame") {
+  if (is(matdata, "matrix") || is(matdata, "data.frame")) {
     iclsp.id <- as.integer(pardata1)
     iclvr <- as.integer(pardata2)
   }
@@ -255,7 +255,7 @@ covastatM <- function(matdata, pardata1, pardata2, stpairs, typetest = "productS
     for (i in 1:length(selstaz)) {
 
       #= data in GSLIB format =#
-      if (class(matdata) == "matrix" || class(matdata) == "data.frame") {
+      if (is(matdata, "matrix") || is(matdata, "data.frame")) {
 
         if (is.numeric(matdata[, iclvr]) == TRUE) {
 
@@ -278,7 +278,7 @@ covastatM <- function(matdata, pardata1, pardata2, stpairs, typetest = "productS
         } else {
 
           #= data in gstat format =#
-          if (class(matdata) == "STFDF") {
+          if (is(matdata, "STFDF")) {
             if (i == 1) {
               selstaz.names <- row.names(matdata@sp)
               selstaz.inter <- intersect(selstaz.names, selstaz)
@@ -300,7 +300,7 @@ covastatM <- function(matdata, pardata1, pardata2, stpairs, typetest = "productS
 
           } else {
             #= data in gstat format =#
-            if (class(matdata) == "STSDF") {
+            if (is(matdata, "STSDF")) {
               matdata <- as(matdata, "STFDF")
               if (i == 1) {
                   selstaz.names <- row.names(matdata@sp)

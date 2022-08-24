@@ -94,16 +94,13 @@
 #'
 #' Grolemund, G, Wickham, H., 2011, Dates and Times Made Easy with lubridate.
 #' Journal of Statistical Software, \bold{40(3)} 1--25.
-#' \url{https://www.jstatsoft.org/v40/i03/}
 #'
 #' Pebesma, E.J., 2012, spacetime: Spatio-Temporal Data in R.
 #' Journal of Statistical Software, \bold{51(7)} 1--30.
-#' \url{https://www.jstatsoft.org/v51/i07/}
 #'
 #' Zeileis, A., Grothendieck. G., 2005, zoo: S3 Infrastructure for Regular and
 #' Irregular Time Series.
 #' Journal of Statistical Software, \bold{14(6)} 1--27.
-#' \url{https://www.jstatsoft.org/article/view/v014i06}
 #'
 #' @seealso \code{\link[spacetime]{STFDF-class}}
 #' @seealso \code{\link[utils]{read.table}}
