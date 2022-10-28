@@ -1,13 +1,13 @@
 #' Class "sepindex"
 #'
-#' A class for the non-separability index (r) for different spatial
+#' A class for the non separability index (r) for different spatial
 #' and temporal lags:
 #' \deqn{r(\mathbf{h}, u, \Theta)= \rho(\mathbf{h}, u;\Theta)/ [\rho(\mathbf{h},0;\Theta)\rho(\mathbf{0},u;\Theta)]}
 #' with \eqn{\rho(\mathbf{h}, u;\Theta)>0}; \eqn{\rho(\mathbf{h},0;\Theta)>0} and \eqn{\rho(\mathbf{0},u;\Theta)>0}.
-#' On the basis of this index, the type of non-separability of the covariance
+#' On the basis of this index, the type of non separability of the covariance
 #' function can be analyzed.
 #'
-#' @slot sep.index.ratio the empirical non-separability index ratio and the
+#' @slot sep.index.ratio the empirical non separability index ratio and the
 #' corresponding spatio-temporal lags
 #' @slot cov.st the spatio-temporal sample covariance function and the
 #' corresponding spatio-temporal lags
@@ -24,8 +24,8 @@ setClass("sepindex", slots = c(sep.index.ratio = "matrix",
                                cov.sp = "matrix"))
 
 #' @param vario_st object of class \code{StVariogram}, containing the
-#' spatio-temporal sample variogram, output from
-#' \code{\link[gstat]{variogramST}}
+#' spatio-temporal sample variogram, output from the function \code{variogramST}
+#' of the package \code{gstat}
 #' @param nt integer, the number of temporal lags in \code{vario_st}
 #' @param ns integer, the number of spatial lags in \code{vario_st}
 #' @param globalSill numeric, the value of the sample variance
@@ -49,7 +49,7 @@ setClass("sepindex", slots = c(sep.index.ratio = "matrix",
 #' models for spatio-temporal processes with non-separable covariance structure.
 #' Scandinavian Journal of Statistics, \bold{37(4)} 553--567.
 #'
-#' @seealso \code{\link[gstat]{variogramST}}
+#'
 #' @import stats
 #' @import methods
 #' @importFrom methods new
@@ -59,7 +59,7 @@ setClass("sepindex", slots = c(sep.index.ratio = "matrix",
 #' # --start define the STFDF rr_13-- #
 #' library(sp)
 #' library(spacetime)
-#' library(gstat)
+#' #library(gstat)
 #' data(air)
 #' ls()
 #' if (!exists("rural")) rural = STFDF(stations, dates, data.frame(PM10 =
@@ -75,8 +75,9 @@ setClass("sepindex", slots = c(sep.index.ratio = "matrix",
 #' #compute the Global Sill
 #' C00_13 <- var(rr_13[,,"PM10"]@data[[1]], na.rm = TRUE)
 #'
-#' #estimate the spatio-temporal variogram
-#' #for this aim see vv_13.Rd
+#' #estimate the spatio-temporal variogram by using the function variogramST
+#' #of the package gstat.
+#' #For this aim see vv_13.Rd
 #' data(vv_13)
 #' nonsep.index <- sepindex(vario_st = vv_13, nt = 16, ns = 4, globalSill = C00_13)
 #'
@@ -154,12 +155,12 @@ sepindex <- function(vario_st, nt, ns, globalSill) {
   cov_sp <- cbind(rep(cov_sp[, 1], times = nt), rep(cov_sp[, 2], times = nt))
   colnames(cov_sp) <- c("hs", "C_sp")
 
-  # Intermediate computation for the non-separability index cov_sep
+  # Intermediate computation for the nonseparability index cov_sep
   cov_sep <- cbind(cov_sp[, 1], cov_tm[, 1], (cov_sp[, 2] * cov_tm[,
                                                                    2]) / globalSill)
   colnames(cov_sep) <- c("ht", "hs", "C'_st")
 
-  # Compute the non-separability index
+  # Compute the nonseparability index
   sep_index_ratio <- cbind(cov_sp[, 1], cov_tm[, 1], cov_st[, 2] / cov_sep[,
                                                                            3])
   sep_index_ratio <- round(sep_index_ratio, digits = 3)
@@ -168,7 +169,7 @@ sepindex <- function(vario_st, nt, ns, globalSill) {
   y <- x[is.na(x)]
   z <- length(y) / n * 100
   if (z > 2) {
-    message("Warning message: ", round(z, digits = 3), "%  of non admissible values for the non-separability index (<0) have been removed")
+    message("Warning message: ", round(z, digits = 3), "%  of non admissible values for the nonseparability index (<0) have been removed")
   }
 
   new("sepindex", sep.index.ratio = sep_index_ratio, cov.st = cov_st,
@@ -222,7 +223,7 @@ setMethod(f="show", signature="sepindex", definition=function(object) {
 #' @param i index specifing elements to extract. Each row includes data for specific
 #' spatio-temporal lags
 #' @param j index specifing elements to extract. Set \code{1} for spatial lags (hs),
-#' \code{2} for temporal lags (ht) and \code{3} for the non-separability index
+#' \code{2} for temporal lags (ht) and \code{3} for the nonseparability index
 #' (SepIndex)
 #' @rdname sepindex-class
 #' @aliases sepindex-method

@@ -28,7 +28,7 @@ setClass("blocks", slots = c(mat.block = "matrix",
 #' each time series
 #' @param ls integer, number of overlapped data between two consecutive blocks.
 #' The number of overlapped terms between two consecutive blocks must in the
-#' interval [0, lb/2]
+#' interval \eqn{[0, lb/2]}
 #' @param matdata STFDF/STSDF or \code{data.frame}, which contains the
 #' coordinates of the spatial points, the identification code of the spatial
 #' points, the indentification code of the temporal points and the values of
@@ -51,15 +51,15 @@ setClass("blocks", slots = c(mat.block = "matrix",
 #'
 #' @note
 #' \itemize{
-#' \item "Error in matdata[, clvr]: subscript out of bounds" appears if \code{pardata2}
+#' \item "Error in matdata\eqn{[, clvr]}: subscript out of bounds" appears if \code{pardata2}
 #' does not exist in the argument \code{matdata}
 #'
-#' \item If "Error in matdata[, clvr]" appears, no data for some of the
+#' \item If "Error in matdata\eqn{[, clvr]}" appears, no data for some of the
 #' spatial points, specified in \code{stpairs}, are available. The user has to
 #' go back to \code{couples} and revise the vector of the selected spatial points
 #' (\code{sel.staz} and \code{sp.couples.in} arguments)
 #'
-#' \item A stop occurs if more than 75\% of consecutive data are missing in the time
+#' \item A stop occurs if more than 75% of consecutive data are missing in the time
 #' series, since a large number of missing values do not guarantee the reliability
 #' of the tests
 #'
@@ -108,7 +108,7 @@ setClass("blocks", slots = c(mat.block = "matrix",
 #' # --start define the STFDF rr_13-- #
 #' library(sp)
 #' library(spacetime)
-#' library(gstat)
+#' #library(gstat)
 #' data(air)
 #' ls()
 #' if (!exists("rural")) rural = STFDF(stations, dates, data.frame(PM10 =

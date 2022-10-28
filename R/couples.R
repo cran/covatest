@@ -51,8 +51,9 @@ setClass("couples", slots = c(couples.st = "matrix",
 #' It is important to point out that:
 #' \itemize{
 #' \item both positive and negative temporal lags are automatically considered in
-#' the slot \code{@couples.st} and \code{@tl.couples} for symmetry test (\code{typetest = "sym"}),
-#' separability test (\code{typetest = "sep"}) and type of non separability tests
+#' the slot \code{@couples.st} and \code{@tl.couples} for symmetry test
+#' (\code{typetest = "sym"}), separability test (\code{typetest = "sep"}) and
+#' type of non separability tests
 #' (\code{typetest = "tnSep"}). If the symmetry hyphotesis has not been rejected, only
 #' positive temporal lags might be considered for the test on separability and type
 #' of non separability (\code{typetest = "sep"} and \code{typetest = "tnSep"}), hence the

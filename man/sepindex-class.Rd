@@ -23,8 +23,8 @@ sepindex(vario_st, nt, ns, globalSill)
 }
 \arguments{
 \item{vario_st}{object of class \code{StVariogram}, containing the
-spatio-temporal sample variogram, output from
-\code{\link[gstat]{variogramST}}}
+spatio-temporal sample variogram, output from the function \code{variogramST}
+of the package \code{gstat}}
 
 \item{nt}{integer, the number of temporal lags in \code{vario_st}}
 
@@ -42,21 +42,21 @@ spatio-temporal sample variogram, output from
 spatio-temporal lags}
 
 \item{j}{index specifing elements to extract. Set \code{1} for spatial lags (hs),
-\code{2} for temporal lags (ht) and \code{3} for the non-separability index
+\code{2} for temporal lags (ht) and \code{3} for the nonseparability index
 (SepIndex)}
 }
 \description{
-A class for the non-separability index (r) for different spatial
+A class for the non separability index (r) for different spatial
 and temporal lags:
 \deqn{r(\mathbf{h}, u, \Theta)= \rho(\mathbf{h}, u;\Theta)/ [\rho(\mathbf{h},0;\Theta)\rho(\mathbf{0},u;\Theta)]}
 with \eqn{\rho(\mathbf{h}, u;\Theta)>0}; \eqn{\rho(\mathbf{h},0;\Theta)>0} and \eqn{\rho(\mathbf{0},u;\Theta)>0}.
-On the basis of this index, the type of non-separability of the covariance
+On the basis of this index, the type of non separability of the covariance
 function can be analyzed.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{sep.index.ratio}}{the empirical non-separability index ratio and the
+\item{\code{sep.index.ratio}}{the empirical non separability index ratio and the
 corresponding spatio-temporal lags}
 
 \item{\code{cov.st}}{the spatio-temporal sample covariance function and the
@@ -73,7 +73,7 @@ corresponding spatial lags}
 # --start define the STFDF rr_13-- #
 library(sp)
 library(spacetime)
-library(gstat)
+#library(gstat)
 data(air)
 ls()
 if (!exists("rural")) rural = STFDF(stations, dates, data.frame(PM10 =
@@ -89,8 +89,9 @@ rr_13 <- r5to10[c("DEHE046","DESN049","DETH026","DENW063","DETH061","DEBY047",
 #compute the Global Sill
 C00_13 <- var(rr_13[,,"PM10"]@data[[1]], na.rm = TRUE)
 
-#estimate the spatio-temporal variogram
-#for this aim see vv_13.Rd
+#estimate the spatio-temporal variogram by using the function variogramST
+#of the package gstat.
+#For this aim see vv_13.Rd
 data(vv_13)
 nonsep.index <- sepindex(vario_st = vv_13, nt = 16, ns = 4, globalSill = C00_13)
 
@@ -127,7 +128,4 @@ package. Computers & Geosciences, \bold{30} 683--691.
 Rodriguez, A., Diggle, P.J., 2010, A class of convolution-based
 models for spatio-temporal processes with non-separable covariance structure.
 Scandinavian Journal of Statistics, \bold{37(4)} 553--567.
-}
-\seealso{
-\code{\link[gstat]{variogramST}}
 }

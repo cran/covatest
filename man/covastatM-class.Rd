@@ -102,7 +102,7 @@ available only for the test on the Gneiting class of model (\code{typetest = "gn
 \itemize{
 \item A stop occurs if the number of spatial points fixed in \code{stpairs}
 (object of class \code{couples}) is less than 2
-\item A stop occurs if more than 75\% of consecutive data are missing in the time
+\item A stop occurs if more than 75\\% of consecutive data are missing in the time
 series, since a large number of missing values do not guarantee the reliability
 of the tests
 }
@@ -112,7 +112,7 @@ of the tests
 # --start define the STFDF rr_13-- #
 library(sp)
 library(spacetime)
-library(gstat)
+#library(gstat)
 data(air)
 ls()
 if (!exists("rural")) rural = STFDF(stations, dates, data.frame(PM10 =

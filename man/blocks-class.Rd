@@ -29,7 +29,7 @@ each time series}
 
 \item{ls}{integer, number of overlapped data between two consecutive blocks.
 The number of overlapped terms between two consecutive blocks must in the
-interval [0, lb/2]}
+interval \eqn{[0, lb/2]}}
 
 \item{matdata}{STFDF/STSDF or \code{data.frame}, which contains the
 coordinates of the spatial points, the identification code of the spatial
@@ -93,10 +93,10 @@ spatial points}
 
 \note{
 \itemize{
-\item "Error in matdata[, clvr]: subscript out of bounds" appears if \code{pardata2}
+\item "Error in matdata\eqn{[, clvr]}: subscript out of bounds" appears if \code{pardata2}
 does not exist in the argument \code{matdata}
 
-\item If "Error in matdata[, clvr]" appears, no data for some of the
+\item If "Error in matdata\eqn{[, clvr]}" appears, no data for some of the
 spatial points, specified in \code{stpairs}, are available. The user has to
 go back to \code{couples} and revise the vector of the selected spatial points
 (\code{sel.staz} and \code{sp.couples.in} arguments)
@@ -112,11 +112,11 @@ spatial points is less than 29
 spatial point is greater than 29 and less than 89, since the length of the
 time series is low and may not guarantee the reliability of the tests
 
-\item A stop occurs if more than 80\% of consecutive data are missing in one
+\item A stop occurs if more than 80\\% of consecutive data are missing in one
 of the blocks, since the estimation of the covariance matrix is not reliable,
 when a large number of missing values occur
 
-\item If, in the last block of each selected spatial point, more than 15\%
+\item If, in the last block of each selected spatial point, more than 15\\%
 of data are missing a warning message appears, since the estimation of the
 covariance matrix, when a large number of missing values occurs, is not
 reliable
@@ -131,7 +131,7 @@ blocks is close to the number of spatio-temporal comparisons defined in
 # --start define the STFDF rr_13-- #
 library(sp)
 library(spacetime)
-library(gstat)
+#library(gstat)
 data(air)
 ls()
 if (!exists("rural")) rural = STFDF(stations, dates, data.frame(PM10 =

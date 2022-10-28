@@ -108,6 +108,7 @@
 #' @seealso \code{\link[zoo]{yearqtr}}
 #' @seealso \code{\link[base]{Dates}} for dates without times
 #' @seealso \code{\link[base]{DateTimeClasses}}
+#' @seealso \code{\link[base]{timezones}} for OlsonNames
 #'
 #'
 #' @importFrom methods as
@@ -127,36 +128,46 @@
 #' #example 1: import a text file, with dates stored in a single column (the 4th)
 #' # and fill missing time points in monthly time series, with time lag equal to one
 #'
-#' file_date <- system.file("extdata", "file_date.txt", package = "covatest")
-#' db.date <- read.STdata(file = file_date, header = TRUE, iclx = 2, icly = 3, iclt = 0,
-#' icldate = c(icl.date = 4, iclty = 0, icltm = 0, icltd = 0),
-#' icltime = c(icl.time = 0, icltH =0, icltM = 0, icltS = 0),
-#' iclvr = 5, iclsp = 1, missing.v = -99999, save.as = "data.frame",
-#' date.format = c("Date", "%d-%m-%Y"), bytime = "%m", tlag = 1)
+#'
+#' ## Not run
+#' ## To run example 1 paste and copy the following lines (without the symbol '#')
+#' ## in the console:
+#' #file_date <- system.file("extdata", "file_date.txt", package = "covatest")
+#' #db.date <- read.STdata(file = file_date, header = TRUE, iclx = 2, icly = 3, iclt = 0,
+#' #icldate = c(icl.date = 4, iclty = 0, icltm = 0, icltd = 0),
+#' #icltime = c(icl.time = 0, icltH =0, icltM = 0, icltS = 0),
+#' #iclvr = 5, iclsp = 1, missing.v = -99999, save.as = "data.frame",
+#' #date.format = c("Date", "%d-%m-%Y"), bytime = "%m", tlag = 1)
 #'
 #'
 #' #example 2: import a text file, with dates and times stored in different columns
 #' # (from the 4th to the 9th) and fill missing time points in hourly time series,
 #' # with time lag equal to three
 #'
-#' file_datetime <- system.file("extdata", "file_datetime.txt", package = "covatest")
-#' db.datetime <- read.STdata(file = file_datetime, header = TRUE, iclx = 2, icly = 3, iclt = 0,
-#' icldate = c(icl.date = 0, iclty = 6, icltm = 5, icltd = 4),
-#' icltime = c(icl.time = 0, icltH = 7, icltM = 8, icltS = 9),
-#' iclvr = 10, iclsp = 1, missing.v = -99999, save.as = "data.frame",
-#' date.format = c("POSIX", "%Y %m %d %H %M %S"), bytime = "%H", tlag = 3)
+#' ## Not run
+#' ## To run example 2 paste and copy the following lines (without the symbol '#')
+#' ## in the console:
+#' #file_datetime <- system.file("extdata", "file_datetime.txt", package = "covatest")
+#' #db.datetime <- read.STdata(file = file_datetime, header = TRUE, iclx = 2, icly = 3, iclt = 0,
+#' #icldate = c(icl.date = 0, iclty = 6, icltm = 5, icltd = 4),
+#' #icltime = c(icl.time = 0, icltH = 7, icltM = 8, icltS = 9),
+#' #iclvr = 10, iclsp = 1, missing.v = -99999, save.as = "data.frame",
+#' #date.format = c("POSIX", "%Y %m %d %H %M %S"), bytime = "%H", tlag = 3)
 #'
 #'
 #' #example 3: import a text file, with dates and times stored in different columns
 #' # (from the 4th to the 9th) and fill missing time points in quarterly time series,
 #' # with time lag equal to one
 #'
-#' file_yq <- system.file("extdata", "file_yq.txt", package = "covatest")
-#' db.yq <- read.STdata(file = file_yq, header = TRUE, iclx = 2, icly = 3, iclt = 0,
-#' icldate = c(icl.date = 4, iclty = 0, icltm = 0, icltd = 0),
-#' icltime = c(icl.time = 0, icltH =0, icltM = 0, icltS = 0),
-#' iclvr = 5, iclsp = 1, missing.v = -99999, save.as = "data.frame",
-#' date.format = c("yearqtr", "%Y-Q%q"), bytime = "%q", tlag = 1)
+#' ## Not run
+#' ## To run example 3 paste and copy the following lines (without the symbol '#')
+#' ## in the console:
+#' #file_yq <- system.file("extdata", "file_yq.txt", package = "covatest")
+#' #db.yq <- read.STdata(file = file_yq, header = TRUE, iclx = 2, icly = 3, iclt = 0,
+#' #icldate = c(icl.date = 4, iclty = 0, icltm = 0, icltd = 0),
+#' #icltime = c(icl.time = 0, icltH =0, icltM = 0, icltS = 0),
+#' #iclvr = 5, iclsp = 1, missing.v = -99999, save.as = "data.frame",
+#' #date.format = c("yearqtr", "%Y-Q%q"), bytime = "%q", tlag = 1)
 #'
 #'
 #' @rdname read.STdata
@@ -178,6 +189,11 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
     }else{
       time.zone <- Sys.timezone()
     }
+  }
+  if(time.zone %in% OlsonNames() == FALSE){
+    message("Start error message. The time zone region specified by using the parameter time.zone does not exist in OlsonNames list.")
+    message("Please use a valid name for time zone.")
+    stop("End error message. Stop running.")
   }
   if (is.scalar(iclx) == FALSE || is.scalar(icly) == FALSE  ||
       is.scalar(iclvr) == FALSE || is.scalar(iclsp) == FALSE) {
@@ -432,25 +448,25 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
           date_format <- "%Y-%m-%d %H:%M:%S"}
     }else{
       if(date.format[1] == "yearmon"){
-        i.date <- as.POSIXlt(as.yearmon(as.character(importFl[,"icldate"]), format = date_format))
-      }else{i.date <- as.POSIXlt(as.yearqtr(as.character(importFl[,"icldate"]), format = date_format))}
+        i.date <- as.POSIXlt(as.yearmon(as.character(importFl[,"icldate"]), format = date_format), tz = time.zone)
+      }else{i.date <- as.POSIXlt(as.yearqtr(as.character(importFl[,"icldate"]), format = date_format), tz = time.zone)}
     }
     if(bytime == "%m"){
-      i.date <- as.POSIXlt(as.yearmon(i.date))
+      i.date <- as.POSIXlt(as.yearmon(i.date), tz = time.zone)
       date.format[1] <- "yearmon"
       if(regexpr('%Y', date_format)[1] < 0){
         date_format <- "%y-%m-%d"}else{
           date_format <- "%Y-%m-%d"}
     }
     if(bytime == "%q"){
-      i.date <- as.POSIXlt(as.yearqtr(i.date))
+      i.date <- as.POSIXlt(as.yearqtr(i.date), tz = time.zone)
       date.format[1] <- "yearqtr"
       if(regexpr('%Y', date_format)[1] < 0){
         date_format <- "%y-%m-%d"}else{
           date_format <- "%Y-%m-%d"}
     }
     if(bytime == "%d"){
-      i.date <- as.POSIXlt(as.Date(i.date))
+      i.date <- as.POSIXlt(as.Date(i.date, tz = time.zone), tz = time.zone)
       if(regexpr('%Y', date_format)[1] < 0){
         date_format <- "%y-%m-%d"}else{
           date_format <- "%Y-%m-%d"}
@@ -490,31 +506,35 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
   importFl1 <- importFl[order(importFl[, iclx], importFl[, icly], importFl[, iclt]), ]
   code.time <- unique(importFl1[, iclt])
   tpar1 <- min(code.time)
+  #print(tpar1)
   tpar2 <- max(code.time)
+  #print(tpar2)
   vec.date <- c(tpar1)
   if(date.format[1] == "Date" || date.format[1] == "POSIX"){
     if(bytime == "%d"){
-      tpar1 <- as.POSIXlt(as.Date(tpar1))
-      tpar2 <- as.POSIXlt(as.Date(tpar2))
-      vec.date.w <- as.POSIXlt(as.Date(tpar1))
+      tpar1 <- as.POSIXlt(as.Date(tpar1, tz = time.zone), tz = time.zone)
+      tpar2 <- as.POSIXlt(as.Date(tpar2, tz = time.zone), tz = time.zone)
+      vec.date.w <- as.POSIXlt(as.Date(tpar1, tz = time.zone), tz = time.zone)
       vec.date <- as.character(vec.date)
     }else{
-      tpar1 <- as.POSIXlt(tpar1)
-      tpar2 <- as.POSIXlt(tpar2)
-      vec.date.w <- as.POSIXlt(tpar1)
-      vec.date <- format(round(as.POSIXlt(vec.date, format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
+      tpar1 <- as.POSIXlt(tpar1, tz = time.zone)
+      tpar2 <- as.POSIXlt(tpar2, tz = time.zone)
+      vec.date.w <- as.POSIXlt(tpar1, tz = time.zone)
+      vec.date <- format(round(as.POSIXlt(vec.date, format="%Y-%m-%d %H:%M:%S", tz = time.zone)), "%Y-%m-%d %H:%M:%S")
     }
   }else{
     vec.date <- as.character(vec.date)
     if(date.format[1] == "yearmon"){
-      tpar1 <- as.POSIXlt(as.yearmon(tpar1))
-      tpar2 <- as.POSIXlt(as.yearmon(tpar2))
-      vec.date.w <- as.POSIXlt(as.yearmon(tpar1))
+      tpar1 <- as.POSIXlt(as.yearmon(tpar1), tz = time.zone)
+      tpar2 <- as.POSIXlt(as.yearmon(tpar2), tz = time.zone)
+      vec.date.w <- as.POSIXlt(as.yearmon(tpar1), tz = time.zone)
     }
     if(date.format[1] == "yearqtr"){
-      tpar1 <- as.POSIXlt(as.yearqtr(tpar1))
-      tpar2 <- as.POSIXlt(as.yearqtr(tpar2))
-      vec.date.w <- as.POSIXlt(as.yearqtr(tpar1))
+      tpar1 <- as.POSIXlt(as.yearqtr(tpar1), tz = time.zone)
+      #print(tpar1)
+      tpar2 <- as.POSIXlt(as.yearqtr(tpar2), tz = time.zone)
+      #print(tpar2)
+      vec.date.w <- as.POSIXlt(as.yearqtr(tpar1), tz = time.zone)
     }
     if(date.format[1] == "code"){
       vec.date.w <- tpar1
@@ -526,16 +546,16 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
   }
   if(date_format != 0){
     if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-      if(bytime == "%d"){delta.time <- difftime(tpar2, tpar1, units = "days")}
-      if(bytime == "%H"){delta.time <- difftime(tpar2, tpar1, units = "hours")}
-      if(bytime == "%M"){delta.time <- difftime(tpar2, tpar1, units = "mins")}
-      if(bytime == "%S"){delta.time <- difftime(tpar2, tpar1, units = "secs")}
+      if(bytime == "%d"){delta.time <- difftime(tpar2, tpar1, units = "days", tz = time.zone)}
+      if(bytime == "%H"){delta.time <- difftime(tpar2, tpar1, units = "hours", tz = time.zone)}
+      if(bytime == "%M"){delta.time <- difftime(tpar2, tpar1, units = "mins", tz = time.zone)}
+      if(bytime == "%S"){delta.time <- difftime(tpar2, tpar1, units = "secs", tz = time.zone)}
     }else{
       if(bytime == "%m"){
-        delta.time <- length(seq(from=as.Date(tpar1), to=as.Date(tpar2), by='month')) - 1
+        delta.time <- length(seq(from=as.Date(tpar1, tz = time.zone), to=as.Date(tpar2, tz = time.zone), by='month')) - 1
       }else{
         if(bytime == "%q"){
-          delta.time <- length(seq(from=as.Date(tpar1), to=as.Date(tpar2), by='quarter')) - 1
+          delta.time <- length(seq(from=as.Date(tpar1, tz = time.zone), to=as.Date(tpar2, tz = time.zone), by='quarter')) - 1
         }}}}else{delta.time <- tpar2-tpar1}
   if(tlag>(delta.time)){
     message("Start error message. The argument tlag is not consistent: it has to be less than the temporal observed interval.")
@@ -565,7 +585,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
         if(is.na(delta.w) == TRUE){
           vec.date.w1 <-vec.date.w
           hour(vec.date.w1) <- hour(vec.date.w1) + tlag + 1
-          if(difftime(vec.date.w1, vec.date.w, units = "hours") < tlag){
+          if(difftime(vec.date.w1, vec.date.w, units = "hours", tz = time.zone) < tlag){
             hour(vec.date.w1) <- hour(vec.date.w1) + 1
           }
           hour(vec.date.w) <- hour(vec.date.w1)
@@ -578,7 +598,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
         if(is.na(delta.w) == TRUE){
           vec.date.w1 <-vec.date.w
           minute(vec.date.w1) <- minute(vec.date.w1) + tlag + 60
-          if(difftime(vec.date.w1, vec.date.w, units = "mins") < tlag){
+          if(difftime(vec.date.w1, vec.date.w, units = "mins", tz = time.zone) < tlag){
             minute(vec.date.w1) <- minute(vec.date.w1) + 60
           }
           minute(vec.date.w) <- minute(vec.date.w1)
@@ -591,7 +611,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
         if(is.na(delta.w) == TRUE){
           vec.date.w1 <-vec.date.w
           second(vec.date.w1) <- second(vec.date.w1) + tlag + 3600
-          if(difftime(vec.date.w1, vec.date.w, units = "secs") < tlag){
+          if(difftime(vec.date.w1, vec.date.w, units = "secs", tz = time.zone) < tlag){
             second(vec.date.w1) <- second(vec.date.w1) + 3600
           }
           second(vec.date.w) <- second(vec.date.w1)
@@ -599,16 +619,17 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
           second(vec.date.w) <- second(vec.date.w) + tlag}
       }
       if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-        if(bytime == "%d"){delta.time <- difftime(tpar2, vec.date.w, units = "days")}
-        if(bytime == "%H"){delta.time <- difftime(tpar2, vec.date.w, units = "hours")}
-        if(bytime == "%M"){delta.time <- difftime(tpar2, vec.date.w, units = "mins")}
-        if(bytime == "%S"){delta.time <- difftime(tpar2, vec.date.w, units = "secs")}
+        if(bytime == "%d"){delta.time <- difftime(tpar2, vec.date.w, units = "days", tz = time.zone)}
+        if(bytime == "%H"){delta.time <- difftime(tpar2, vec.date.w, units = "hours", tz = time.zone)}
+        if(bytime == "%M"){delta.time <- difftime(tpar2, vec.date.w, units = "mins", tz = time.zone)}
+        if(bytime == "%S"){delta.time <- difftime(tpar2, vec.date.w, units = "secs", tz = time.zone)}
       }else{
         if(bytime == "%m"){
-          delta.time <- length(seq(from=as.Date(vec.date.w), to=as.Date(tpar2), by='month')) - 1
+          delta.time <- length(seq(from=as.Date(vec.date.w, tz = time.zone), to=as.Date(tpar2, tz = time.zone), by='month')) - 1
         }else{
           if(bytime == "%q"){
-            delta.time <- length(seq(from=as.Date(vec.date.w), to=as.Date(tpar2), by='quarter')) - 1
+            delta.time <- length(seq(from=as.Date(vec.date.w, tz = time.zone), to=as.Date(tpar2, tz = time.zone), by='quarter')) - 1
+            #print(delta.time)
           }}}
     }else{
       vec.date.w <- vec.date.w + tlag
@@ -617,7 +638,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
     vec_date <- vec.date.w
     if(date.format[1] == "POSIX" && bytime != "%d"){
       if(hour(vec_date) == 0 && minute(vec_date) == 0 && second(vec_date) == 0){
-        vec_date <- format(round(as.POSIXlt(vec.date.w, format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
+        vec_date <- format(round(as.POSIXlt(vec.date.w, format="%Y-%m-%d %H:%M:%S", tz = time.zone)), "%Y-%m-%d %H:%M:%S")
       }}
     vec.date <- rbind(vec.date,as.character(vec_date))
   }
@@ -625,7 +646,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
   for(i in 1:n.time){
     if(date.format[1] == "POSIX" && bytime != "%d"){
       if(hour(importFl1[i, iclt]) == 0 && minute(importFl1[i, iclt]) == 0 && second(importFl1[i, iclt]) == 0){
-        importFl1[i, iclt] <- format(round(as.POSIXlt(importFl1[i, iclt], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
+        importFl1[i, iclt] <- format(round(as.POSIXlt(importFl1[i, iclt], format="%Y-%m-%d %H:%M:%S", tz = time.zone)), "%Y-%m-%d %H:%M:%S")
       }}
 
   }
@@ -634,16 +655,16 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
   if(date_format != 0){
     if(date.format[1] == "Date" || date.format[1] == "POSIX"){
       if(bytime == "%d"){
-        importFl1[[iclt]] <- as.POSIXlt(as.Date(importFl1[,iclt], format = date_format))
+        importFl1[[iclt]] <- as.POSIXlt(as.Date(importFl1[,iclt], format = date_format, tz = time.zone), tz = time.zone)
       }else{
-        importFl1[[iclt]] <- (as.POSIXlt(importFl1[,iclt], format = date_format, tz = time.zone))
+        importFl1[[iclt]] <- as.POSIXlt(importFl1[,iclt], format = date_format, tz = time.zone)
       }
     }else{
       if(date.format[1] == "yearmon"){
-        importFl1[[iclt]] <- as.POSIXlt(as.yearmon((importFl1[,iclt]), format = date_format))
+        importFl1[[iclt]] <- as.POSIXlt(as.yearmon((importFl1[,iclt]), format = date_format), tz = time.zone)
       }
       if(date.format[1] == "yearqtr"){
-        importFl1[[iclt]] <- as.POSIXlt(as.yearqtr((importFl1[,iclt]), format = date_format))
+        importFl1[[iclt]] <- as.POSIXlt(as.yearqtr((importFl1[,iclt]), format = date_format), tz = time.zone)
       }
     }
   }else{importFl1[[iclt]]<-as.numeric(importFl1[,iclt])}
@@ -656,15 +677,15 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
   if(date_format != 0){
     if(date.format[1] == "Date" || date.format[1] == "POSIX"){
       if(bytime == "%d"){
-        tpar2 <- as.POSIXlt(as.Date(tpar2))
+        tpar2 <- as.POSIXlt(as.Date(tpar2, tz = time.zone), tz = time.zone)
       }else{
-        tpar2 <- (as.POSIXlt(tpar2))}
+        tpar2 <- as.POSIXlt(tpar2, tz = time.zone)}
     }else{
       if(date.format[1] == "yearmon"){
-        tpar2 <- as.POSIXlt(as.yearmon(tpar2))
+        tpar2 <- as.POSIXlt(as.yearmon(tpar2), tz = time.zone)
       }
       if(date.format[1] == "yearqtr"){
-        tpar2 <- as.POSIXlt(as.yearqtr(tpar2))
+        tpar2 <- as.POSIXlt(as.yearqtr(tpar2), tz = time.zone)
       }
     }}else{tpar2 <- as.numeric(tpar2)}
   if(length(unique(c(tpar1,tpar2))) == 1){
@@ -703,7 +724,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
   iclt <- "iclt"
   if(date.format[1] == "POSIX" && bytime != "%d"){
     if(hour(importFlfull[[iclt]]) == 0 && minute(importFlfull[[iclt]]) == 0 && second(importFlfull[[iclt]]) == 0){
-      importFlfull[[iclt]] <- format(round(as.POSIXlt(importFlfull[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
+      importFlfull[[iclt]] <- format(round(as.POSIXlt(importFlfull[[iclt]], format="%Y-%m-%d %H:%M:%S", tz = time.zone)), "%Y-%m-%d %H:%M:%S")
     }}
   importFlfull[[iclt]] <- as.character(importFlfull[[iclt]])
   ### CHECK ON MISSING DATES ###
@@ -711,15 +732,15 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
   if(date_format != 0){
     if(date.format[1] == "Date" || date.format[1] == "POSIX"){
       if(bytime == "%d"){
-        t1 <- as.POSIXlt(as.Date(t1))
+        t1 <- as.POSIXlt(as.Date(t1, tz = time.zone), tz = time.zone)
       }else{
-        t1 <- as.POSIXlt(t1)}
+        t1 <- as.POSIXlt(t1, tz = time.zone)}
     }else{
       if(date.format[1] == "yearmon"){
-        t1 <- as.POSIXlt(as.yearmon(t1))
+        t1 <- as.POSIXlt(as.yearmon(t1), tz = time.zone)
       }
       if(date.format[1] == "yearqtr"){
-        t1 <- as.POSIXlt(as.yearqtr(t1))
+        t1 <- as.POSIXlt(as.yearqtr(t1), tz = time.zone)
       }
     }
   }else{t1 <- as.numeric(t1)}
@@ -728,23 +749,23 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
   if(date_format != 0){
     if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
       if(bytime == "%d"){
-        delta.time <- difftime(t1,tpar1, units = "days")
+        delta.time <- difftime(t1,tpar1, units = "days", tz = time.zone)
       }
       if(bytime == "%H"){
-        delta.time <- difftime(t1,tpar1, units = "hours")
+        delta.time <- difftime(t1,tpar1, units = "hours", tz = time.zone)
       }
       if(bytime == "%M"){
-        delta.time <- difftime(t1,tpar1, units = "mins")
+        delta.time <- difftime(t1,tpar1, units = "mins", tz = time.zone)
       }
       if(bytime == "%S"){
-        delta.time <- difftime(t1,tpar1, units = "secs")
+        delta.time <- difftime(t1,tpar1, units = "secs", tz = time.zone)
       }
     }else{
       if(bytime == "%m"){
-        delta.time <- length(seq(from=as.Date(tpar1), to=as.Date(t1), by='month')) - 1
+        delta.time <- length(seq(from=as.Date(tpar1, tz = time.zone), to=as.Date(t1, tz = time.zone), by='month')) - 1
       }else{
         if(bytime == "%q"){
-          delta.time <- length(seq(from=as.Date(tpar1), to=as.Date(t1), by='quarter')) - 1
+          delta.time <- length(seq(from=as.Date(tpar1, tz = time.zone), to=as.Date(t1, tz = time.zone), by='quarter')) - 1
         }
       }
     }
@@ -774,7 +795,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
         if(is.na(delta.w) == TRUE){
           t11 <- t1
           hour(t11) <- hour(t11) - tlag - 1
-          if(difftime(t1, t11, units = "hours") < tlag){
+          if(difftime(t1, t11, units = "hours", tz = time.zone) < tlag){
             hour(t11) <- hour(t11) - 1
           }
           hour(t1) <- hour(t11)
@@ -787,7 +808,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
         if(is.na(delta.w) == TRUE){
           t11 <- t1
           minute(t11) <- minute(t11) - tlag - 60
-          if(difftime(t1, t11, units = "mins") < tlag){
+          if(difftime(t1, t11, units = "mins", tz = time.zone) < tlag){
             minute(t11) <- minute(t11) - 60
           }
           minute(t1) <- minute(t11)
@@ -800,7 +821,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
         if(is.na(delta.w) == TRUE){
           t11 <- t1
           second(t11) <- second(t11) - tlag - 3600
-          if(difftime(t1, t11, units = "secs") < tlag){
+          if(difftime(t1, t11, units = "secs", tz = time.zone) < tlag){
             second(t11) <- second(t11) - 3600
           }
           second(t1) <- second(t11)
@@ -809,15 +830,15 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
       }
       if(date.format[1] == "Date" || date.format[1] == "POSIX"){
         if(bytime == "%d"){
-          importFlw[[iclt]]<- as.POSIXlt(as.Date(t1))
+          importFlw[[iclt]]<- as.POSIXlt(as.Date(t1, tz = time.zone), tz = time.zone)
         }else{
-          importFlw[[iclt]]<- (as.POSIXlt(t1))}
+          importFlw[[iclt]]<- as.POSIXlt(t1, tz = time.zone)}
       }else{
         if(date.format[1] == "yearmon"){
-          importFlw[[iclt]]<- as.POSIXlt(as.yearmon(t1))
+          importFlw[[iclt]]<- as.POSIXlt(as.yearmon(t1), tz = time.zone)
         }
         if(date.format[1] == "yearqtr"){
-          importFlw[[iclt]]<- as.POSIXlt(as.yearqtr(t1))
+          importFlw[[iclt]]<- as.POSIXlt(as.yearqtr(t1), tz = time.zone)
         }
       }
     }else{
@@ -827,22 +848,22 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
     importFlw[[iclvr]]<- NA
     if(date.format[1] == "POSIX" && bytime != "%d"){
       if(hour(importFlw[[iclt]]) == 0 && minute(importFlw[[iclt]]) == 0 && second(importFlw[[iclt]]) == 0){
-        importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
+        importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S", tz = time.zone)), "%Y-%m-%d %H:%M:%S")
       }}
     importFlw[[iclt]] <- as.character(importFlw[[iclt]])
     importFlfull <- rbind(importFlw,importFlfull)
     if(date_format != 0){
       if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-        if(bytime == "%d"){delta.time <- difftime(t1,tpar1, units = "days")}
-        if(bytime == "%H"){delta.time <- difftime(t1,tpar1, units = "hours")}
-        if(bytime == "%M"){delta.time <- difftime(t1,tpar1, units = "mins")}
-        if(bytime == "%S"){delta.time <- difftime(t1,tpar1, units = "secs")}
+        if(bytime == "%d"){delta.time <- difftime(t1,tpar1, units = "days", tz = time.zone)}
+        if(bytime == "%H"){delta.time <- difftime(t1,tpar1, units = "hours", tz = time.zone)}
+        if(bytime == "%M"){delta.time <- difftime(t1,tpar1, units = "mins", tz = time.zone)}
+        if(bytime == "%S"){delta.time <- difftime(t1,tpar1, units = "secs", tz = time.zone)}
       }else{
         if(bytime == "%m"){
-          delta.time <- length(seq(from=as.Date(tpar1), to=as.Date(t1), by='month')) - 1
+          delta.time <- length(seq(from=as.Date(tpar1, tz = time.zone), to=as.Date(t1, tz = time.zone), by='month')) - 1
         }else{
           if(bytime == "%q"){
-            delta.time <- length(seq(from=as.Date(tpar1), to=as.Date(t1), by='quarter')) - 1
+            delta.time <- length(seq(from=as.Date(tpar1, tz = time.zone), to=as.Date(t1, tz = time.zone), by='quarter')) - 1
           }
         }
       }
@@ -857,20 +878,20 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
       if(date_format != 0){
         if(date.format[1] == "Date" || date.format[1] == "POSIX"){
           if(bytime == "%d"){
-            t1 <- as.POSIXlt(as.Date(t1))
-            t2 <- as.POSIXlt(as.Date(t2))
+            t1 <- as.POSIXlt(as.Date(t1, tz = time.zone), tz = time.zone)
+            t2 <- as.POSIXlt(as.Date(t2, tz = time.zone), tz = time.zone)
           }else{
-            t1 <- as.POSIXlt(t1)
-            t2 <- as.POSIXlt(t2)
+            t1 <- as.POSIXlt(t1, tz = time.zone)
+            t2 <- as.POSIXlt(t2, tz = time.zone)
           }
         }else{
           if(date.format[1] == "yearmon"){
-            t1 <- as.POSIXlt(as.yearmon(t1))
-            t2 <- as.POSIXlt(as.yearmon(t2))
+            t1 <- as.POSIXlt(as.yearmon(t1), tz = time.zone)
+            t2 <- as.POSIXlt(as.yearmon(t2), tz = time.zone)
           }
           if(date.format[1] == "yearqtr"){
-            t1 <- as.POSIXlt(as.yearqtr(t1))
-            t2 <- as.POSIXlt(as.yearqtr(t2))
+            t1 <- as.POSIXlt(as.yearqtr(t1), tz = time.zone)
+            t2 <- as.POSIXlt(as.yearqtr(t2), tz = time.zone)
           }
         }
       }else{
@@ -879,23 +900,23 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
       if(date_format != 0){
         if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
           if(bytime == "%d"){
-            delta.time <- difftime(t2, t1, units = "days")
+            delta.time <- difftime(t2, t1, units = "days", tz = time.zone)
           }
           if(bytime == "%H"){
-            delta.time <- difftime(t2, t1, units = "hours")
+            delta.time <- difftime(t2, t1, units = "hours", tz = time.zone)
           }
           if(bytime == "%M"){
-            delta.time <- difftime(t2, t1, units = "mins")
+            delta.time <- difftime(t2, t1, units = "mins", tz = time.zone)
           }
           if(bytime == "%S"){
-            delta.time <- difftime(t2, t1, units = "secs")
+            delta.time <- difftime(t2, t1, units = "secs", tz = time.zone)
           }
         }else{
           if(bytime == "%m"){
-            delta.time <- length(seq(from=as.Date(t1), to=as.Date(t2), by='month')) - 1
+            delta.time <- length(seq(from=as.Date(t1, tz = time.zone), to=as.Date(t2, tz = time.zone), by='month')) - 1
           }else{
             if(bytime == "%q"){
-              delta.time <- length(seq(from=as.Date(t1), to=as.Date(t2), by='quarter')) - 1
+              delta.time <- length(seq(from=as.Date(t1, tz = time.zone), to=as.Date(t2, tz = time.zone), by='quarter')) - 1
             }
           }
         }
@@ -925,7 +946,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
             if(is.na(delta.w) == TRUE){
               t11 <- t1
               hour(t11) <- hour(t11) + tlag + 1
-              if(difftime(t11, t1, units = "hours") < tlag){
+              if(difftime(t11, t1, units = "hours", tz = time.zone) < tlag){
                 hour(t11) <- hour(t11) + 1
               }
               hour(t1) <- hour(t11)
@@ -938,7 +959,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
             if(is.na(delta.w) == TRUE){
               t11 <- t1
               minute(t11) <- minute(t11) + tlag + 60
-              if(difftime(t11, t1, units = "mins") < tlag){
+              if(difftime(t11, t1, units = "mins", tz = time.zone) < tlag){
                 minute(t11) <- minute(t11) + 60
               }
               minute(t1) <- minute(t11)
@@ -951,7 +972,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
             if(is.na(delta.w) == TRUE){
               t11 <- t1
               second(t11) <- second(t11) + tlag + 3600
-              if(difftime(t11, t1, units = "secs") < tlag){
+              if(difftime(t11, t1, units = "secs", tz = time.zone) < tlag){
                 second(t11) <- second(t11) + 3600
               }
               second(t1) <- second(t11)
@@ -960,15 +981,15 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
           }
           if(date.format[1] == "Date" || date.format[1] == "POSIX"){
             if(bytime == "%d"){
-              importFlw[[iclt]]<- as.POSIXlt(as.Date(t1))
+              importFlw[[iclt]]<- as.POSIXlt(as.Date(t1, tz = time.zone), tz = time.zone)
             }else{
-              importFlw[[iclt]]<- as.POSIXlt(t1)}
+              importFlw[[iclt]]<- as.POSIXlt(t1, tz = time.zone)}
           }else{
             if(date.format[1] == "yearmon"){
-              importFlw[[iclt]]<- as.POSIXlt(as.yearmon(t1))
+              importFlw[[iclt]]<- as.POSIXlt(as.yearmon(t1), tz = time.zone)
             }
             if(date.format[1] == "yearqtr"){
-              importFlw[[iclt]]<- as.POSIXlt(as.yearqtr(t1))
+              importFlw[[iclt]]<- as.POSIXlt(as.yearqtr(t1), tz = time.zone)
             }
           }
         }else{
@@ -978,22 +999,22 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
         importFlw[[iclvr]]<- NA
         if(date.format[1] == "POSIX" && bytime != "%d"){
           if(hour(importFlw[[iclt]]) == 0 && minute(importFlw[[iclt]]) == 0 && second(importFlw[[iclt]]) == 0){
-            importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
+            importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S", tz = time.zone)), "%Y-%m-%d %H:%M:%S")
           }}
         importFlw[[iclt]] <- as.character(importFlw[[iclt]])
         importFlfull <- rbind(importFlfull, importFlw)
         if(date_format != 0){
           if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-            if(bytime == "%d"){delta.time <- difftime(t2, t1, units = "days")}
-            if(bytime == "%H"){delta.time <- difftime(t2, t1, units = "hours")}
-            if(bytime == "%M"){delta.time <- difftime(t2, t1, units = "mins")}
-            if(bytime == "%S"){delta.time <- difftime(t2, t1, units = "secs")}
+            if(bytime == "%d"){delta.time <- difftime(t2, t1, units = "days", tz = time.zone)}
+            if(bytime == "%H"){delta.time <- difftime(t2, t1, units = "hours", tz = time.zone)}
+            if(bytime == "%M"){delta.time <- difftime(t2, t1, units = "mins", tz = time.zone)}
+            if(bytime == "%S"){delta.time <- difftime(t2, t1, units = "secs", tz = time.zone)}
           }else{
             if(bytime == "%m"){
-              delta.time <- length(seq(from=as.Date(t1), to=as.Date(t2), by='month')) - 1
+              delta.time <- length(seq(from=as.Date(t1, tz = time.zone), to=as.Date(t2, tz = time.zone), by='month')) - 1
             }else{
               if(bytime == "%q"){
-                delta.time <- length(seq(from=as.Date(t1), to=as.Date(t2), by='quarter')) - 1
+                delta.time <- length(seq(from=as.Date(t1, tz = time.zone), to=as.Date(t2, tz = time.zone), by='quarter')) - 1
               }
             }
           }
@@ -1002,7 +1023,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
       importFlw <- importFl1[i,]
       if(date.format[1] == "POSIX" && bytime != "%d"){
         if(hour(importFlw[[iclt]]) == 0 && minute(importFlw[[iclt]]) == 0 && second(importFlw[[iclt]]) == 0){
-          importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
+          importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S", tz = time.zone)), "%Y-%m-%d %H:%M:%S")
         }}
       importFlw[[iclt]] <- as.character(importFlw[1, iclt])
       importFlfull <- rbind(importFlfull, importFlw)
@@ -1014,30 +1035,30 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
         if(date_format != 0){
           if(date.format[1] == "Date" || date.format[1] == "POSIX"){
             if(bytime == "%d"){
-              t2 <- as.POSIXlt(as.Date(t2))
+              t2 <- as.POSIXlt(as.Date(t2, tz = time.zone), tz = time.zone)
             }else{
-              t2 <- as.POSIXlt(t2)}
+              t2 <- as.POSIXlt(t2, tz = time.zone)}
           }else{
             if(date.format[1] == "yearmon"){
-              t2 <- as.POSIXlt(as.yearmon(t2))
+              t2 <- as.POSIXlt(as.yearmon(t2), tz = time.zone)
             }
             if(date.format[1] == "yearqtr"){
-              t2 <- as.POSIXlt(as.yearqtr(t2))
+              t2 <- as.POSIXlt(as.yearqtr(t2), tz = time.zone)
             }
           }
         }else{t2 <- as.numeric(t2)}
         if(date_format != 0){
           if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-            if(bytime == "%d"){delta.time <- difftime(tpar2, t2, units = "days")}
-            if(bytime == "%H"){delta.time <- difftime(tpar2, t2, units = "hours")}
-            if(bytime == "%M"){delta.time <- difftime(tpar2, t2, units = "mins")}
-            if(bytime == "%S"){delta.time <- difftime(tpar2, t2, units = "secs")}
+            if(bytime == "%d"){delta.time <- difftime(tpar2, t2, units = "days", tz = time.zone)}
+            if(bytime == "%H"){delta.time <- difftime(tpar2, t2, units = "hours", tz = time.zone)}
+            if(bytime == "%M"){delta.time <- difftime(tpar2, t2, units = "mins", tz = time.zone)}
+            if(bytime == "%S"){delta.time <- difftime(tpar2, t2, units = "secs", tz = time.zone)}
           }else{
             if(bytime == "%m"){
-              delta.time <- length(seq(from=as.Date(t2), to=as.Date(tpar2), by='month')) - 1
+              delta.time <- length(seq(from=as.Date(t2, tz = time.zone), to=as.Date(tpar2, tz = time.zone), by='month')) - 1
             }else{
               if(bytime == "%q"){
-                delta.time <- length(seq(from=as.Date(t2), to=as.Date(tpar2), by='quarter')) - 1
+                delta.time <- length(seq(from=as.Date(t2, tz = time.zone), to=as.Date(tpar2, tz = time.zone), by='quarter')) - 1
               }
             }
           }
@@ -1067,7 +1088,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
               if(is.na(delta.w) == TRUE){
                 t11 <- t2
                 hour(t11) <- hour(t11) + tlag + 1
-                if(difftime(t11, t2, units = "hours") < tlag){
+                if(difftime(t11, t2, units = "hours", tz = time.zone) < tlag){
                   hour(t11) <- hour(t11) + 1
                 }
                 hour(t2) <- hour(t11)
@@ -1080,7 +1101,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
               if(is.na(delta.w) == TRUE){
                 t11 <- t2
                 minute(t11) <- minute(t11) + tlag + 60
-                if(difftime(t11, t2, units = "mins") < tlag){
+                if(difftime(t11, t2, units = "mins", tz = time.zone) < tlag){
                   minute(t11) <- minute(t11) + 60
                 }
                 minute(t2) <- minute(t11)
@@ -1093,7 +1114,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
               if(is.na(delta.w) == TRUE){
                 t11 <- t2
                 second(t11) <- second(t11) + tlag + 3600
-                if(difftime(t11, t2, units = "secs") < tlag){
+                if(difftime(t11, t2, units = "secs", tz = time.zone) < tlag){
                   second(t11) <- second(t11) + 3600
                 }
                 second(t2) <- second(t11)
@@ -1102,17 +1123,17 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
             }
             if(date.format[1] == "Date" || date.format[1] == "POSIX"){
               if(bytime == "%d"){
-                t2 <- as.POSIXlt(as.Date(t2))
-                importFlw[[iclt]]<- as.POSIXlt(as.Date(t2))
+                t2 <- as.POSIXlt(as.Date(t2, tz = time.zone), tz = time.zone)
+                importFlw[[iclt]]<- as.POSIXlt(as.Date(t2, tz = time.zone), tz = time.zone)
               }else{
-                importFlw[[iclt]]<- (as.POSIXlt(t2))
+                importFlw[[iclt]]<- as.POSIXlt(t2, tz = time.zone)
               }
             }else{
               if(date.format[1] == "yearmon"){
-                importFlw[[iclt]]<- as.POSIXlt(as.yearmon(t2))
+                importFlw[[iclt]]<- as.POSIXlt(as.yearmon(t2), tz = time.zone)
               }
               if(date.format[1] == "yearqtr"){
-                importFlw[[iclt]]<- as.POSIXlt(as.yearqtr(t2))
+                importFlw[[iclt]]<- as.POSIXlt(as.yearqtr(t2), tz = time.zone)
               }
             }
           }else{
@@ -1122,22 +1143,22 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
           importFlw[[iclvr]] <- NA
           if(date.format[1] == "POSIX" && bytime != "%d"){
             if(hour(importFlw[[iclt]]) == 0 && minute(importFlw[[iclt]]) == 0 && second(importFlw[[iclt]]) == 0){
-              importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
+              importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S", tz = time.zone)), "%Y-%m-%d %H:%M:%S")
             }}
           importFlw[[iclt]] <- as.character(importFlw[[iclt]])
           importFlfull <- rbind(importFlfull, importFlw)
           if(date_format != 0){
             if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-              if(bytime == "%d"){delta.time <- difftime(tpar2, t2, units = "days")}
-              if(bytime == "%H"){delta.time <- difftime(tpar2, t2, units = "hours")}
-              if(bytime == "%M"){delta.time <- difftime(tpar2, t2, units = "mins")}
-              if(bytime == "%S"){delta.time <- difftime(tpar2, t2, units = "secs")}
+              if(bytime == "%d"){delta.time <- difftime(tpar2, t2, units = "days", tz = time.zone)}
+              if(bytime == "%H"){delta.time <- difftime(tpar2, t2, units = "hours", tz = time.zone)}
+              if(bytime == "%M"){delta.time <- difftime(tpar2, t2, units = "mins", tz = time.zone)}
+              if(bytime == "%S"){delta.time <- difftime(tpar2, t2, units = "secs", tz = time.zone)}
             }else{
               if(bytime == "%m"){
-                delta.time <- length(seq(from=as.Date(t2), to=as.Date(tpar2), by='month')) - 1
+                delta.time <- length(seq(from=as.Date(t2, tz = time.zone), to=as.Date(tpar2, tz = time.zone), by='month')) - 1
               }else{
                 if(bytime == "%q"){
-                  delta.time <- length(seq(from=as.Date(t2), to=as.Date(tpar2), by='quarter')) - 1
+                  delta.time <- length(seq(from=as.Date(t2, tz = time.zone), to=as.Date(tpar2, tz = time.zone), by='quarter')) - 1
                 }
               }
             }}else{delta.time <- tpar2-t2}
@@ -1148,19 +1169,19 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
       if(date_format != 0){
         if(date.format[1] == "Date" || date.format[1] == "POSIX"){
           if(bytime == "%d"){
-            t1 <- as.POSIXlt(as.Date(t1))
-            t0 <- as.POSIXlt(as.Date(t0))
+            t1 <- as.POSIXlt(as.Date(t1, tz = time.zone), tz = time.zone)
+            t0 <- as.POSIXlt(as.Date(t0, tz = time.zone), tz = time.zone)
           }else{
-            t0 <- as.POSIXlt(t0)
-            t1 <- as.POSIXlt(t1)}
+            t0 <- as.POSIXlt(t0, tz = time.zone)
+            t1 <- as.POSIXlt(t1, tz = time.zone)}
         }else{
           if(date.format[1] == "yearmon"){
-            t1 <- as.POSIXlt(as.yearmon(t1))
-            t0 <- as.POSIXlt(as.yearmon(t0))
+            t1 <- as.POSIXlt(as.yearmon(t1), tz = time.zone)
+            t0 <- as.POSIXlt(as.yearmon(t0), tz = time.zone)
           }
           if(date.format[1] == "yearqtr"){
-            t1 <- as.POSIXlt(as.yearqtr(t1))
-            t0 <- as.POSIXlt(as.yearqtr(t0))
+            t1 <- as.POSIXlt(as.yearqtr(t1), tz = time.zone)
+            t0 <- as.POSIXlt(as.yearqtr(t0), tz = time.zone)
           }
         }
       }else{
@@ -1169,16 +1190,16 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
       importFlw <-importFl1[i,]
       if(date_format != 0){
         if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-          if(bytime == "%d"){delta.time <- difftime(t1, t0, units = "days")}
-          if(bytime == "%H"){delta.time <- difftime(t1, t0, units = "hours")}
-          if(bytime == "%M"){delta.time <- difftime(t1, t0, units = "mins")}
-          if(bytime == "%S"){delta.time <- difftime(t1, t0, units = "secs")}
+          if(bytime == "%d"){delta.time <- difftime(t1, t0, units = "days", tz = time.zone)}
+          if(bytime == "%H"){delta.time <- difftime(t1, t0, units = "hours", tz = time.zone)}
+          if(bytime == "%M"){delta.time <- difftime(t1, t0, units = "mins", tz = time.zone)}
+          if(bytime == "%S"){delta.time <- difftime(t1, t0, units = "secs", tz = time.zone)}
         }else{
           if(bytime == "%m"){
-            delta.time <- length(seq(from=as.Date(t0), to=as.Date(t1), by='month')) - 1
+            delta.time <- length(seq(from=as.Date(t0, tz = time.zone), to=as.Date(t1, tz = time.zone), by='month')) - 1
           }else{
             if(bytime == "%q"){
-              delta.time <- length(seq(from=as.Date(t0), to=as.Date(t1), by='quarter')) - 1
+              delta.time <- length(seq(from=as.Date(t0, tz = time.zone), to=as.Date(t1, tz = time.zone), by='quarter')) - 1
             }
           }
         }
@@ -1193,15 +1214,15 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
         if(date_format != 0){
           if(date.format[1] == "Date" || date.format[1] == "POSIX"){
             if(bytime == "%d"){
-              importFlw[[iclt]]<- as.POSIXlt(as.Date(t0))
+              importFlw[[iclt]]<- as.POSIXlt(as.Date(t0, tz = time.zone), tz = time.zone)
             }else{
-              importFlw[[iclt]]<- (as.POSIXlt(t0))}
+              importFlw[[iclt]]<- as.POSIXlt(t0, tz = time.zone)}
           }else{
             if(date.format[1] == "yearmon"){
-              importFlw[[iclt]]<- as.POSIXlt(as.yearmon(t0))
+              importFlw[[iclt]]<- as.POSIXlt(as.yearmon(t0), tz = time.zone)
             }
             if(date.format[1] == "yearqtr"){
-              importFlw[[iclt]]<- as.POSIXlt(as.yearqtr(t0))
+              importFlw[[iclt]]<- as.POSIXlt(as.yearqtr(t0), tz = time.zone)
             }
           }
           if(bytime == "%Y" || bytime == "%y"){
@@ -1222,7 +1243,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
             if(is.na(delta.w) == TRUE){
               t11 <- t0
               hour(t11) <- hour(t11) + tlag + 1
-              if(difftime(t11, t0, units = "hours") < tlag){
+              if(difftime(t11, t0, units = "hours", tz = time.zone) < tlag){
                 hour(t11) <- hour(t11) + 1
               }
               hour(t0) <- hour(t11)
@@ -1235,7 +1256,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
             if(is.na(delta.w) == TRUE){
               t11 <- t0
               minute(t11) <- minute(t11) + tlag + 60
-              if(difftime(t11, t0, units = "mins") < tlag){
+              if(difftime(t11, t0, units = "mins", tz = time.zone) < tlag){
                 minute(t11) <- minute(t11) + 60
               }
               minute(t0) <- minute(t11)
@@ -1248,7 +1269,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
             if(is.na(delta.w) == TRUE){
               t11 <- t0
               second(t11) <- second(t11) + tlag + 3600
-              if(difftime(t11, t0, units = "secs") < tlag){
+              if(difftime(t11, t0, units = "secs", tz = time.zone) < tlag){
                 second(t11) <- second(t11) + 3600
               }
               second(t0) <- second(t11)
@@ -1262,22 +1283,22 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
         importFlw[[iclvr]]<- NA
         if(date.format[1] == "POSIX" && bytime != "%d"){
           if(hour(importFlw[[iclt]]) == 0 && minute(importFlw[[iclt]]) == 0 && second(importFlw[[iclt]]) == 0){
-            importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
+            importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S", tz = time.zone)), "%Y-%m-%d %H:%M:%S")
           }}
         importFlw[[iclt]] <- as.character(importFlw[[iclt]])
         importFlfull <- rbind(importFlfull,importFlw)
         if(date_format != 0){
           if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-            if(bytime == "%d"){delta.time <- difftime(t1, t0, units = "days")}
-            if(bytime == "%H"){delta.time <- difftime(t1, t0, units = "hours")}
-            if(bytime == "%M"){delta.time <- difftime(t1, t0, units = "mins")}
-            if(bytime == "%S"){delta.time <- difftime(t1, t0, units = "secs")}
+            if(bytime == "%d"){delta.time <- difftime(t1, t0, units = "days", tz = time.zone)}
+            if(bytime == "%H"){delta.time <- difftime(t1, t0, units = "hours", tz = time.zone)}
+            if(bytime == "%M"){delta.time <- difftime(t1, t0, units = "mins", tz = time.zone)}
+            if(bytime == "%S"){delta.time <- difftime(t1, t0, units = "secs", tz = time.zone)}
           }else{
             if(bytime == "%m"){
-              delta.time <- length(seq(from=as.Date(t0), to=as.Date(t1), by='month')) - 1
+              delta.time <- length(seq(from=as.Date(t0, tz = time.zone), to=as.Date(t1, tz = time.zone), by='month')) - 1
             }else{
               if(bytime == "%q"){
-                delta.time <- length(seq(from=as.Date(t0), to=as.Date(t1), by='quarter')) - 1
+                delta.time <- length(seq(from=as.Date(t0, tz = time.zone), to=as.Date(t1, tz = time.zone), by='quarter')) - 1
               }
             }
           }
@@ -1288,7 +1309,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
       importFlw <- importFl1[i,]
       if(date.format[1] == "POSIX" && bytime != "%d"){
         if(hour(importFlw[[iclt]]) == 0 && minute(importFlw[[iclt]]) == 0 && second(importFlw[[iclt]]) == 0){
-          importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
+          importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S", tz = time.zone)), "%Y-%m-%d %H:%M:%S")
         }}
       importFlw[[iclt]] <- as.character(importFlw[1, iclt])
       importFlfull <- rbind(importFlfull, importFlw)
@@ -1301,27 +1322,27 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
     if(date_format != 0){
       if(date.format[1] == "Date" || date.format[1] == "POSIX"){
         if(bytime == "%d"){
-          t2 <- as.POSIXlt(as.Date(t2))
-        }else{t2 <- as.POSIXlt(t2)}
+          t2 <- as.POSIXlt(as.Date(t2, tz = time.zone), tz = time.zone)
+        }else{t2 <- as.POSIXlt(t2, tz = time.zone)}
       }else{
         if(date.format[1] == "yearmon"){
-          t2 <- as.POSIXlt(as.yearmon(t2))
+          t2 <- as.POSIXlt(as.yearmon(t2), tz = time.zone)
         }
-        if(date.format[1] == "yearqtr"){t2 <- as.POSIXlt(as.yearqtr(t2))}
+        if(date.format[1] == "yearqtr"){t2 <- as.POSIXlt(as.yearqtr(t2), tz = time.zone)}
       }}else{t2 <- as.numeric(t2)}
     importFlw <-importFl1[ndata,]
     if(date_format != 0){
       if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-        if(bytime == "%d"){delta.time <- difftime(tpar2, t2, units = "days")}
-        if(bytime == "%H"){delta.time <- difftime(tpar2, t2, units = "hours")}
-        if(bytime == "%M"){delta.time <- difftime(tpar2, t2, units = "mins")}
-        if(bytime == "%S"){delta.time <- difftime(tpar2, t2, units = "secs")}
+        if(bytime == "%d"){delta.time <- difftime(tpar2, t2, units = "days", tz = time.zone)}
+        if(bytime == "%H"){delta.time <- difftime(tpar2, t2, units = "hours", tz = time.zone)}
+        if(bytime == "%M"){delta.time <- difftime(tpar2, t2, units = "mins", tz = time.zone)}
+        if(bytime == "%S"){delta.time <- difftime(tpar2, t2, units = "secs", tz = time.zone)}
       }else{
         if(bytime == "%m"){
-          delta.time <- length(seq(from=as.Date(t2), to=as.Date(tpar2), by='month')) - 1
+          delta.time <- length(seq(from=as.Date(t2, tz = time.zone), to=as.Date(tpar2, tz = time.zone), by='month')) - 1
         }else{
           if(bytime == "%q"){
-            delta.time <- length(seq(from=as.Date(t2), to=as.Date(tpar2), by='quarter')) - 1
+            delta.time <- length(seq(from=as.Date(t2, tz = time.zone), to=as.Date(tpar2, tz = time.zone), by='quarter')) - 1
           }
         }
       }
@@ -1352,7 +1373,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
           if(is.na(delta.w) == TRUE){
             t11 <- t2
             hour(t11) <- hour(t11) + tlag + 1
-            if(difftime(t11, t2, units = "hours") < tlag){
+            if(difftime(t11, t2, units = "hours", tz = time.zone) < tlag){
               hour(t11) <- hour(t11) + 1
             }
             hour(t2) <- hour(t11)
@@ -1365,7 +1386,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
           if(is.na(delta.w) == TRUE){
             t11 <- t2
             minute(t11) <- minute(t11) + tlag + 60
-            if(difftime(t11, t2, units = "mins") < tlag){
+            if(difftime(t11, t2, units = "mins", tz = time.zone) < tlag){
               minute(t11) <- minute(t11) + 60
             }
             minute(t2) <- minute(t11)
@@ -1378,7 +1399,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
           if(is.na(delta.w) == TRUE){
             t11 <- t2
             second(t11) <- second(t11) + tlag + 3600
-            if(difftime(t11, t2, units = "secs") < tlag){
+            if(difftime(t11, t2, units = "secs", tz = time.zone) < tlag){
               second(t11) <- second(t11) + 3600
             }
             second(t2) <- second(t11)
@@ -1387,15 +1408,15 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
         }
         if(date.format[1] == "Date" || date.format[1] == "POSIX"){
           if(bytime == "%d"){
-            importFlw[[iclt]] <- as.POSIXlt(as.Date(t2))
+            importFlw[[iclt]] <- as.POSIXlt(as.Date(t2, tz = time.zone), tz = time.zone)
           }else{
-            importFlw[[iclt]] <- as.POSIXlt(t2)}
+            importFlw[[iclt]] <- as.POSIXlt(t2, tz = time.zone)}
         }else{
           if(date.format[1] == "yearmon"){
-            importFlw[[iclt]] <- as.POSIXlt(as.yearmon(t2))
+            importFlw[[iclt]] <- as.POSIXlt(as.yearmon(t2), tz = time.zone)
           }
           if(date.format[1] == "yearqtr"){
-            importFlw[[iclt]] <- as.POSIXlt(as.yearqtr(t2))
+            importFlw[[iclt]] <- as.POSIXlt(as.yearqtr(t2), tz = time.zone)
           }
         }
       }else{
@@ -1405,22 +1426,22 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
       importFlw[[iclvr]] <- NA
       if(date.format[1] == "POSIX" && bytime != "%d"){
         if(hour(importFlw[[iclt]]) == 0 && minute(importFlw[[iclt]]) == 0 && second(importFlw[[iclt]]) == 0){
-          importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S")), "%Y-%m-%d %H:%M:%S")
+          importFlw[[iclt]] <- format(round(as.POSIXlt(importFlw[[iclt]], format="%Y-%m-%d %H:%M:%S", tz = time.zone)), "%Y-%m-%d %H:%M:%S")
         }}
       importFlw[[iclt]] <- as.character(importFlw[[iclt]])
       importFlfull <- rbind(importFlfull, importFlw)
       if(date_format != 0){
         if(bytime == "%d" || bytime == "%H" || bytime == "%M" || bytime == "%S"){
-          if(bytime == "%d"){delta.time <- difftime(tpar2, t2, units = "days")}
-          if(bytime == "%H"){delta.time <- difftime(tpar2, t2, units = "hours")}
-          if(bytime == "%M"){delta.time <- difftime(tpar2, t2, units = "mins")}
-          if(bytime == "%S"){delta.time <- difftime(tpar2, t2, units = "secs")}
+          if(bytime == "%d"){delta.time <- difftime(tpar2, t2, units = "days", tz = time.zone)}
+          if(bytime == "%H"){delta.time <- difftime(tpar2, t2, units = "hours", tz = time.zone)}
+          if(bytime == "%M"){delta.time <- difftime(tpar2, t2, units = "mins", tz = time.zone)}
+          if(bytime == "%S"){delta.time <- difftime(tpar2, t2, units = "secs", tz = time.zone)}
         }else{
           if(bytime == "%m"){
-            delta.time <- length(seq(from=as.Date(t2), to=as.Date(tpar2), by='month')) - 1
+            delta.time <- length(seq(from=as.Date(t2, tz = time.zone), to=as.Date(tpar2, tz = time.zone), by='month')) - 1
           }else{
             if(bytime == "%q"){
-              delta.time <- length(seq(from=as.Date(t2), to=as.Date(tpar2), by='quarter')) - 1
+              delta.time <- length(seq(from=as.Date(t2, tz = time.zone), to=as.Date(tpar2, tz = time.zone), by='quarter')) - 1
             }
           }
         }
@@ -1431,7 +1452,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
   if(date_format != 0){
     if(date.format[1] == "Date" || date.format[1] == "POSIX"){
       if(bytime == "%d"){
-        importFlfull[[iclt]] <- as.Date(as.character(importFlfull[[iclt]]), format = date_format)
+        importFlfull[[iclt]] <- as.Date(as.character(importFlfull[[iclt]]), format = date_format, tz = time.zone)
       }else{
         importFlfull[[iclt]] <- as.POSIXlt(importFlfull[[iclt]], format = date_format, tz = time.zone)
       }}else{
@@ -1479,7 +1500,7 @@ read.STdata <- function(file, header = FALSE, dec = ".", sep = "", iclx, icly, i
     #== TEMPORAL DB ==#
     if(iflagt == 1){
       importFl[[iclt]]<-as.character(importFl[,iclt])
-      data.time <- (as.Date(unique(importFl[,iclt]), format = date.format[2]))
+      data.time <- as.Date(unique(importFl[,iclt]), format = date.format[2], tz = time.zone)
       month(data.time) <- 1
       day(data.time) <- 1
     }else{data.time <- unique(importFl[,iclt])}

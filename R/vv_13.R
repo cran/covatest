@@ -15,7 +15,7 @@
 #' # --start define the STFDF rr_13-- #
 #' library(sp)
 #' library(spacetime)
-#' library(gstat)
+#'
 #'
 #' data(air)
 #'
@@ -39,7 +39,8 @@
 #' ## To estimate the spatio-temporal variogram, paste and copy the following lines
 #' ## (without the symbol '#') in the console:
 #' #
-#' ## vv_13 is obtained by running the following command line:
+#' ## vv_13 is obtained by running the function variogramST of the package gstat,
+#' ## as follows
 #' #
 #' # vv_13 <- gstat::variogramST(PM10~1, rr_13, width=60, cutoff = 220, tlags=0:15)
 #' ## End (Not run)

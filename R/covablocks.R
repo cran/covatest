@@ -62,7 +62,7 @@ setClass("covablocks", slots = c(mat.cova = "matrix",
 #' # --start define the STFDF rr_13-- #
 #' library(sp)
 #' library(spacetime)
-#' library(gstat)
+#' #library(gstat)
 #' data(air)
 #' ls()
 #' if (!exists("rural")) rural = STFDF(stations, dates, data.frame(PM10 =
