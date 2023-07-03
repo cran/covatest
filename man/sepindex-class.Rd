@@ -17,7 +17,7 @@ sepindex(vario_st, nt, ns, globalSill)
 
 \S4method{show}{sepindex}(object)
 
-\S4method{[}{sepindex}(x, i, j)
+\S4method{[}{sepindex}(x, i, j, drop = FALSE)
 
 \S4method{summary}{sepindex}(object)
 }
@@ -38,18 +38,24 @@ of the package \code{gstat}}
 
 \item{object}{object of class \code{sepindex} for methods \code{show} and \code{summary}}
 
-\item{i}{index specifing elements to extract. Each row includes data for specific
+\item{i}{index specifying elements to extract. Each row includes data for specific
 spatio-temporal lags}
 
-\item{j}{index specifing elements to extract. Set \code{1} for spatial lags (hs),
+\item{j}{index specifying elements to extract. Set \code{1} for spatial lags (hs),
 \code{2} for temporal lags (ht) and \code{3} for the nonseparability index
 (SepIndex)}
+
+\item{drop}{logical, the argument is set, by default, equal to \code{FALSE} to
+preserve the structure of the object. It is advisable not to change this option}
 }
 \description{
+\loadmathjax
 A class for the non separability index (r) for different spatial
 and temporal lags:
-\deqn{r(\mathbf{h}, u, \Theta)= \rho(\mathbf{h}, u;\Theta)/ [\rho(\mathbf{h},0;\Theta)\rho(\mathbf{0},u;\Theta)]}
-with \eqn{\rho(\mathbf{h}, u;\Theta)>0}; \eqn{\rho(\mathbf{h},0;\Theta)>0} and \eqn{\rho(\mathbf{0},u;\Theta)>0}.
+\mjdeqn{r(\mathbf{h}, u, \Theta)= \rho(\mathbf{h}, u;\Theta)/ [\rho(\mathbf{h},0;\Theta)\rho(\mathbf{0},u;\Theta)]}{r(\mathbf{h}, u, \Theta)= \rho(\mathbf{h}, u;\Theta)/ [\rho(\mathbf{h},0;\Theta)\rho(\mathbf{0},u;\Theta)]}
+with \mjeqn{\rho(\mathbf{h}, u;\Theta)>0}{\rho(\mathbf{h}, u;\Theta)>0};
+\mjeqn{\rho(\mathbf{h},0;\Theta)>0}{\rho(\mathbf{h},0;\Theta)>0} and
+\mjeqn{\rho(\mathbf{0},u;\Theta)>0}{\rho(\mathbf{0},u;\Theta)>0}.
 On the basis of this index, the type of non separability of the covariance
 function can be analyzed.
 }

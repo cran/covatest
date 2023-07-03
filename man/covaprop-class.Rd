@@ -32,6 +32,7 @@ hypothesis that the non separability is non negative}
 A function for testing some properties (symmetry, separability, type of
 non-separability) of spatio-temporal covariance functions and some classes
 of space-time covariance models
+\loadmathjax
 }
 \details{
 {
@@ -43,13 +44,13 @@ the alternative or not reject it, at a specific level of significance
 equal to \code{"sym"}) represents the first step
 for the selection of a suitable class of spatio-temporal covariance functions.
 According to the definition of full symmetry, the null hypothesis to be
-tested is \deqn{H_0: C(\mathbf{h},u) - C(\mathbf{h},-u)=0}{H_0: C(h,u) - C(h,-u) = 0}
+tested is \mjdeqn{H_0: C(\mathbf{h},u) - C(\mathbf{h},-u)=0}{H_0: C(h,u) - C(h,-u) = 0}
 
 \item The test of separability (when the slot \code{@typetest} is
 equal to \code{"sep"}) represents the second
 step of the testing procedure. According to the definition of separability,
 the null hypothesis to be tested is
-\deqn{H_0: C(\mathbf{h}, u)/C(\mathbf{h}, 0) - C(\mathbf{0}, u)/C(\mathbf{0},0)=0}{H_0: C(h, u)/C(h, 0) - C(0, u)/C(0,0) = 0}
+\mjdeqn{H_0: C(\mathbf{h}, u)/C(\mathbf{h}, 0) - C(\mathbf{0}, u)/C(\mathbf{0},0)=0}{H_0: C(h, u)/C(h, 0) - C(0, u)/C(0,0) = 0}
 
 \item The test on the type of non separability (when the slot
 \code{@typetest} is equal to \code{"tnSep"})
@@ -57,15 +58,15 @@ represents the third step for the selection of a suitable class of space-time
 covariance functions.
 According to the definition of type of non separability, the null hypothesis
 to be tested is that the non separability is non negative
-\deqn{H_0: C(\mathbf{h},u)/C(\mathbf{h},0) - C(\mathbf{0},u)/C(\mathbf{0},0) > 0}{H_0: C(h,u)/C(h,0) - C(0,u)/C(0,0) > 0}
+\mjdeqn{H_0: C(\mathbf{h},u)/C(\mathbf{h},0) - C(\mathbf{0},u)/C(\mathbf{0},0) > 0}{H_0: C(h,u)/C(h,0) - C(0,u)/C(0,0) > 0}
 or
-\deqn{H_0: C(\mathbf{h},u)/C(\mathbf{h},0) - C(\mathbf{0},u)/C(\mathbf{0},0) < 0}{H_0: C(h,u)/C(h,0) - C(0,u)/C(0,0) < 0}
+\mjdeqn{H_0: C(\mathbf{h},u)/C(\mathbf{h},0) - C(\mathbf{0},u)/C(\mathbf{0},0) < 0}{H_0: C(h,u)/C(h,0) - C(0,u)/C(0,0) < 0}
 if the null hypothesis to test is that the non separability is non positive
 
 \item If the slot \code{@typetest} is equal to \code{"productSum"}
 \code{"intProduct"} or \code{"gneiting"}, the goodness of a specific class of
 space-time covariance function will be tested. For this testing procedure
-the generic null hypothesis is: \deqn{H_0: \mathbf{Af(G)}=0}{H_0: Af(G) = 0}
+the generic null hypothesis is: \mjdeqn{H_0: \mathbf{Af(G)}=0}{H_0: Af(G) = 0}
 }
 For the analytic expression of each test statistic and its probability
 distribution see Cappello et al. (2018). In the same contribution the

@@ -70,11 +70,11 @@ setClass("blocks", slots = c(mat.block = "matrix",
 #' spatial point is greater than 29 and less than 89, since the length of the
 #' time series is low and may not guarantee the reliability of the tests
 #'
-#' \item A stop occurs if more than 80\% of consecutive data are missing in one
+#' \item A stop occurs if more than 80% of consecutive data are missing in one
 #' of the blocks, since the estimation of the covariance matrix is not reliable,
 #' when a large number of missing values occur
 #'
-#' \item If, in the last block of each selected spatial point, more than 15\%
+#' \item If, in the last block of each selected spatial point, more than 15%
 #' of data are missing a warning message appears, since the estimation of the
 #' covariance matrix, when a large number of missing values occurs, is not
 #' reliable
@@ -521,10 +521,10 @@ blocks <- function(lb, ls, matdata, pardata1, pardata2, stpairs) {
 #' @include sepindex.R couples.R
 NULL
 #' @param x object of class \code{blocks} for methods \code{boxplot} and \code{extract}
-#' @param i index specifing the block to be selected. If \code{i=0} all blocks are
+#' @param i index specifying the block to be selected. If \code{i=0} all blocks are
 #' selected automatically (option available only for \code{boxplot} and \code{summary}
 #' methods)
-#' @param j index specifing the spatial point to be selected. If \code{j=0} all
+#' @param j index specifying the spatial point to be selected. If \code{j=0} all
 #' spatial points are selected automatically (option available only for \code{boxplot}
 #' and \code{summary} methods)
 #' @param ... any arguments that will be passed to the panel plotting functions
@@ -619,10 +619,13 @@ setMethod(f="show", signature="blocks", definition=function(object) {
   print(object@sel.staz)
 }
 )
+#' @param drop logical, the argument is set, by default, equal to \code{FALSE} to
+#' preserve the structure of the object. It is advisable not to change this option
+#'
 #' @rdname blocks-class
 #' @aliases blocks-method
 #' @export
-setMethod(f="[", signature="blocks", definition=function(x, i, j) {
+setMethod(f="[", signature="blocks", definition=function(x, i, j, drop = FALSE) {
 
   x@array.block[, i, j]
 

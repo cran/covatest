@@ -1,7 +1,7 @@
 Package: covatest
 Type: Package
 Title: Tests on Properties of Space-Time Covariance Functions
-Version: 1.2.2
+Version: 1.2.3
 Authors@R: c(person("Sandra", "De Iaco", role = c("aut", "cre"), 
     email = "sandra.deiaco@unisalento.it"),
     person("Claudia", "Cappello", role = "aut", email = "claudia.cappello@unisalento.it"),
@@ -18,8 +18,10 @@ Description: Tests on properties of space-time covariance functions.
     and Cappello, C., De Iaco, S., Posa, D., 2020, covatest: an R package for
     selecting a class of space-time covariance functions <doi:10.18637/jss.v094.i01>.
 Depends: R(>= 3.4.0)
-Imports: utils, stats, graphics, methods, lubridate, zoo, gstat, sp (>=
-        0.9-72), spacetime (>= 1.0-0)
+Imports: utils, stats, graphics, mathjaxr, methods, lubridate, V8, zoo,
+        gstat, sp (>= 0.9-72), spacetime (>= 1.0-0)
+Suggests: sf
+RdMacros: mathjaxr
 License: GPL (>= 2.0)
 Encoding: UTF-8
 LazyData: true
@@ -28,11 +30,11 @@ Collate: 'sepindex.R' 'couples.R' 'blocks.R' 'covablocks.R'
         'covastat.R' 'covaprop.R' 'covastatM.R' 'read.STdata.R'
         'vv_13.R'
 NeedsCompilation: no
-Packaged: 2022-10-27 18:21:44 UTC; claudiacappello
+Packaged: 2023-07-01 12:51:11 UTC; claudiacappello
 Author: Sandra De Iaco [aut, cre],
   Claudia Cappello [aut],
   Donato Posa [aut],
   Sabrina Maggio [ctb]
 Maintainer: Sandra De Iaco <sandra.deiaco@unisalento.it>
 Repository: CRAN
-Date/Publication: 2022-10-28 11:57:36 UTC
+Date/Publication: 2023-07-03 09:50:02 UTC

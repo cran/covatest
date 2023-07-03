@@ -18,7 +18,7 @@ blocks(lb, ls, matdata, pardata1, pardata2, stpairs)
 
 \S4method{show}{blocks}(object)
 
-\S4method{[}{blocks}(x, i, j)
+\S4method{[}{blocks}(x, i, j, drop = FALSE)
 
 \S4method{summary}{blocks}(object, i, j)
 }
@@ -52,17 +52,20 @@ points and the corresponding temporal lags to be analyzed}
 
 \item{x}{object of class \code{blocks} for methods \code{boxplot} and \code{extract}}
 
-\item{i}{index specifing the block to be selected. If \code{i=0} all blocks are
+\item{i}{index specifying the block to be selected. If \code{i=0} all blocks are
 selected automatically (option available only for \code{boxplot} and \code{summary}
 methods)}
 
-\item{j}{index specifing the spatial point to be selected. If \code{j=0} all
+\item{j}{index specifying the spatial point to be selected. If \code{j=0} all
 spatial points are selected automatically (option available only for \code{boxplot}
 and \code{summary} methods)}
 
 \item{...}{any arguments that will be passed to the panel plotting functions}
 
 \item{object}{object of class \code{blocks} for methods \code{show} and \code{summary}}
+
+\item{drop}{logical, the argument is set, by default, equal to \code{FALSE} to
+preserve the structure of the object. It is advisable not to change this option}
 }
 \description{
 A class for overlapped blocks of the time series associated with the given
@@ -112,11 +115,11 @@ spatial points is less than 29
 spatial point is greater than 29 and less than 89, since the length of the
 time series is low and may not guarantee the reliability of the tests
 
-\item A stop occurs if more than 80\\% of consecutive data are missing in one
+\item A stop occurs if more than 80\% of consecutive data are missing in one
 of the blocks, since the estimation of the covariance matrix is not reliable,
 when a large number of missing values occur
 
-\item If, in the last block of each selected spatial point, more than 15\\%
+\item If, in the last block of each selected spatial point, more than 15\%
 of data are missing a warning message appears, since the estimation of the
 covariance matrix, when a large number of missing values occurs, is not
 reliable

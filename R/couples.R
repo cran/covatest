@@ -1,8 +1,9 @@
 #' Class "couples"
 #'
-#' A class for spatial points and the corresponding temporal lags to be
+#' @description A class for spatial points and the corresponding temporal lags to be
 #' analyzed in order to test some covariance properties and some well known
 #' classes of space-time covariance functions models
+#' \loadmathjax
 #'
 #' @slot couples.st matrix, in which the first two columns contain the
 #' couples of spatial points (denoted with order numbers) to be analyzed
@@ -16,6 +17,8 @@
 #' couples of the selected spatial points
 #' @slot typetest character; contains the code of the test to be performed
 #'
+#' @import mathjaxr
+#' @import V8
 #' @rdname couples-class
 #' @exportClass couples
 #' @export
@@ -68,14 +71,14 @@ setClass("couples", slots = c(couples.st = "matrix",
 #' \code{"intProduct"} and \code{"gneiting"}), the number of analyzed spatial
 #' points must be used to create at least 3 spatial couples or multiple of 3,
 #' such that each triplet satisfies the condition
-#' \deqn{||\mathbf{h}_{1}||^{2\gamma}- ||\mathbf{h}_{2}||^{2\gamma} = ||\mathbf{h}_{2}||^{2\gamma}-||\mathbf{h}_{3}||^{2\gamma}}{||h_1||^{2\gamma} - ||h_2||^{2\gamma} = ||h_2||^{2\gamma} - ||h_3||^{2\gamma}}
-#' where \eqn{\gamma \in ]0,1]} only for \code{typetest = "intProduct"}
+#' \mjdeqn{||\mathbf{h}_{1}||^{2\gamma} - ||\mathbf{h}_{2}||^{2\gamma} = ||\mathbf{h}_{2}||^{2\gamma}-||\mathbf{h}_{3}||^{2\gamma}}{||h_1||^{2\gamma} - ||h_2||^{2\gamma} = ||h_2||^{2\gamma} - ||h_3||^{2\gamma}}
+#' where \mjeqn{\gamma \in ]0,1]}{\gamma \in ]0,1]} only for \code{typetest = "intProduct"}
 #' and \code{"gneiting"}.
 #' The number of positive temporal lags must be at least 3, or multiple
-#' of 3, too. The condition \deqn{u_{1}^{2\alpha}-u_{2}^{2\alpha}=u_{2}^{2\alpha}-u_{3}^{2\alpha}}{u_1^{2\alpha} - u_2^{2\alpha} = u_2^{2\alpha} - u_3^{2\alpha}}
-#' where \eqn{\alpha \in ]0,1]} must be satisfied for each triplet
+#' of 3, too. The condition \mjdeqn{u_{1}^{2\alpha}-u_{2}^{2\alpha}=u_{2}^{2\alpha}-u_{3}^{2\alpha}}{u_1^{2\alpha} - u_2^{2\alpha} = u_2^{2\alpha} - u_3^{2\alpha}}
+#' where \mjeqn{\alpha \in ]0,1]}{\alpha \in ]0,1]} must be satisfied for each triplet
 #' (only for \code{typetest = "intProduct"} and \code{"gneiting"}), as clarified
-#' in Cappello et al., 2018. The values of \eqn{\gamma} and \eqn{\alpha} are usually fixed
+#' in Cappello et al., 2018. The values of \mjeqn{\gamma}{\gamma} and \mjeqn{\alpha}{\alpha}  are usually fixed
 #' equal to 0.5 or 1 according that the behavior near the origin of the spatial
 #' and temporal marginal covariograms is linear or quadratic, respectively.
 #' Note that for each spatial triplet and each temporal triplet, 6 contrasts can
@@ -775,19 +778,22 @@ cat("Spatio-temporal lags defined throught the objects of the class 'couples'", 
 }
 )
 #' @param x object of class \code{couples} for method \code{extract}
-#' @param i index specifing rows or columns of the slot \code{@couples.st}.
+#' @param i index specifying rows or columns of the slot \code{@couples.st}.
 #' Rows or columns depending on the logical parameter \code{by.row} to be set
 #' @param by.row logical, if \code{TRUE} rows of the slot \code{@couples.st} are
 #' selected (the temporal lags associated to the i-th spatial couple are given).
 #' If \code{FALSE} (the default) columns of the slot \code{@couples.st} are
 #' selected. In particular, the spatial couples associated to the i-th temporal
 #' lag (i >= 3, temporal lags are stored from the third column) are given
+#' @param drop logical, the argument is set, by default, equal to \code{FALSE} to
+#' preserve the structure of the object. It is advisable not to change this option
 #'
 #' @rdname couples-class
 #' @aliases couples-method
 #' @aliases select
 #' @export
-setMethod(f="[", signature="couples", definition=function(x, i, by.row = FALSE) {
+setMethod(f="[", signature="couples", definition=function(x, i, by.row = FALSE,
+                                                          drop = FALSE) {
   if(by.row == FALSE){
     if(i <= 2){
       message("Start error message. The column selected does not contain the temporal lags. Please select a column greater than 2.")
@@ -803,7 +809,6 @@ setMethod(f="[", signature="couples", definition=function(x, i, by.row = FALSE) 
     names(y) <- NULL
     return(y)
   }
-
 }
 )
 #' @rdname couples-class
